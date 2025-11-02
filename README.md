@@ -27,7 +27,21 @@ Cursor Cloud Agents API (Beta) allows you to programmatically create and manage 
 </pml-workflow>
 ```
 
-**2. Launch the tool:**
+**2. Provide a valid CURSOR_API_KEY:**
+
+In the path where you going to run churrera, define `.env` with:
+
+```bash
+CURSOR_API_KEY=your_key_xxx
+```
+
+or have a System environment variable with the name `CURSOR_API_KEY`:
+
+```bash
+export CURSOR_API_KEY=your_key_xxx
+```
+
+**3. Launch the tool:**
 
 ```bash
 # Build

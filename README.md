@@ -53,6 +53,7 @@ java -jar churrera-cli/target/churrera-cli-0.1.0-SNAPSHOT.jar
 jobs                    # List all jobs
 jobs new    churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml
 jobs new    churrera-cli/src/test/resources/examples/cis194/workflow-cis194.xml
+jobs new    churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml
 jobs status <job-id>    # Check job status
 jobs logs   <job-id>    # View job logs and conversation
 jobs delete <job-id>    # Delete job and associated Cursor agent

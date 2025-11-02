@@ -4,7 +4,7 @@
 
 Churrera is a Java development CLI tool designed to operate with `Cursor Cloud Agents API` in an easy way.
 
-## What is Cursor background Agents API?
+## What is Cursor Cloud Agents API?
 
 Cursor Cloud Agents API (Beta) allows you to programmatically create and manage AI-powered coding agents that work autonomously on your repositories.
 

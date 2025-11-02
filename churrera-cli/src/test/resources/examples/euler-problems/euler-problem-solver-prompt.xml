@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prompt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.2.0-SNAPSHOT/pml.xsd">
+
+    <title>Solve a Euler problem for the number: <![CDATA[<input>INPUT</input>]]></title>
+
+    <role>You are a Senior software engineer with extensive experience in Java software development</role>
+
+    <goal>Solve the Euler problem for the number: <![CDATA[<input>INPUT</input>]]>
+
+        To achieve this goal, you need to follow the following steps:
+
+        Get access to the page to understand the problem statement:
+        https://projecteuler.net/minimal=<![CDATA[<input>INPUT</input>]]>
+
+        Review the different Euler problems and check in the repository in
+        sandbox/src/main/java/info/jab/euler-problems/
+
+        and create a new package named euler-problemX
+        where X represent the number provided in the <![CDATA[<input>INPUT</input>]]> value.
+
+        if in the repository doesn't exist a euler-problemX, X represent the number,
+        in that case take the minimum one which is not solved in the repository.
+
+        Do a good analysis to implement the solution.
+
+        Before start, update the VM to Java 25 using the following commands:
+
+        ```bash
+        sudo apt update
+        # Install SDKMAN
+        curl -s "https://get.sdkman.io" | bash
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+        sdk install java 25.0.1-graalce
+        sdk default java 25.0.1-graalce
+        java -version
+        ```
+
+        Verify the Java version is 25
+
+        Check if the Maven project is configured correctly:
+        Apply TDD so, create in tests the new package:
+        sandbox/src/test/java/info/jab/euler-problems/euler-problemX
+        where X represent the number provided in the <![CDATA[<input>INPUT</input>]]> value.
+
+        Once you have the initial test, execute:
+
+        ```bash
+        ./mvnw clean test -pl sandbox
+        ```
+
+        and it will fail but this is something normal because you don't have the implementation.
+        and it represents the TDD red phase.
+
+        After that, Implement the solution in:
+
+        sandbox/src/main/java/info/jab/euler-problems/euler-problemX/
+
+        where X represent the number provided in the <![CDATA[<input>INPUT</input>]]> value.
+
+        and execute:
+
+        ```bash
+        ./mvnw clean test -pl sandbox
+        ```
+
+        This time it should pass the test, in order case, review the implementation and commit and push the changes to the branch to create the PR.
+
+        Follow this steps for all Euler problems included in the list of Euler problems numbers.
+    </goal>
+
+    <constraints>
+        <constraint-list>
+            <constraint>Only commit java sources (*.java) and not any type files</constraint>
+            <constraint>Not update pom.xml file</constraint>
+        </constraint-list>
+    </constraints>
+
+    <safeguards>
+        <safeguards-list>
+            <safeguards-item>verify the changes only with `./mvnw clean verify`</safeguards-item>
+            <safeguards-item>Only commit java sources (*.java) and not any type files</safeguards-item>
+        </safeguards-list>
+    </safeguards>
+
+    <acceptance-criteria>
+        <acceptance-criteria-list>
+            <acceptance-criteria-item>The solution is tested successfully with `./mvnw clean test -pl sandbox`</acceptance-criteria-item>
+            <acceptance-criteria-item>The solution is committed and pushed to the branch to create the PR</acceptance-criteria-item>
+            <acceptance-criteria-item>Only commit java sources only and push the changes to the branch to create the PR</acceptance-criteria-item>
+        </acceptance-criteria-list>
+    </acceptance-criteria>
+</prompt>

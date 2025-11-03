@@ -55,5 +55,5 @@ mvn versions:commit
 ./mvnw clean package -DskipTests
 
 # Run Churrera
-java -jar churrera-cli/target/churrera-cli-0.1.0-SNAPSHOT.jar
+java -jar churrera-cli/target/churrera-cli-0.1.0.jar
 ```

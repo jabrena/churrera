@@ -48,6 +48,9 @@ jwebserver -p 8020 -d "$(pwd)/docs"
 ./mvnw versions:display-dependency-updates
 ./mvnw versions:display-plugin-updates
 
+mvn versions:set -DnewVersion=0.1.0
+mvn versions:commit
+
 # Create jar
 ./mvnw clean package -DskipTests
 

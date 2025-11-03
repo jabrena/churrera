@@ -47,7 +47,7 @@ export CURSOR_API_KEY=your_key_xxx
 # Build
 ./mvnw clean package
 # Run
-java -jar churrera-cli/target/churrera-cli-0.1.0.jar
+java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar
 
 # Using the commands
 jobs                    # List all jobs

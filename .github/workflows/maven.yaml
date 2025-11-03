@@ -24,6 +24,6 @@ jobs:
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
-          name: setup-${{ steps.get_version.outputs.VERSION }}.jar
+          name: churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar
           path: |
             ./churrera-cli/target/churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar

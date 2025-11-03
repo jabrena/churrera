@@ -90,6 +90,10 @@ jobs pr     <job-id>    # Show PR link
 </pml-workflow>
 ```
 
+## Changelog
+
+- Review the [CHANGELOG](./CHANGELOG.md) for further details
+
 ## References
 
 - https://github.com/jabrena/pml

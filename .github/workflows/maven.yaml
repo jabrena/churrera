@@ -26,4 +26,4 @@ jobs:
         with:
           name: setup-${{ steps.get_version.outputs.VERSION }}.jar
           path: |
-            .churrera-cli/target/churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar
+            ./churrera-cli/target/churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar

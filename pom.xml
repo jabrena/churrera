@@ -56,7 +56,7 @@
         <maven-plugin-build-helper.version>3.6.1</maven-plugin-build-helper.version>
         <maven-plugin-failsafe.version>3.5.4</maven-plugin-failsafe.version>
         <maven-plugin-resources.version>3.3.1</maven-plugin-resources.version>
-        <extra-enforcer-rules.version>1.10.0</extra-enforcer-rules.version>
+        <extra-enforcer-rules.version>1.11.0</extra-enforcer-rules.version>
         <maven-plugins-git-commit-id.version>4.9.10</maven-plugins-git-commit-id.version>
         <maven-plugin-jacoco.version>0.8.14</maven-plugin-jacoco.version>
         <maven-plugin-jxr.version>3.6.0</maven-plugin-jxr.version>

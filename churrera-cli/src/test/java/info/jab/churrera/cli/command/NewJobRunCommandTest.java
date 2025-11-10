@@ -126,7 +126,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.pml", "pml"),
             "test-model",
             "test-repo",
-            updatePrompts
+            updatePrompts,
+            null, null, null
         );
     }
 
@@ -139,7 +140,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.pml", "pml"),
             null, // null model to trigger defaults
             null, // null repository to trigger defaults
-            updatePrompts
+            updatePrompts,
+            null, null, null
         );
     }
 
@@ -280,7 +282,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.xml", "pml"),
             "test-model",
             "test-repo",
-            List.of(new PromptInfo("prompt2.xml", "pml"))
+            List.of(new PromptInfo("prompt2.xml", "pml")),
+            null, null, null
         );
         when(workflowParser.parse(any(File.class))).thenReturn(workflowData);
 
@@ -313,7 +316,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.xml", "pml"),
             "test-model",
             "test-repo",
-            List.of(new PromptInfo("prompt2.xml", "pml"))
+            List.of(new PromptInfo("prompt2.xml", "pml")),
+            null, null, null
         );
         when(workflowParser.parse(any(File.class))).thenReturn(workflowData);
 
@@ -345,7 +349,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.md", "markdown"),
             "test-model",
             "test-repo",
-            List.of(new PromptInfo("prompt2.txt", "text plain"))
+            List.of(new PromptInfo("prompt2.txt", "text plain")),
+            null, null, null
         );
         when(workflowParser.parse(any(File.class))).thenReturn(workflowData);
 
@@ -373,7 +378,8 @@ class NewJobRunCommandTest {
             new PromptInfo("prompt1.xml", "pml"),
             "test-model",
             "test-repo",
-            List.of(new PromptInfo("prompt2.md", "markdown"))
+            List.of(new PromptInfo("prompt2.md", "markdown")),
+            null, null, null
         );
         when(workflowParser.parse(any(File.class))).thenReturn(workflowData);
 
@@ -400,7 +406,8 @@ class NewJobRunCommandTest {
             new PromptInfo("nonexistent.xml", "pml"),
             "test-model",
             "test-repo",
-            List.of()
+            List.of(),
+            null, null, null
         );
         when(workflowParser.parse(any(File.class))).thenReturn(workflowData);
 

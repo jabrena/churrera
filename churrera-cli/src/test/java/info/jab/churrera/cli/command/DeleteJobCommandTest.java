@@ -47,7 +47,7 @@ class DeleteJobCommandTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
     }
 
     @Test
@@ -78,7 +78,7 @@ class DeleteJobCommandTest {
             null, // no cursor agent
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, jobId);
 
@@ -175,7 +175,7 @@ class DeleteJobCommandTest {
             "cursor-agent-parent",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         String childJobId1 = "child-job-id-1";
         Job childJob1 = new Job(childJobId1,
@@ -183,7 +183,7 @@ class DeleteJobCommandTest {
             "cursor-agent-child1",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null, null, null, null, null);
 
         String childJobId2 = "child-job-id-2";
         Job childJob2 = new Job(childJobId2,
@@ -191,7 +191,7 @@ class DeleteJobCommandTest {
             null,
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, parentJobId);
 
@@ -231,7 +231,7 @@ class DeleteJobCommandTest {
             "cursor-agent-grandparent",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         String parentJobId = "parent-job-id";
         Job parentJob = new Job(parentJobId,
@@ -239,7 +239,7 @@ class DeleteJobCommandTest {
             "cursor-agent-parent",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), grandparentJobId, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), grandparentJobId, null, null, null, null, null, null);
 
         String childJobId = "child-job-id";
         Job childJob = new Job(childJobId,
@@ -247,7 +247,7 @@ class DeleteJobCommandTest {
             "cursor-agent-child",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), parentJobId, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, grandparentJobId);
 
@@ -310,8 +310,8 @@ class DeleteJobCommandTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
-        
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
+
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, fullJobId);
 
         when(jobRepository.findById(fullJobId)).thenReturn(Optional.of(jobWithMatchingId));
@@ -339,7 +339,7 @@ class DeleteJobCommandTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
@@ -384,13 +384,13 @@ class DeleteJobCommandTest {
             "cursor-agent-1",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
         Job matchingJob2 = new Job(fullJobId2,
             "/test/path2",
             "cursor-agent-2",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
@@ -412,13 +412,13 @@ class DeleteJobCommandTest {
             verifyNoInteractions(cliAgent);
             verify(jobRepository, never()).deletePromptsByJobId(anyString());
             verify(jobRepository, never()).deleteById(anyString());
-            
+
             String output = outContent.toString();
-            assertTrue(output.contains("Ambiguous job prefix"), 
+            assertTrue(output.contains("Ambiguous job prefix"),
                 "Should contain ambiguous prefix message");
-            assertTrue(output.contains(fullJobId1), 
+            assertTrue(output.contains(fullJobId1),
                 "Should list first matching job");
-            assertTrue(output.contains(fullJobId2), 
+            assertTrue(output.contains(fullJobId2),
                 "Should list second matching job");
             assertTrue(output.contains("Please specify a full UUID or a unique 8-char prefix"),
                 "Should contain instruction message");
@@ -437,7 +437,7 @@ class DeleteJobCommandTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
@@ -459,7 +459,7 @@ class DeleteJobCommandTest {
             verifyNoInteractions(cliAgent);
             verify(jobRepository, never()).deletePromptsByJobId(anyString());
             verify(jobRepository, never()).deleteById(anyString());
-            
+
             String output = outContent.toString();
             assertTrue(output.contains("No job found starting with: " + prefix),
                 "Should contain no matches message");
@@ -492,7 +492,7 @@ class DeleteJobCommandTest {
             verifyNoInteractions(cliAgent);
             verify(jobRepository, never()).deletePromptsByJobId(anyString());
             verify(jobRepository, never()).deleteById(anyString());
-            
+
             String output = outContent.toString();
             assertTrue(output.contains("No job found starting with: " + prefix),
                 "Should contain no matches message");
@@ -524,7 +524,7 @@ class DeleteJobCommandTest {
             verifyNoInteractions(cliAgent);
             verify(jobRepository, never()).deletePromptsByJobId(anyString());
             verify(jobRepository, never()).deleteById(anyString());
-            
+
             String output = outContent.toString();
             assertTrue(output.contains("Job not found: " + partialId),
                 "Should contain job not found message");
@@ -554,7 +554,7 @@ class DeleteJobCommandTest {
             verify(jobRepository).findById(longPrefix);
             verify(jobRepository, never()).findAll();
             verifyNoInteractions(cliAgent);
-            
+
             String output = outContent.toString();
             assertTrue(output.contains("Job not found: " + longPrefix),
                 "Should contain job not found message");
@@ -573,7 +573,7 @@ class DeleteJobCommandTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
         // Job with different prefix should not match
         String differentPrefixId = "87654321-1234-1234-1234-123456789abc";
         Job jobWithDifferentPrefix = new Job(differentPrefixId,
@@ -581,7 +581,7 @@ class DeleteJobCommandTest {
             "cursor-agent-456",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
@@ -655,7 +655,7 @@ class DeleteJobCommandTest {
             verify(jobRepository, never()).findById(anyString());
             verify(jobRepository, never()).findAll();
             verifyNoInteractions(cliAgent);
-            
+
             String output = outContent.toString();
             assertTrue(output.contains("Job not found: null"),
                 "Should handle null gracefully");

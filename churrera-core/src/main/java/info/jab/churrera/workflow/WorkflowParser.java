@@ -143,6 +143,24 @@ public class WorkflowParser {
         String model = sequence.getAttribute("model");
         String repository = sequence.getAttribute("repository");
 
+        // Extract timeout and fallback-src attributes (optional)
+        String timeoutStr = sequence.getAttribute("timeout");
+        String fallbackSrc = sequence.getAttribute("fallback-src");
+
+        Long timeoutMillis = null;
+        if (timeoutStr != null && !timeoutStr.trim().isEmpty()) {
+            try {
+                timeoutMillis = TimeoutParser.parseToMillis(timeoutStr);
+            } catch (IllegalArgumentException e) {
+                throw new WorkflowParseException("Invalid timeout format: " + e.getMessage(), e);
+            }
+        }
+
+        // Empty string is treated as not specified
+        if (fallbackSrc != null && fallbackSrc.trim().isEmpty()) {
+            fallbackSrc = null;
+        }
+
         // Parse all prompt elements
         NodeList promptList = sequence.getElementsByTagName("prompt");
         if (promptList.getLength() == 0) {
@@ -165,7 +183,7 @@ public class WorkflowParser {
         PromptInfo launchPrompt = allPrompts.get(0);
         List<PromptInfo> updatePrompts = allPrompts.subList(1, allPrompts.size());
 
-        return new WorkflowData(launchPrompt, model, repository, updatePrompts, null);
+        return new WorkflowData(launchPrompt, model, repository, updatePrompts, null, timeoutMillis, fallbackSrc);
     }
 
     /**
@@ -180,6 +198,24 @@ public class WorkflowParser {
 
         String type = inferTypeFromExtension(srcFile);
         String bindResultType = parallelElement.getAttribute("bindResultType");
+
+        // Extract timeout and fallback-src attributes (optional)
+        String timeoutStr = parallelElement.getAttribute("timeout");
+        String fallbackSrc = parallelElement.getAttribute("fallback-src");
+
+        Long timeoutMillis = null;
+        if (timeoutStr != null && !timeoutStr.trim().isEmpty()) {
+            try {
+                timeoutMillis = TimeoutParser.parseToMillis(timeoutStr);
+            } catch (IllegalArgumentException e) {
+                throw new WorkflowParseException("Invalid timeout format: " + e.getMessage(), e);
+            }
+        }
+
+        // Empty string is treated as not specified
+        if (fallbackSrc != null && fallbackSrc.trim().isEmpty()) {
+            fallbackSrc = null;
+        }
 
         // Create the parallel prompt info
         PromptInfo parallelPrompt = new PromptInfo(srcFile, type, null);
@@ -203,9 +239,9 @@ public class WorkflowParser {
         String repository = firstSequence.getRepository();
 
         // Create ParallelWorkflowData
-        ParallelWorkflowData parallelData = new ParallelWorkflowData(parallelPrompt, bindResultType, sequences);
+        ParallelWorkflowData parallelData = new ParallelWorkflowData(parallelPrompt, bindResultType, sequences, timeoutMillis, fallbackSrc);
 
-        return new WorkflowData(parallelPrompt, model, repository, new ArrayList<>(), parallelData);
+        return new WorkflowData(parallelPrompt, model, repository, new ArrayList<>(), parallelData, timeoutMillis, fallbackSrc);
     }
 
     /**
@@ -214,6 +250,24 @@ public class WorkflowParser {
     private SequenceInfo parseSequenceInfo(Element sequenceElement) throws WorkflowParseException {
         String model = sequenceElement.getAttribute("model");
         String repository = sequenceElement.getAttribute("repository");
+
+        // Extract timeout and fallback-src attributes (optional)
+        String timeoutStr = sequenceElement.getAttribute("timeout");
+        String fallbackSrc = sequenceElement.getAttribute("fallback-src");
+
+        Long timeoutMillis = null;
+        if (timeoutStr != null && !timeoutStr.trim().isEmpty()) {
+            try {
+                timeoutMillis = TimeoutParser.parseToMillis(timeoutStr);
+            } catch (IllegalArgumentException e) {
+                throw new WorkflowParseException("Invalid timeout format: " + e.getMessage(), e);
+            }
+        }
+
+        // Empty string is treated as not specified
+        if (fallbackSrc != null && fallbackSrc.trim().isEmpty()) {
+            fallbackSrc = null;
+        }
 
         NodeList promptList = sequenceElement.getElementsByTagName("prompt");
         List<PromptInfo> prompts = new ArrayList<>();
@@ -229,7 +283,7 @@ public class WorkflowParser {
             prompts.add(new PromptInfo(srcFile, type, bindResultExp));
         }
 
-        return new SequenceInfo(model, repository, prompts);
+        return new SequenceInfo(model, repository, prompts, timeoutMillis, fallbackSrc);
     }
 
     /**

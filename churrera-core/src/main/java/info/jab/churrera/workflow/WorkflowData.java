@@ -12,17 +12,17 @@ public class WorkflowData {
     private final String repository;
     private final List<PromptInfo> updatePrompts;
     private final ParallelWorkflowData parallelWorkflowData;
+    private final Long timeoutMillis;
+    private final String fallbackSrc;
 
-    public WorkflowData(PromptInfo launchPrompt, String model, String repository, List<PromptInfo> updatePrompts) {
-        this(launchPrompt, model, repository, updatePrompts, null);
-    }
-
-    public WorkflowData(PromptInfo launchPrompt, String model, String repository, List<PromptInfo> updatePrompts, ParallelWorkflowData parallelWorkflowData) {
+    public WorkflowData(PromptInfo launchPrompt, String model, String repository, List<PromptInfo> updatePrompts, ParallelWorkflowData parallelWorkflowData, Long timeoutMillis, String fallbackSrc) {
         this.launchPrompt = launchPrompt;
         this.model = model;
         this.repository = repository;
         this.updatePrompts = new ArrayList<>(updatePrompts);
         this.parallelWorkflowData = parallelWorkflowData;
+        this.timeoutMillis = timeoutMillis;
+        this.fallbackSrc = fallbackSrc;
     }
 
     /**
@@ -95,6 +95,24 @@ public class WorkflowData {
      */
     public boolean hasUpdateAgents() {
         return !updatePrompts.isEmpty();
+    }
+
+    /**
+     * Returns the timeout in milliseconds, or null if not specified.
+     *
+     * @return timeout in milliseconds, or null
+     */
+    public Long getTimeoutMillis() {
+        return timeoutMillis;
+    }
+
+    /**
+     * Returns the fallback source file path, or null if not specified.
+     *
+     * @return fallback source file path, or null
+     */
+    public String getFallbackSrc() {
+        return fallbackSrc;
     }
 }
 

@@ -74,7 +74,7 @@ CURSOR_API_KEY=key_xxx
 
 **Note:** Remember to add the file `.env` inside of a `.cursorignore` file. Further information about it [here](https://cursor.com/docs/context/ignore-files).
 
-In the another hand, you could use that `CURSOR_API_KEY` and export as an environment variable in your system:
+In the another hand, you could use that `CURSOR_API_KEY` and export it as an environment variable in your system:
 
 ```bash
 export CURSOR_API_KEY=key_xxx

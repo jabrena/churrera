@@ -5,8 +5,11 @@
     <title>Fallback Prompt</title>
 
     <goal>
-        Stop all activities activities from the Agent.
-        So, if the Agent is running a bash script, stop it or a Java maven build, stop it.
+        Stop all running activities from the Agent.
+        If the Agent is running a bash script, stop it
+        If the Agent is running a Java maven build, stop it.
+        If the Agent is running coding activity, stop it.
+        If the Agent is running any other activity, stop it.
 
         If you have any local changes, commit them and push to the branch.
 

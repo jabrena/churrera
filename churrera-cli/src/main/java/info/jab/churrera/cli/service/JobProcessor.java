@@ -336,6 +336,8 @@ public class JobProcessor {
             }
 
             // Non-blocking poll and process prompts per cycle for child jobs
+            // Always check status if job has cursorAgentId (even if database shows terminal)
+            // to ensure database is synchronized with actual agent status
             if (job.cursorAgentId() != null && !justLaunched) {
                 // Check timeout again before processing
                 if (timeoutMillis != null && job.workflowStartTime() != null) {
@@ -362,16 +364,20 @@ public class JobProcessor {
                         } else if (job.status().isTerminal()) {
                             logger.info("Child job {} has reached timeout but is already in terminal state ({}), skipping fallback.",
                                 job.jobId(), job.status());
-                            return;
+                            // Don't return here - still check agent status to ensure database is synchronized
                         } else {
                             logger.debug("Child job {} has reached timeout but fallback already executed, skipping.", job.jobId());
-                            return;
+                            // Don't return here - still check agent status to ensure database is synchronized
                         }
                     }
                 }
+                // Always check agent status to ensure database is synchronized with actual agent state
+                // This is critical for child jobs in parallel workflows where agents may finish
+                // but database status hasn't been updated yet
                 try {
                     AgentState currentStatus = cliAgent.getAgentStatus(job.cursorAgentId());
-                    logger.info("Child job {} status polled: {} -> updating database", job.jobId(), currentStatus);
+                    logger.info("Child job {} status polled: {} -> updating database (current DB status: {})", 
+                        job.jobId(), currentStatus, job.status());
                     cliAgent.updateJobStatusInDatabase(job, currentStatus);
 
                     // Refresh job from database to get the updated status

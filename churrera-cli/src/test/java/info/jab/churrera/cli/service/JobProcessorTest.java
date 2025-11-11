@@ -63,14 +63,14 @@ class JobProcessorTest {
             null, // no cursor agent initially
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN,LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.UNKNOWN,LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         testJobWithAgent = new Job("test-job-id",
             "/test/path/workflow.xml",
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.CREATING,LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.CREATING,LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         testPrompts = List.of(
             new Prompt(
@@ -95,7 +95,8 @@ class JobProcessorTest {
             new PromptInfo("prompt1.pml", "pml"),
             "test-model",
             "test-repo",
-            List.of(new PromptInfo("prompt2.pml", "pml"))
+            List.of(new PromptInfo("prompt2.pml", "pml")),
+            null, null, null
         );
     }
 
@@ -318,7 +319,7 @@ class JobProcessorTest {
             null,
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN,LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.UNKNOWN,LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         CountDownLatch bothJobsProcessedLatch = new CountDownLatch(2);
         when(jobRepository.findUnfinishedJobs())
@@ -382,7 +383,7 @@ class JobProcessorTest {
             null,
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(jobWithRealPath))
@@ -425,7 +426,7 @@ class JobProcessorTest {
             null,
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(jobWithRealPath))
@@ -472,7 +473,7 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(jobWithRealPath))
@@ -520,7 +521,7 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         Prompt sentPrompt = new Prompt("prompt-1", "test-job-id", "prompt2.pml", "SENT",
             LocalDateTime.now(), LocalDateTime.now());
@@ -570,12 +571,12 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, "test-bound-value", null);
+            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, "test-bound-value", null, null, null, null, null);
 
         PromptInfo launchPrompt = new PromptInfo("prompt1.pml", "pml", "item");
         PromptInfo updatePromptWithBind = new PromptInfo("prompt2.pml", "pml", "item");
         WorkflowData workflowDataWithBind = new WorkflowData(
-            launchPrompt, "test-model", "test-repo", List.of(updatePromptWithBind)
+            launchPrompt, "test-model", "test-repo", List.of(updatePromptWithBind), null, null, null
         );
 
         when(jobRepository.findUnfinishedJobs())
@@ -622,7 +623,7 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(jobWithRealPath))
@@ -662,7 +663,7 @@ class JobProcessorTest {
             null,
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(jobWithBadPath))
@@ -714,17 +715,17 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         // Create parallel workflow data
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt = new PromptInfo("prompt2.pml", "pml", "item");
         SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo",
-            List.of(seqPrompt));
+            List.of(seqPrompt), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -773,14 +774,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of());
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -826,14 +827,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of());
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -879,14 +880,15 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         // Regular sequence workflow data (not parallel)
         WorkflowData sequenceWorkflowData = new WorkflowData(
             new PromptInfo("prompt1.pml", "pml"),
             "test-model",
             "test-repo",
-            List.of()
+            List.of(),
+            null, null, null
         );
 
         CountDownLatch jobProcessedLatch = new CountDownLatch(1);
@@ -928,14 +930,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         // Parallel workflow with no sequences
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of()); // Empty sequences
+            parallelPrompt, "List<String>", List.of(), null, null); // Empty sequences
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(childJob))
@@ -972,15 +974,15 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         // Parallel workflow with sequence but no prompts
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of());
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(childJob))
@@ -1026,18 +1028,18 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         // Parallel workflow with proper sequence and prompts
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt1 = new PromptInfo("prompt1.pml", "pml", "item");
         PromptInfo seqPrompt2 = new PromptInfo("prompt2.pml", "pml");
         SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo",
-            List.of(seqPrompt1, seqPrompt2));
+            List.of(seqPrompt1, seqPrompt2), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(childJob))
@@ -1086,15 +1088,15 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(seqPrompt));
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(seqPrompt), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(childJob))
@@ -1145,17 +1147,17 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt1 = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt2 = new PromptInfo("prompt2.pml", "pml");
         SequenceInfo sequenceInfo = new SequenceInfo("child-model", "child-repo",
-            List.of(seqPrompt1, seqPrompt2));
+            List.of(seqPrompt1, seqPrompt2), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -1205,14 +1207,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         // Empty sequences list
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of());
+            parallelPrompt, "List<String>", List.of(), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -1263,14 +1265,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of());
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -1318,14 +1320,14 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null,
-            WorkflowType.PARALLEL);
+            WorkflowType.PARALLEL, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of());
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(parallelJob))
@@ -1371,7 +1373,7 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         Prompt testPrompt = new Prompt("prompt-1", "test-job-id", "prompt2.pml", "UNKNOWN",
             LocalDateTime.now(), LocalDateTime.now());
@@ -1422,7 +1424,7 @@ class JobProcessorTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.FINISHED, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         Prompt testPrompt = new Prompt("prompt-1", "test-job-id", "prompt2.pml", "UNKNOWN",
             LocalDateTime.now(), LocalDateTime.now());
@@ -1465,14 +1467,14 @@ class JobProcessorTest {
         // PromptInfo without bindResultExp
         PromptInfo launchPrompt = new PromptInfo("prompt1.pml", "pml");
         WorkflowData workflowData = new WorkflowData(
-            launchPrompt, "test-model", "test-repo", List.of());
+            launchPrompt, "test-model", "test-repo", List.of(), null, null, null);
 
         Job jobWithResult = new Job("test-job-id",
             workflowFile.toString(),
             null,
             "test-model",
             "test-repo",
-            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, "some-result", null);
+            AgentState.UNKNOWN, LocalDateTime.now(), LocalDateTime.now(), null, "some-result", null, null, null, null, null);
 
         Job updatedJob = jobWithResult.withCursorAgentId("new-agent-123").withStatus(AgentState.CREATING);
 
@@ -1518,15 +1520,15 @@ class JobProcessorTest {
             "test-model",
             "test-repo",
             AgentState.RUNNING, LocalDateTime.now(), LocalDateTime.now(), "parent-job-id", "bound-value",
-            WorkflowType.SEQUENCE);
+            WorkflowType.SEQUENCE, null, null, null, null);
 
         PromptInfo parallelPrompt = new PromptInfo("prompt1.pml", "pml");
         PromptInfo seqPrompt = new PromptInfo("prompt1.pml", "pml");
-        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(seqPrompt));
+        SequenceInfo sequenceInfo = new SequenceInfo("test-model", "test-repo", List.of(seqPrompt), null, null);
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List<String>", List.of(sequenceInfo));
+            parallelPrompt, "List<String>", List.of(sequenceInfo), null, null);
         WorkflowData parallelWorkflowData = new WorkflowData(
-            parallelPrompt, "test-model", "test-repo", List.of(), parallelData);
+            parallelPrompt, "test-model", "test-repo", List.of(), parallelData, null, null);
 
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(childJob))

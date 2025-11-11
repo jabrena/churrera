@@ -475,6 +475,10 @@ public class JobRepository {
                         "<parentJobId>%s</parentJobId>" +
                         "<result>%s</result>" +
                         "<type>%s</type>" +
+                        "<timeoutMillis>%s</timeoutMillis>" +
+                        "<workflowStartTime>%s</workflowStartTime>" +
+                        "<fallbackSrc>%s</fallbackSrc>" +
+                        "<fallbackExecuted>%s</fallbackExecuted>" +
                         "</job>",
                 escapeXml(job.jobId()),
                 escapeXml(job.path()),
@@ -486,7 +490,11 @@ public class JobRepository {
                 job.lastUpdate().format(DATE_TIME_FORMATTER),
                 job.parentJobId() != null ? escapeXml(job.parentJobId()) : "null",
                 job.result() != null ? escapeXml(job.result()) : "null",
-                job.type() != null ? job.type().toString() : "null");
+                job.type() != null ? job.type().toString() : "null",
+                job.timeoutMillis() != null ? String.valueOf(job.timeoutMillis()) : "null",
+                job.workflowStartTime() != null ? job.workflowStartTime().format(DATE_TIME_FORMATTER) : "null",
+                job.fallbackSrc() != null ? escapeXml(job.fallbackSrc()) : "null",
+                job.fallbackExecuted() != null ? String.valueOf(job.fallbackExecuted()) : "null");
     }
 
     private Job parseJobFromXml(String xml) {
@@ -527,8 +535,44 @@ public class JobRepository {
         // Parse AgentState from string
         AgentState status = AgentState.valueOf(statusStr);
 
+        // Parse new timeout and fallback fields (nullable)
+        String timeoutMillisStr = extractXmlValueOptional(xml, "timeoutMillis");
+        Long timeoutMillis = null;
+        if (timeoutMillisStr != null && !"null".equals(timeoutMillisStr)) {
+            try {
+                timeoutMillis = Long.parseLong(timeoutMillisStr);
+            } catch (NumberFormatException e) {
+                logger.warn("Invalid timeoutMillis '{}' for job {}, defaulting to null", timeoutMillisStr, jobId);
+            }
+        }
+
+        String workflowStartTimeStr = extractXmlValueOptional(xml, "workflowStartTime");
+        LocalDateTime workflowStartTime = null;
+        if (workflowStartTimeStr != null && !"null".equals(workflowStartTimeStr)) {
+            try {
+                workflowStartTime = LocalDateTime.parse(workflowStartTimeStr, DATE_TIME_FORMATTER);
+            } catch (Exception e) {
+                logger.warn("Invalid workflowStartTime '{}' for job {}, defaulting to null", workflowStartTimeStr, jobId);
+            }
+        }
+
+        String fallbackSrc = extractXmlValueOptional(xml, "fallbackSrc");
+        if (fallbackSrc != null && "null".equals(fallbackSrc)) {
+            fallbackSrc = null;
+        }
+
+        String fallbackExecutedStr = extractXmlValueOptional(xml, "fallbackExecuted");
+        Boolean fallbackExecuted = null;
+        if (fallbackExecutedStr != null && !"null".equals(fallbackExecutedStr)) {
+            try {
+                fallbackExecuted = Boolean.parseBoolean(fallbackExecutedStr);
+            } catch (Exception e) {
+                logger.warn("Invalid fallbackExecuted '{}' for job {}, defaulting to null", fallbackExecutedStr, jobId);
+            }
+        }
+
         return new Job(jobId, path, cursorAgentId, model, repository, status, createdAt, lastUpdate, parentJobId,
-                result, type);
+                result, type, timeoutMillis, workflowStartTime, fallbackSrc, fallbackExecuted);
     }
 
     private List<Job> parseJobsFromDocument(String documentXml) {

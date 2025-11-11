@@ -77,6 +77,89 @@ public class WorkflowValidator {
     }
 
     /**
+     * Validates timeout and fallback attributes from a parsed workflow.
+     *
+     * @param workflowFile the workflow file (used to resolve relative paths for fallback)
+     * @param workflowData the parsed workflow data
+     * @return list of validation error messages (empty if all valid)
+     */
+    public List<String> validateTimeoutAndFallback(File workflowFile, WorkflowData workflowData) {
+        List<String> errors = new ArrayList<>();
+
+        // Get timeout and fallback from workflow data
+        Long timeoutMillis = workflowData.getTimeoutMillis();
+        String fallbackSrc = workflowData.getFallbackSrc();
+
+        // Validate timeout format (already validated during parsing, but check consistency)
+        // If fallback is specified but timeout is not, that's an error
+        if (fallbackSrc != null && !fallbackSrc.trim().isEmpty() && timeoutMillis == null) {
+            errors.add("fallback-src is specified but timeout is not. fallback-src requires timeout to be set.");
+        }
+
+        // Validate fallback file exists and has valid extension
+        if (fallbackSrc != null && !fallbackSrc.trim().isEmpty()) {
+            errors.addAll(validateFallbackFile(workflowFile, fallbackSrc));
+        }
+
+        // For parallel workflows, also validate nested sequences
+        if (workflowData.isParallelWorkflow()) {
+            ParallelWorkflowData parallelData = workflowData.getParallelWorkflowData();
+            for (SequenceInfo sequence : parallelData.getSequences()) {
+                Long seqTimeout = sequence.getTimeoutMillis();
+                String seqFallback = sequence.getFallbackSrc();
+
+                // If sequence fallback is specified but timeout is not, that's an error
+                if (seqFallback != null && !seqFallback.trim().isEmpty() && seqTimeout == null) {
+                    errors.add("Sequence fallback-src is specified but timeout is not. fallback-src requires timeout to be set.");
+                }
+
+                // Validate sequence fallback file
+                if (seqFallback != null && !seqFallback.trim().isEmpty()) {
+                    errors.addAll(validateFallbackFile(workflowFile, seqFallback));
+                }
+            }
+        }
+
+        return errors;
+    }
+
+    /**
+     * Validates that a fallback file exists and has a valid extension.
+     *
+     * @param workflowFile the workflow file (used to resolve relative paths)
+     * @param fallbackSrc the fallback source file path
+     * @return list of validation error messages (empty if valid)
+     */
+    public List<String> validateFallbackFile(File workflowFile, String fallbackSrc) {
+        List<String> errors = new ArrayList<>();
+
+        if (fallbackSrc == null || fallbackSrc.trim().isEmpty()) {
+            return errors; // Not specified, skip validation
+        }
+
+        // Check file extension
+        String lowerFallback = fallbackSrc.toLowerCase();
+        if (!lowerFallback.endsWith(".xml") && !lowerFallback.endsWith(".md") && !lowerFallback.endsWith(".txt")) {
+            errors.add("Fallback file '" + fallbackSrc + "' must have extension .xml, .md, or .txt");
+            return errors; // Don't check existence if extension is invalid
+        }
+
+        // Resolve fallback file path relative to workflow file directory
+        java.nio.file.Path workflowDir = workflowFile.getParentFile() != null
+            ? workflowFile.getParentFile().toPath()
+            : java.nio.file.Paths.get(".");
+        java.nio.file.Path fallbackPath = workflowDir.resolve(fallbackSrc);
+        File fallbackFile = fallbackPath.toFile();
+
+        // Check if file exists
+        if (!fallbackFile.exists()) {
+            errors.add("Fallback file not found: " + fallbackPath.toAbsolutePath());
+        }
+
+        return errors;
+    }
+
+    /**
      * Loads the XSD schema from the external URL.
      *
      * @return the loaded Schema object

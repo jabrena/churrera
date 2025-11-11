@@ -10,11 +10,15 @@ public class ParallelWorkflowData {
     private final PromptInfo parallelPrompt;
     private final String bindResultType;
     private final List<SequenceInfo> sequences;
+    private final Long timeoutMillis;
+    private final String fallbackSrc;
 
-    public ParallelWorkflowData(PromptInfo parallelPrompt, String bindResultType, List<SequenceInfo> sequences) {
+    public ParallelWorkflowData(PromptInfo parallelPrompt, String bindResultType, List<SequenceInfo> sequences, Long timeoutMillis, String fallbackSrc) {
         this.parallelPrompt = parallelPrompt;
         this.bindResultType = bindResultType;
         this.sequences = new ArrayList<>(sequences);
+        this.timeoutMillis = timeoutMillis;
+        this.fallbackSrc = fallbackSrc;
     }
 
     public PromptInfo getParallelPrompt() {
@@ -31,6 +35,24 @@ public class ParallelWorkflowData {
 
     public boolean hasBindResultType() {
         return bindResultType != null && !bindResultType.trim().isEmpty();
+    }
+
+    /**
+     * Returns the timeout in milliseconds, or null if not specified.
+     *
+     * @return timeout in milliseconds, or null
+     */
+    public Long getTimeoutMillis() {
+        return timeoutMillis;
+    }
+
+    /**
+     * Returns the fallback source file path, or null if not specified.
+     *
+     * @return fallback source file path, or null
+     */
+    public String getFallbackSrc() {
+        return fallbackSrc;
     }
 }
 

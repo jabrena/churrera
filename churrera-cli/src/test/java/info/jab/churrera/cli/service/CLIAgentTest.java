@@ -65,7 +65,7 @@ class CLIAgentTest {
             "cursor-agent-123",
             "test-model",
             "test-repo",
-            AgentState.CREATING,LocalDateTime.now(), LocalDateTime.now(), null, null, null);
+            AgentState.CREATING,LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);
 
         testPrompt = new Prompt(
             "prompt-1",

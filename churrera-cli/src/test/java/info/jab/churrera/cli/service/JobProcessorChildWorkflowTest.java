@@ -38,7 +38,9 @@ class JobProcessorChildWorkflowTest {
         SequenceInfo sequenceInfo = new SequenceInfo(
             "default",
             "https://github.com/jabrena/wjax25-demos",
-            prompts
+            prompts,
+            null,
+            null
         );
 
         // When: Generate child workflow XML
@@ -66,7 +68,9 @@ class JobProcessorChildWorkflowTest {
         SequenceInfo sequenceInfo = new SequenceInfo(
             "default",
             "https://github.com/jabrena/wjax25-demos",
-            prompts
+            prompts,
+            null,
+            null
         );
 
         // When: Generate child workflow XML
@@ -102,7 +106,9 @@ class JobProcessorChildWorkflowTest {
         SequenceInfo sequenceInfo = new SequenceInfo(
             "default",
             "https://github.com/jabrena/wjax25-demos",
-            prompts
+            prompts,
+            null,
+            null
         );
 
         // When: Generate child workflow XML
@@ -142,7 +148,9 @@ class JobProcessorChildWorkflowTest {
         SequenceInfo sequenceInfo = new SequenceInfo(
             "claude-sonnet-4",
             "https://github.com/jabrena/wjax25-demos",
-            prompts
+            prompts,
+            null,
+            null
         );
 
         // When: Generate child workflow XML
@@ -174,7 +182,9 @@ class JobProcessorChildWorkflowTest {
         SequenceInfo sequenceInfo = new SequenceInfo(
             "default",
             "https://github.com/jabrena/wjax25-demos",
-            prompts
+            prompts,
+            null,
+            null
         );
 
         // When: Generate child workflow XML and write to file

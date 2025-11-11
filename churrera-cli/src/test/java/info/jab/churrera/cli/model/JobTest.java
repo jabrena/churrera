@@ -26,7 +26,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When
-        Job job = new Job(jobId, path, cursorAgentId, model, repository, status, createdAt, lastUpdate, null, null, null);
+        Job job = new Job(jobId, path, cursorAgentId, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null);
 
         // Then
         assertThat(job.jobId()).isEqualTo(jobId);
@@ -53,7 +53,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When
-        Job job = new Job(jobId, path, null, model, repository, status, createdAt, lastUpdate, null, null, null);
+        Job job = new Job(jobId, path, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null);
 
         // Then
         assertThat(job.cursorAgentId()).isNull();
@@ -71,7 +71,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(null, path, null, model, repository, status, createdAt, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(null, path, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Job ID cannot be null");
     }
@@ -87,7 +87,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, null, null, model, repository, status, createdAt, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, null, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Path cannot be null");
     }
@@ -103,7 +103,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, null, repository, status, createdAt, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, path, null, null, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Model cannot be null");
     }
@@ -119,7 +119,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, null, status, createdAt, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, path, null, model, null, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Repository cannot be null");
     }
@@ -135,7 +135,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, null, createdAt, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, null, createdAt, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Status cannot be null");
     }
@@ -151,7 +151,7 @@ class JobTest {
         LocalDateTime lastUpdate = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, null, lastUpdate, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, null, lastUpdate, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Created at cannot be null");
     }
@@ -167,7 +167,7 @@ class JobTest {
         LocalDateTime createdAt = LocalDateTime.now();
 
         // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, createdAt, null, null, null, null))
+        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, createdAt, null, null, null, null, null, null, null, null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("Last update cannot be null");
     }
@@ -187,8 +187,11 @@ class JobTest {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
         String newPath = "/new/path.xml";
 
         // When
@@ -220,8 +223,11 @@ class JobTest {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
         String newAgentId = "agent-456";
 
         // When
@@ -252,8 +258,11 @@ class JobTest {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
         AgentState newStatus = AgentState.RUNNING;
 
         // When
@@ -284,8 +293,11 @@ class JobTest {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
         String newModel = "gpt-4-turbo";
 
         // When
@@ -316,8 +328,11 @@ class JobTest {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
         String newRepository = "new-repo";
 
         // When
@@ -337,9 +352,9 @@ class JobTest {
     void shouldHaveProperEquality() {
         // Given
         LocalDateTime timestamp = LocalDateTime.now();
-        Job job1 = new Job("id", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null);
-        Job job2 = new Job("id", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null);
-        Job job3 = new Job("id2", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null);
+        Job job1 = new Job("id", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null, null, null, null, null);
+        Job job2 = new Job("id", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null, null, null, null, null);
+        Job job3 = new Job("id2", "/path", "agent", "model", "repo", AgentState.PENDING, timestamp, timestamp, null, null, null, null, null, null, null);
 
         // When & Then
         assertThat(job1).isEqualTo(job2);
@@ -362,8 +377,11 @@ class JobTest {
             timestamp,
             null,
             null,
+            null,
+            null,
+            null,
             null
-        );
+        , null);
 
         // When
         String toString = job.toString();
@@ -384,7 +402,7 @@ class JobTest {
 
         // When & Then - Test with different states
         for (AgentState state : AgentState.values()) {
-            Job job = new Job("id", "/path", "agent", "model", "repo", state, timestamp, timestamp, null, null, null);
+            Job job = new Job("id", "/path", "agent", "model", "repo", state, timestamp, timestamp, null, null, null, null, null, null, null);
             assertThat(job.status()).isEqualTo(state);
         }
     }

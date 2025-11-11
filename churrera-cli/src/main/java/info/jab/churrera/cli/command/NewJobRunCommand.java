@@ -98,6 +98,20 @@ public class NewJobRunCommand implements Runnable {
             logger.debug("Parsing workflow file");
             WorkflowData workflowData = workflowParser.parse(workflowFile);
 
+            // Validate timeout and fallback attributes
+            logger.debug("Validating timeout and fallback attributes");
+            List<String> timeoutFallbackErrors = workflowValidator.validateTimeoutAndFallback(workflowFile, workflowData);
+            if (!timeoutFallbackErrors.isEmpty()) {
+                logger.error("Timeout/fallback validation failed: {} errors found", timeoutFallbackErrors.size());
+                System.err.println("Timeout/fallback validation failed:");
+                for (int i = 0; i < timeoutFallbackErrors.size(); i++) {
+                    System.err.println("  " + (i + 1) + ". " + timeoutFallbackErrors.get(i));
+                }
+                return;
+            }
+
+            logger.debug("Timeout/fallback validation passed");
+
             // Validate all PML files referenced in the workflow
             logger.debug("Validating PML files referenced in workflow");
             List<String> pmlValidationErrors = validatePmlFiles(workflowFile, workflowData);
@@ -137,6 +151,11 @@ public class NewJobRunCommand implements Runnable {
             WorkflowType workflowType = WorkflowParser.determineWorkflowType(workflowFile);
             logger.debug("Workflow type determined: {}", workflowType);
 
+            // Extract timeout and fallback from workflow data
+            Long timeoutMillis = workflowData.getTimeoutMillis();
+            String fallbackSrc = workflowData.getFallbackSrc();
+            logger.debug("Extracted timeout: {}ms, fallback: {}", timeoutMillis, fallbackSrc);
+
             // Create and save the job with all required fields
             Job job = new Job(
                 jobId,
@@ -149,7 +168,11 @@ public class NewJobRunCommand implements Runnable {
                 now,
                 null, // parentJobId is null for top-level jobs
                 null, // result is null initially
-                workflowType // workflow type
+                workflowType, // workflow type
+                timeoutMillis, // timeout in milliseconds (null if not specified)
+                null, // workflowStartTime is null initially, set when launched if timeout is set
+                fallbackSrc, // fallback source file path (null if not specified)
+                null // fallbackExecuted is null initially (false when not executed)
             );
             logger.info("Saving job with jobId: {}", jobId);
             jobRepository.save(job);

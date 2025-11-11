@@ -649,7 +649,7 @@ class WorkflowParserTest {
         );
 
         // When
-        SequenceInfo sequenceInfo = new SequenceInfo("model", "repo", prompts);
+        SequenceInfo sequenceInfo = new SequenceInfo("model", "repo", prompts, null, null);
 
         // Then
         assertEquals("model", sequenceInfo.getModel());
@@ -668,12 +668,12 @@ class WorkflowParserTest {
         // Given
         PromptInfo parallelPrompt = new PromptInfo("parallel.xml", "pml");
         List<SequenceInfo> sequences = List.of(
-            new SequenceInfo("model", "repo", List.of())
+            new SequenceInfo("model", "repo", List.of(), null, null)
         );
 
         // When
         ParallelWorkflowData parallelData = new ParallelWorkflowData(
-            parallelPrompt, "List_Integer", sequences
+            parallelPrompt, "List_Integer", sequences, null, null
         );
 
         // Then
@@ -684,7 +684,7 @@ class WorkflowParserTest {
 
         // Test immutability
         List<SequenceInfo> returnedSequences = parallelData.getSequences();
-        returnedSequences.add(new SequenceInfo("model2", "repo2", List.of()));
+        returnedSequences.add(new SequenceInfo("model2", "repo2", List.of(), null, null));
         assertEquals(1, parallelData.getSequences().size());
     }
 

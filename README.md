@@ -10,7 +10,43 @@ Cursor Cloud Agents REST API (Beta) allows you to programmatically create and ma
 
 **OpenAPI:** https://editor-next.swagger.io/?url=https://cursor.com/docs-static/cloud-agents-openapi.yaml
 
+## How it works?
+
+`Churrera CLI` processes a `PML-Workflow` file which define a Job to be processes and it is composed by one or more `Prompts` which are executed by a `Frontier model`.
+
 ![](./documentation/high-level-solution.png)
+
+## Agentic patterns
+
+### Sequence
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
+    <sequence model="default" repository="https://github.com/jabrena/wjax25-demos"
+     timeout="3m" fallback="fallback.xml">
+        <prompt src="pml-java25-installation-v5.xml" />
+        <prompt src="pml-hello-world-java-v2.xml" />
+    </sequence>
+</pml-workflow>
+```
+
+### Parallel
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
+    <parallel src="euler-problem-extractor-prompt.xml" bindResultType="List_Integer">
+        <sequence model="default" repository="https://github.com/jabrena/wjax25-demos">
+            <prompt src="euler-problem-solver-prompt.xml" bindResultExp="$get()"/>
+        </sequence>
+    </parallel>
+</pml-workflow>
+```
+
+**Note:** [Review examples to get inspiration](./churrera-cli/src/test/resources/examples/).
 
 ## Getting started
 
@@ -46,13 +82,21 @@ export CURSOR_API_KEY=key_xxx
 
 ### 2. Give permissions Cursor to interact in Github
 
-Configure Github to allow Cursor interact with the repository that you want that Cursor Cloud Agents interact
+Configure Github to allow Cursor in order to interact with the repository that you want that Cursor Cloud Agents interact so visit [Integrations](https://cursor.com/dashboard?tab=integrations) and click in the button `Manage` in Github area.
 
 ![](./documentation/getting-started/github-configuration-1.png)
 
+**Note:** In the future, Cursor Cloud Agents will support `Gitlab` soon (I guess)
+
+Once you are in Github, you will have to select in what `Github User` you are going to give permissions:
+
 ![](./documentation/getting-started/github-configuration-2.png)
 
+Once, you are installed Cursor in your Github User, you will need to configure what repository will give permissions:
+
 ![](./documentation/getting-started/github-configuration-3.png)
+
+That repository will match with the repository that you indicate in the attribute `repository` in a `pml-workflow` file.
 
 ### 3. Running your first PML Workflow
 
@@ -68,7 +112,7 @@ Configure Github to allow Cursor interact with the repository that you want that
 </pml-workflow>
 ```
 
-**2. Define a `pml-prompt` file:**
+**2. Define a `PML` prompt file:**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -77,18 +121,23 @@ Configure Github to allow Cursor interact with the repository that you want that
     <goal>
         Print "Hello World" in the console using a echo command
     </goal>
-
-    <output-format>Not explain anything and show any output</output-format>
 </prompt>
 ```
 
+Further information about `PML` [here](https://github.com/jabrena/pml).
+
 **3. Launch the tool:**
 
+Build & run Churrera:
+
 ```bash
-# Build
-./mvnw clean package
+# Build the cli from the sources
+./mvnw clean package -DskipTests
+# Run Churrera using a basic pml-workflow file for a single execution
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
 ```
+
+Follow the output from the tool:
 
 ```bash
 
@@ -126,11 +175,12 @@ Job completed with status: FINISHED
 Thanks for using Churrera! ✨
 ```
 
-## Using churrera
+## Using the tool
 
 ```bash
 # Build
 ./mvnw clean package
+
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar --help
 # Single Run
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --help
@@ -160,37 +210,6 @@ jbang catalog list jabrena
 
 jbang churrera@jabrena
 ```
-
-## Agentic patterns
-
-### Sequence
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
-    <sequence model="default" repository="https://github.com/jabrena/wjax25-demos">
-        <prompt src="pml-java25-installation-v5.xml" />
-        <prompt src="pml-hello-world-java-v2.xml" />
-    </sequence>
-</pml-workflow>
-```
-
-### Parallel
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
-    <parallel src="euler-problem-extractor-prompt.xml" bindResultType="List_Integer">
-        <sequence model="default" repository="https://github.com/jabrena/wjax25-demos">
-            <prompt src="euler-problem-solver-prompt.xml" bindResultExp="$get()"/>
-        </sequence>
-    </parallel>
-</pml-workflow>
-```
-
-**Note:** [Review examples to get inspiration](./churrera-cli/src/test/resources/examples/).
 
 ## Changelog
 

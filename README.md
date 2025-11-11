@@ -94,11 +94,11 @@ Once you are in Github, you will have to select in what `Github User` you are go
 
 ![](./documentation/getting-started/github-configuration-2.png)
 
-Once, you are installed Cursor in your Github User, you will need to define what repositores you will give permissions:
+Once, you have installed Cursor in your Github User, you will need to define what repositores you will give permissions:
 
 ![](./documentation/getting-started/github-configuration-3.png)
 
-That repository will match with the repository that you indicate in the attribute `repository` in a `pml-workflow` file.
+You will indicate in the attribute `repository` the repository that you deinfed before in the `pml-workflow` file.
 
 ### 4. Running your first PML Workflow
 

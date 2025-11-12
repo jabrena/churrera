@@ -133,10 +133,16 @@ Further information about `PML` [here](https://github.com/jabrena/pml).
 Build & run Churrera:
 
 ```bash
-# Build the cli from the sources
-./mvnw clean package -DskipTests
-# Run Churrera using a basic pml-workflow file for a single execution
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
+#JBang
+sdk install jbang
+
+jbang trust add https://github.com/jabrena/
+jbang cache clear
+jbang catalog list jabrena
+
+# Single execution (Designed for Pipelines)
+jbang churrera@jabrena run \
+churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
 ```
 
 Follow the output from the tool:

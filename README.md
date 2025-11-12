@@ -133,10 +133,16 @@ Further information about `PML` [here](https://github.com/jabrena/pml).
 Build & run Churrera:
 
 ```bash
-# Build the cli from the sources
-./mvnw clean package -DskipTests
-# Run Churrera using a basic pml-workflow file for a single execution
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
+#JBang
+sdk install jbang
+
+jbang trust add https://github.com/jabrena/
+jbang cache clear
+jbang catalog list jabrena
+
+# Single execution (Designed for Pipelines)
+jbang churrera@jabrena run \
+churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
 ```
 
 Follow the output from the tool:
@@ -180,18 +186,24 @@ Thanks for using Churrera! ✨
 ## Using the tool
 
 ```bash
-# Build
-./mvnw clean package
+#JBang
+sdk install jbang
 
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar --help
-# Single Run
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --help
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/timeout/workflow-timeout.xml
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
-# Run REPL
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar cli
+jbang trust list
+jbang trust add https://github.com/jabrena/
+jbang cache clear
+jbang catalog list jabrena
+
+jbang churrera@jabrena --help
+# Single execution (Designed for Pipelines)
+jbang churrera@jabrena run --help
+jbang churrera@jabrena run churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml
+jbang churrera@jabrena run churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml
+jbang churrera@jabrena run churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml
+
+# Run REPL (Ideal for long lived sessions in local)
+jbang churrera@jabrena cli
+
 jobs                    # List all jobs
 jobs new    churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml
 jobs new    churrera-cli/src/test/resources/examples/cis194/workflow-cis194.xml
@@ -201,16 +213,6 @@ jobs status <job-id>    # Check job status
 jobs logs   <job-id>    # View job logs and conversation
 jobs delete <job-id>    # Delete job and associated Cursor agent
 jobs pr     <job-id>    # Show PR link
-
-#JBang
-sdk install jbang
-
-jbang trust list
-jbang cache clear
-jbang catalog list
-jbang catalog list jabrena
-
-jbang churrera@jabrena
 ```
 
 ## Changelog

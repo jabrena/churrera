@@ -1,8 +1,8 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.model.DeleteAgentResponse;
-import info.jab.cursor.client.model.FollowUpResponse;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.DeleteAgentResponse;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -100,7 +100,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -125,7 +125,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -150,7 +150,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -201,7 +201,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                     .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID + "/followup")));
         }
@@ -225,7 +225,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                     .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + nonExistentAgentId + "/followup")));
         }
@@ -272,7 +272,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");
 
             verify(deleteRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID)));
@@ -296,7 +296,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");
 
             verify(deleteRequestedFor(urlEqualTo("/v0/agents/" + nonExistentAgentId)));

@@ -1,12 +1,12 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.ApiException;
-import info.jab.cursor.client.api.AgentManagementApi;
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.model.DeleteAgentResponse;
-import info.jab.cursor.client.model.FollowUpResponse;
-import info.jab.cursor.client.model.LaunchAgentRequest;
-import info.jab.cursor.client.model.TargetRequest;
+import info.jab.cursor.generated.client.ApiException;
+import info.jab.cursor.generated.client.api.AgentManagementApi;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.DeleteAgentResponse;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
+import info.jab.cursor.generated.client.model.LaunchAgentRequest;
+import info.jab.cursor.generated.client.model.TargetRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

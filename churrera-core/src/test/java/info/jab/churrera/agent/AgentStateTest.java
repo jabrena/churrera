@@ -1,6 +1,6 @@
 package info.jab.churrera.agent;
 
-import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.AgentResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

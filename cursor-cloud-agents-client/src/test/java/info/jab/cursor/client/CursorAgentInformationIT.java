@@ -1,8 +1,8 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.model.AgentsList;
-import info.jab.cursor.client.model.ConversationResponse;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.AgentsList;
+import info.jab.cursor.generated.client.model.ConversationResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;

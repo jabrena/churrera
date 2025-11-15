@@ -1,11 +1,11 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.ApiClient;
-import info.jab.cursor.client.api.AgentInformationApi;
-import info.jab.cursor.client.model.AgentsList;
-import info.jab.cursor.client.model.ConversationResponse;
-import info.jab.cursor.client.ApiException;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.ApiClient;
+import info.jab.cursor.generated.client.api.AgentInformationApi;
+import info.jab.cursor.generated.client.model.AgentsList;
+import info.jab.cursor.generated.client.model.ConversationResponse;
+import info.jab.cursor.generated.client.ApiException;
 
 import java.util.HashMap;
 import java.util.Map;

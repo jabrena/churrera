@@ -1,16 +1,16 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.model.DeleteAgentResponse;
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.ApiClient;
-import info.jab.cursor.client.api.AgentManagementApi;
-import info.jab.cursor.client.model.LaunchAgentRequest;
-import info.jab.cursor.client.model.Prompt;
-import info.jab.cursor.client.model.Source;
-import info.jab.cursor.client.model.TargetRequest;
-import info.jab.cursor.client.model.FollowUpRequest;
-import info.jab.cursor.client.model.FollowUpResponse;
-import info.jab.cursor.client.ApiException;
+import info.jab.cursor.generated.client.model.DeleteAgentResponse;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.ApiClient;
+import info.jab.cursor.generated.client.api.AgentManagementApi;
+import info.jab.cursor.generated.client.model.LaunchAgentRequest;
+import info.jab.cursor.generated.client.model.Prompt;
+import info.jab.cursor.generated.client.model.Source;
+import info.jab.cursor.generated.client.model.TargetRequest;
+import info.jab.cursor.generated.client.model.FollowUpRequest;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
+import info.jab.cursor.generated.client.ApiException;
 
 import java.net.URI;
 import java.util.HashMap;

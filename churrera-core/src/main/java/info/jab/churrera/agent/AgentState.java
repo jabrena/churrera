@@ -1,6 +1,6 @@
 package info.jab.churrera.agent;
 
-import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.AgentResponse;
 
 /**
  * Enum representing all possible agent states.

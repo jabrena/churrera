@@ -1,13 +1,13 @@
 package info.jab.churrera.cli.service;
 
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.CursorAgentManagement;
-import info.jab.cursor.CursorAgentInformation;
-import info.jab.cursor.CursorAgentManagementImpl;
-import info.jab.cursor.CursorAgentInformationImpl;
-import info.jab.cursor.client.model.FollowUpResponse;
-import info.jab.cursor.client.model.ConversationResponse;
-import info.jab.cursor.client.model.ConversationMessage;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.client.CursorAgentManagement;
+import info.jab.cursor.client.CursorAgentInformation;
+import info.jab.cursor.client.CursorAgentManagementImpl;
+import info.jab.cursor.client.CursorAgentInformationImpl;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
+import info.jab.cursor.generated.client.model.ConversationResponse;
+import info.jab.cursor.generated.client.model.ConversationMessage;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.model.Job;

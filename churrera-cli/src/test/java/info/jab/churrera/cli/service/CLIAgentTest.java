@@ -3,11 +3,11 @@ package info.jab.churrera.cli.service;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.repository.JobRepository;
-import info.jab.cursor.CursorAgentManagement;
-import info.jab.cursor.CursorAgentInformation;
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.model.ConversationResponse;
-import info.jab.cursor.client.model.FollowUpResponse;
+import info.jab.cursor.client.CursorAgentManagement;
+import info.jab.cursor.client.CursorAgentInformation;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.ConversationResponse;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
 import info.jab.churrera.agent.AgentState;
 import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.util.PropertyResolver;
@@ -594,7 +594,7 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            var mockMessage = mock(info.jab.cursor.client.model.ConversationMessage.class);
+            var mockMessage = mock(info.jab.cursor.generated.client.model.ConversationMessage.class);
         when(mockMessage.getText()).thenReturn(null);
 
             when(cursorAgentInformation.getAgentConversation(anyString())).thenReturn(mockConversationResponse);

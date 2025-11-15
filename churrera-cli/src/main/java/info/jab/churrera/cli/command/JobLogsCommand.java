@@ -5,7 +5,7 @@ import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.cli.service.CLIAgent;
-import info.jab.cursor.client.model.ConversationMessage;
+import info.jab.cursor.generated.client.model.ConversationMessage;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.slf4j.Logger;
@@ -17,8 +17,6 @@ import java.util.Optional;
 
 import info.jab.churrera.util.PropertyResolver;
 import info.jab.churrera.util.PmlConverter;
-import info.jab.cursor.CursorAgentManagementImpl;
-import info.jab.cursor.CursorAgentInformationImpl;
 
 /**
  * Command to show logs for a specific job by its UUID.

@@ -11,7 +11,7 @@ import info.jab.cursor.client.model.ConversationMessage;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.model.Job;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.util.PropertyResolver;
 import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.workflow.ExpressionEvaluator;

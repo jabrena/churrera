@@ -1,4 +1,4 @@
-package info.jab.churrera.agent;
+package info.jab.churrera.cli.model;
 
 import info.jab.cursor.client.model.AgentResponse;
 
@@ -98,3 +98,4 @@ public enum AgentState {
         };
     }
 }
+

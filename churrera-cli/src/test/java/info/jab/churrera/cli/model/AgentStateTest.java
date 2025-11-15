@@ -1,4 +1,4 @@
-package info.jab.churrera.agent;
+package info.jab.churrera.cli.model;
 
 import info.jab.cursor.client.model.AgentResponse;
 import info.jab.cursor.client.model.Source;
@@ -418,3 +418,4 @@ public class AgentStateTest {
         assertEquals("UNKNOWN", AgentState.UNKNOWN.name());
     }
 }
+

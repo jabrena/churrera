@@ -1,6 +1,5 @@
 package info.jab.churrera.cli.model;
 
-import info.jab.churrera.agent.AgentState;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

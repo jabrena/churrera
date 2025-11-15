@@ -7,7 +7,7 @@ import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.cursor.client.model.ConversationMessage;
 import info.jab.cursor.client.model.ConversationResponse;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.junit.jupiter.api.BeforeEach;

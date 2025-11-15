@@ -12,7 +12,7 @@ import info.jab.churrera.workflow.WorkflowParseException;
 import info.jab.churrera.workflow.PmlValidator;
 import info.jab.churrera.workflow.ParallelWorkflowData;
 import info.jab.churrera.workflow.SequenceInfo;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.cli.service.JobProcessor;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;

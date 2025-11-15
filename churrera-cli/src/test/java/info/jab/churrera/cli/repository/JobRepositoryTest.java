@@ -3,7 +3,7 @@ package info.jab.churrera.cli.repository;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.model.JobWithDetails;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.util.PropertyResolver;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;

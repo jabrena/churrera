@@ -11,7 +11,7 @@ import info.jab.churrera.workflow.WorkflowParser;
 import info.jab.churrera.workflow.WorkflowData;
 import info.jab.churrera.workflow.ParallelWorkflowData;
 import info.jab.churrera.util.ConversationJsonDeserializer;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.slf4j.Logger;

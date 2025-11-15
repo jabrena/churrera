@@ -11,7 +11,7 @@ import info.jab.cursor.client.model.FollowUpResponse;
 import info.jab.cursor.client.model.Source;
 import info.jab.cursor.client.model.Target;
 import info.jab.cursor.client.model.ConversationMessage;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.util.PropertyResolver;
 import org.junit.jupiter.api.BeforeEach;

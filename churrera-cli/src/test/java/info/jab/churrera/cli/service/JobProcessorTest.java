@@ -10,7 +10,7 @@ import info.jab.churrera.workflow.PromptInfo;
 import info.jab.churrera.workflow.ParallelWorkflowData;
 import info.jab.churrera.workflow.SequenceInfo;
 import info.jab.churrera.workflow.WorkflowParseException;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

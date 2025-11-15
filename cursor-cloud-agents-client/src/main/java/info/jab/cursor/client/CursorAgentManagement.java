@@ -1,8 +1,8 @@
 package info.jab.cursor.client;
 
-import info.jab.cursor.generated.client.model.AgentResponse;
-import info.jab.cursor.generated.client.model.FollowUpResponse;
-import info.jab.cursor.generated.client.model.DeleteAgentResponse;
+import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.client.model.FollowUpResponse;
+import info.jab.cursor.client.model.DeleteAgentResponse;
 
 /**
  * Interface for launching Cursor agents with simplified parameters.

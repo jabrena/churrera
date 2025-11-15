@@ -1,13 +1,13 @@
 package info.jab.churrera.cli.service;
 
-import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.client.model.AgentResponse;
 import info.jab.cursor.client.CursorAgentManagement;
 import info.jab.cursor.client.CursorAgentInformation;
 import info.jab.cursor.client.impl.CursorAgentManagementImpl;
 import info.jab.cursor.client.impl.CursorAgentInformationImpl;
-import info.jab.cursor.generated.client.model.FollowUpResponse;
-import info.jab.cursor.generated.client.model.ConversationResponse;
-import info.jab.cursor.generated.client.model.ConversationMessage;
+import info.jab.cursor.client.model.FollowUpResponse;
+import info.jab.cursor.client.model.ConversationResponse;
+import info.jab.cursor.client.model.ConversationMessage;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.model.Job;
@@ -75,7 +75,7 @@ public class CLIAgent {
             logger.debug("Prepared prompt content for agent launch (type: {})", type);
 
             AgentResponse cursorAgentResult = cursorAgentManagement.launch(markdownContent, job.model(), job.repository(), pr);
-            return cursorAgentResult.getId();
+            return cursorAgentResult.id();
         } catch (Exception e) {
             logger.error("Failed to launch agent: {}", e.getMessage());
             throw new RuntimeException("Failed to launch agent: " + e.getMessage(), e);
@@ -113,7 +113,7 @@ public class CLIAgent {
 
             logger.debug("Prepared prompt content for follow-up (type: {})", type);
             FollowUpResponse response = cursorAgentManagement.followUp(cursorAgentId, markdownContent);
-            return response.getId();
+            return response.id();
         } catch (Exception e) {
             throw new RuntimeException("Failed to send follow-up: " + e.getMessage(), e);
         }
@@ -189,10 +189,10 @@ public class CLIAgent {
             ConversationResponse conversation = cursorAgentInformation.getAgentConversation(cursorAgentId);
             StringBuilder content = new StringBuilder();
 
-            if (conversation.getMessages() != null) {
-                for (ConversationMessage message : conversation.getMessages()) {
-                    if (message.getText() != null) {
-                        content.append(message.getText()).append("\n");
+            if (conversation.messages() != null) {
+                for (ConversationMessage message : conversation.messages()) {
+                    if (message.text() != null) {
+                        content.append(message.text()).append("\n");
                     }
                 }
             }

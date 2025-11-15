@@ -1,8 +1,8 @@
 package info.jab.cursor.client;
 
 import info.jab.cursor.client.impl.CursorAgentGeneralEndpointsImpl;
-import info.jab.cursor.generated.client.model.ApiKeyInfo;
-import info.jab.cursor.generated.client.model.RepositoriesList;
+import info.jab.cursor.client.model.ApiKeyInfo;
+import info.jab.cursor.client.model.RepositoriesList;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -65,9 +65,9 @@ class CursorAgentGeneralEndpointsIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getApiKeyName()).isEqualTo("API_KEY_TOKEN_V2");
-            assertThat(response.getUserEmail()).isEqualTo("bren@juanantonio.info");
-            assertThat(response.getCreatedAt()).isNotNull();
+            assertThat(response.apiKeyName()).isEqualTo("API_KEY_TOKEN_V2");
+            assertThat(response.userEmail()).isEqualTo("bren@juanantonio.info");
+            assertThat(response.createdAt()).isNotNull();
 
             verify(getRequestedFor(urlEqualTo("/v0/me"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -160,19 +160,19 @@ class CursorAgentGeneralEndpointsIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getRepositories()).isNotNull();
-            assertThat(response.getRepositories()).hasSize(18);
+            assertThat(response.repositories()).isNotNull();
+            assertThat(response.repositories()).hasSize(18);
 
             // Verify the first repository
-            assertThat(response.getRepositories().get(0).getOwner()).isEqualTo("jabrena");
-            assertThat(response.getRepositories().get(0).getName()).isEqualTo("101-cursor");
-            assertThat(response.getRepositories().get(0).getRepository().toString())
+            assertThat(response.repositories().get(0).owner()).isEqualTo("jabrena");
+            assertThat(response.repositories().get(0).name()).isEqualTo("101-cursor");
+            assertThat(response.repositories().get(0).repository())
                 .isEqualTo("https://github.com/jabrena/101-cursor");
 
             // Verify churrera repository is in the list
-            assertThat(response.getRepositories()).anySatisfy(repo -> {
-                assertThat(repo.getName()).isEqualTo("churrera");
-                assertThat(repo.getRepository().toString()).isEqualTo("https://github.com/jabrena/churrera");
+            assertThat(response.repositories()).anySatisfy(repo -> {
+                assertThat(repo.name()).isEqualTo("churrera");
+                assertThat(repo.repository()).isEqualTo("https://github.com/jabrena/churrera");
             });
 
             verify(getRequestedFor(urlEqualTo("/v0/repositories"))

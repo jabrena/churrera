@@ -1,9 +1,9 @@
 package info.jab.cursor.client;
 
 import info.jab.cursor.client.impl.CursorAgentInformationImpl;
-import info.jab.cursor.generated.client.model.AgentResponse;
-import info.jab.cursor.generated.client.model.AgentsList;
-import info.jab.cursor.generated.client.model.ConversationResponse;
+import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.client.model.AgentsList;
+import info.jab.cursor.client.model.ConversationResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -65,15 +65,15 @@ class CursorAgentInformationIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getAgents()).hasSize(1);
-            assertThat(response.getNextCursor()).isEqualTo("bc-359da03f-3712-490c-9e32-025bef880af7");
+            assertThat(response.agents()).hasSize(1);
+            assertThat(response.nextCursor()).isEqualTo("bc-359da03f-3712-490c-9e32-025bef880af7");
 
-            AgentResponse agent = response.getAgents().get(0);
-            assertThat(agent.getId()).isEqualTo(TEST_AGENT_ID);
-            assertThat(agent.getName()).isEqualTo("Add installation instructions to readme");
-            assertThat(agent.getStatus()).isEqualTo(AgentResponse.StatusEnum.COMPLETED);
-            assertThat(agent.getSource().getRepository().toString()).isEqualTo("https://github.com/jabrena/churrera");
-            assertThat(agent.getSource().getRef()).isEqualTo("main");
+            AgentResponse agent = response.agents().get(0);
+            assertThat(agent.id()).isEqualTo(TEST_AGENT_ID);
+            assertThat(agent.name()).isEqualTo("Add installation instructions to readme");
+            assertThat(agent.status()).isEqualTo("COMPLETED");
+            assertThat(agent.source().repository().toString()).isEqualTo("https://github.com/jabrena/churrera");
+            assertThat(agent.source().ref()).isEqualTo("main");
 
             verify(getRequestedFor(urlEqualTo("/v0/agents"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -117,14 +117,14 @@ class CursorAgentInformationIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getId()).isEqualTo(TEST_AGENT_ID);
-            assertThat(response.getName()).isEqualTo("Add installation instructions to readme");
-            assertThat(response.getStatus()).isEqualTo(AgentResponse.StatusEnum.COMPLETED);
-            assertThat(response.getSource().getRepository().toString()).isEqualTo("https://github.com/jabrena/churrera");
-            assertThat(response.getSource().getRef()).isEqualTo("main");
-            assertThat(response.getTarget().getBranchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
-            assertThat(response.getCreatedAt()).isNotNull();
-            assertThat(response.getUpdatedAt()).isNotNull();
+            assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
+            assertThat(response.name()).isEqualTo("Add installation instructions to readme");
+            assertThat(response.status()).isEqualTo("COMPLETED");
+            assertThat(response.source().repository().toString()).isEqualTo("https://github.com/jabrena/churrera");
+            assertThat(response.source().ref()).isEqualTo("main");
+            assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
+            assertThat(response.createdAt()).isNotNull();
+            assertThat(response.updatedAt()).isNotNull();
 
             verify(getRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -186,11 +186,11 @@ class CursorAgentInformationIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getId()).isEqualTo(TEST_AGENT_ID);
-            assertThat(response.getMessages()).isNotNull();
-            assertThat(response.getMessages()).hasSize(4);
-            assertThat(response.getMessages().get(0).getType()).isEqualTo("user_message");
-            assertThat(response.getMessages().get(0).getText()).isEqualTo("Add installation instructions to readme");
+            assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
+            assertThat(response.messages()).isNotNull();
+            assertThat(response.messages()).hasSize(4);
+            assertThat(response.messages().get(0).type()).isEqualTo("user_message");
+            assertThat(response.messages().get(0).text()).isEqualTo("Add installation instructions to readme");
 
             verify(getRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID + "/conversation"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));

@@ -1,11 +1,11 @@
 package info.jab.cursor.client.impl;
 
 import info.jab.cursor.client.CursorAgentInformation;
-import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.client.model.AgentsList;
+import info.jab.cursor.client.model.ConversationResponse;
 import info.jab.cursor.generated.client.ApiClient;
 import info.jab.cursor.generated.client.api.AgentInformationApi;
-import info.jab.cursor.generated.client.model.AgentsList;
-import info.jab.cursor.generated.client.model.ConversationResponse;
 import info.jab.cursor.generated.client.ApiException;
 
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class CursorAgentInformationImpl implements CursorAgentInformation {
     @Override
     public AgentsList getAgents(Integer limit, String cursor) {
         try {
-            return agentInformationApi.listAgents(limit, cursor, getAuthHeaders());
+            return AgentsList.from(agentInformationApi.listAgents(limit, cursor, getAuthHeaders()));
         } catch (ApiException e) {
             logger.error("Failed to get agents: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get agents: " + e.getMessage(), e);
@@ -83,7 +83,7 @@ public class CursorAgentInformationImpl implements CursorAgentInformation {
 
         try {
             // Get current agent status - single API call
-            return agentInformationApi.getAgent(agentId, getAuthHeaders());
+            return AgentResponse.from(agentInformationApi.getAgent(agentId, getAuthHeaders()));
         } catch (Exception statusException) {
             logger.error("Failed to get agent status: {}", statusException.getMessage(), statusException);
             // If status parsing fails due to unknown enum value, try to handle gracefully
@@ -109,7 +109,7 @@ public class CursorAgentInformationImpl implements CursorAgentInformation {
         }
 
         try {
-            return agentInformationApi.getAgentConversation(agentId, getAuthHeaders());
+            return ConversationResponse.from(agentInformationApi.getAgentConversation(agentId, getAuthHeaders()));
         } catch (ApiException e) {
             logger.error("Failed to get agent conversation: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get agent conversation: " + e.getMessage(), e);

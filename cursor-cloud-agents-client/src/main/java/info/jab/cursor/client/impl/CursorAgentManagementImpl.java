@@ -1,8 +1,9 @@
 package info.jab.cursor.client.impl;
 
 import info.jab.cursor.client.CursorAgentManagement;
-import info.jab.cursor.generated.client.model.DeleteAgentResponse;
-import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.client.model.DeleteAgentResponse;
+import info.jab.cursor.client.model.FollowUpResponse;
 import info.jab.cursor.generated.client.ApiClient;
 import info.jab.cursor.generated.client.api.AgentManagementApi;
 import info.jab.cursor.generated.client.model.LaunchAgentRequest;
@@ -10,7 +11,6 @@ import info.jab.cursor.generated.client.model.Prompt;
 import info.jab.cursor.generated.client.model.Source;
 import info.jab.cursor.generated.client.model.TargetRequest;
 import info.jab.cursor.generated.client.model.FollowUpRequest;
-import info.jab.cursor.generated.client.model.FollowUpResponse;
 import info.jab.cursor.generated.client.ApiException;
 
 import java.net.URI;
@@ -87,8 +87,8 @@ public class CursorAgentManagementImpl implements CursorAgentManagement {
         // Launch the agent
         try {
             logger.debug("Launching agent with model: {}, repository: {}", model, repository);
-            AgentResponse result = agentManagementApi.launchAgent(request, getAuthHeaders());
-            logger.debug("Successfully launched agent: {}", result.getId());
+            AgentResponse result = AgentResponse.from(agentManagementApi.launchAgent(request, getAuthHeaders()));
+            logger.debug("Successfully launched agent: {}", result.id());
             return result;
         } catch (ApiException e) {
             logger.error("Failed to launch agent: {}", e.getMessage(), e);
@@ -150,7 +150,7 @@ public class CursorAgentManagementImpl implements CursorAgentManagement {
         // Follow-up the agent
         try {
             logger.debug("Following up agent: {}", agentId);
-            FollowUpResponse response = agentManagementApi.addFollowUp(agentId, request, getAuthHeaders());
+            FollowUpResponse response = FollowUpResponse.from(agentManagementApi.addFollowUp(agentId, request, getAuthHeaders()));
             logger.debug("Successfully followed up agent: {}", agentId);
             return response;
         } catch (ApiException e) {
@@ -170,8 +170,8 @@ public class CursorAgentManagementImpl implements CursorAgentManagement {
 
         try {
             logger.debug("Deleting agent: {}", agentId);
-            DeleteAgentResponse response = agentManagementApi.deleteAgent(agentId, getAuthHeaders());
-            logger.debug("Successfully deleted agent: {} with response: {}", agentId, response.getId());
+            DeleteAgentResponse response = DeleteAgentResponse.from(agentManagementApi.deleteAgent(agentId, getAuthHeaders()));
+            logger.debug("Successfully deleted agent: {} with response: {}", agentId, response.id());
             return response;
         } catch (ApiException e) {
             logger.error("Failed to delete agent {}: {}", agentId, e.getMessage(), e);

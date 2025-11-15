@@ -1,7 +1,7 @@
 package info.jab.cursor.client;
 
-import info.jab.cursor.generated.client.model.ApiKeyInfo;
-import info.jab.cursor.generated.client.model.RepositoriesList;
+import info.jab.cursor.client.model.ApiKeyInfo;
+import info.jab.cursor.client.model.RepositoriesList;
 import java.util.List;
 
 /**

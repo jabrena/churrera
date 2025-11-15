@@ -5,7 +5,7 @@ import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.cli.service.CLIAgent;
-import info.jab.cursor.generated.client.model.ConversationMessage;
+import info.jab.cursor.client.model.ConversationMessage;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.slf4j.Logger;
@@ -81,10 +81,10 @@ public class JobLogsCommand implements Runnable {
                     try {
                         System.out.println("\n=== Cursor Agent Conversation ===");
                         var conversation = cliAgent.getConversation(job.cursorAgentId());
-                        if (conversation != null && conversation.getMessages() != null) {
-                            logger.debug("Retrieved {} conversation messages", conversation.getMessages().size());
-                            for (ConversationMessage message : conversation.getMessages()) {
-                                System.out.println("[conversation] " + message.getText());
+                        if (conversation != null && conversation.messages() != null) {
+                            logger.debug("Retrieved {} conversation messages", conversation.messages().size());
+                            for (ConversationMessage message : conversation.messages()) {
+                                System.out.println("[conversation] " + message.text());
                             }
                         } else {
                             logger.debug("No conversation messages available");

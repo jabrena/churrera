@@ -412,6 +412,18 @@ class CursorAgentManagementImplTest {
 
             AgentResponse mockResponse = new AgentResponse();
             mockResponse.setId(TEST_AGENT_ID);
+            mockResponse.setName("Test Agent");
+            mockResponse.setStatus(AgentResponse.StatusEnum.CREATING);
+            mockResponse.setCreatedAt(java.time.OffsetDateTime.now());
+            info.jab.cursor.generated.client.model.Source source = new info.jab.cursor.generated.client.model.Source();
+            source.setRepository(java.net.URI.create(repository));
+            source.setRef("main");
+            mockResponse.setSource(source);
+            info.jab.cursor.generated.client.model.Target target = new info.jab.cursor.generated.client.model.Target();
+            target.setBranchName("cursor/test");
+            target.setUrl(java.net.URI.create("https://cursor.com/agents?id=" + TEST_AGENT_ID));
+            target.setAutoCreatePr(false);
+            mockResponse.setTarget(target);
             when(agentManagementApi.launchAgent(any(), any())).thenReturn(mockResponse);
 
             // When
@@ -436,6 +448,18 @@ class CursorAgentManagementImplTest {
 
             AgentResponse mockResponse = new AgentResponse();
             mockResponse.setId(TEST_AGENT_ID);
+            mockResponse.setName("Test Agent");
+            mockResponse.setStatus(AgentResponse.StatusEnum.CREATING);
+            mockResponse.setCreatedAt(java.time.OffsetDateTime.now());
+            info.jab.cursor.generated.client.model.Source source = new info.jab.cursor.generated.client.model.Source();
+            source.setRepository(java.net.URI.create(repository));
+            source.setRef("main");
+            mockResponse.setSource(source);
+            info.jab.cursor.generated.client.model.Target target = new info.jab.cursor.generated.client.model.Target();
+            target.setBranchName("cursor/test");
+            target.setUrl(java.net.URI.create("https://cursor.com/agents?id=" + TEST_AGENT_ID));
+            target.setAutoCreatePr(false);
+            mockResponse.setTarget(target);
             when(agentManagementApi.launchAgent(any(), any())).thenReturn(mockResponse);
 
             // When

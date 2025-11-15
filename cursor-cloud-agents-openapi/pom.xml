@@ -79,9 +79,9 @@
                             <generatorName>java</generatorName>
                             <library>native</library>
                             <output>${project.build.directory}/generated-sources</output>
-                            <apiPackage>info.jab.cursor.client.api</apiPackage>
-                            <modelPackage>info.jab.cursor.client.model</modelPackage>
-                            <invokerPackage>info.jab.cursor.client</invokerPackage>
+                            <apiPackage>info.jab.cursor.generated.client.api</apiPackage>
+                            <modelPackage>info.jab.cursor.generated.client.model</modelPackage>
+                            <invokerPackage>info.jab.cursor.generated.client</invokerPackage>
 
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>

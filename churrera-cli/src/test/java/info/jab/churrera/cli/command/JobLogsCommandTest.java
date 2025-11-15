@@ -7,7 +7,7 @@ import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.cursor.client.model.ConversationMessage;
 import info.jab.cursor.client.model.ConversationResponse;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,14 +118,10 @@ class JobLogsCommandTest {
         String jobId = "test-job-id";
         jobLogsCommand = new JobLogsCommand(jobRepository, cliAgent, jobId);
 
-        ConversationMessage message1 = new ConversationMessage();
-        message1.setText("User: Hello");
+        ConversationMessage message1 = new ConversationMessage("msg-1", "user_message", "User: Hello");
+        ConversationMessage message2 = new ConversationMessage("msg-2", "agent_message", "Agent: Hi there!");
 
-        ConversationMessage message2 = new ConversationMessage();
-        message2.setText("Agent: Hi there!");
-
-        ConversationResponse conversation = new ConversationResponse();
-        conversation.setMessages(List.of(message1, message2));
+        ConversationResponse conversation = new ConversationResponse("agent-id", List.of(message1, message2));
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(testJob));
         when(jobRepository.findJobWithDetails(jobId))
@@ -190,8 +186,7 @@ class JobLogsCommandTest {
         String jobId = "test-job-id";
         jobLogsCommand = new JobLogsCommand(jobRepository, cliAgent, jobId);
 
-        ConversationResponse conversation = new ConversationResponse();
-        conversation.setMessages(null);
+        ConversationResponse conversation = new ConversationResponse("agent-id", null);
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(testJob));
         when(jobRepository.findJobWithDetails(jobId))

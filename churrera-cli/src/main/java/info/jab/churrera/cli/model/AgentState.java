@@ -1,4 +1,4 @@
-package info.jab.churrera.agent;
+package info.jab.churrera.cli.model;
 
 import info.jab.cursor.client.model.AgentResponse;
 
@@ -64,11 +64,11 @@ public enum AgentState {
      * @return AgentStates enum representing the agent's current state
      */
     public static AgentState of(AgentResponse agent) {
-        if (agent == null || agent.getStatus() == null) {
+        if (agent == null || agent.status() == null) {
             return UNKNOWN;
         }
 
-        String status = agent.getStatus().toString();
+        String status = agent.status();
         return parseStatus(status);
     }
 
@@ -98,3 +98,4 @@ public enum AgentState {
         };
     }
 }
+

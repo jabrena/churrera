@@ -17,8 +17,6 @@ import java.util.Optional;
 
 import info.jab.churrera.util.PropertyResolver;
 import info.jab.churrera.util.PmlConverter;
-import info.jab.cursor.CursorAgentManagementImpl;
-import info.jab.cursor.CursorAgentInformationImpl;
 
 /**
  * Command to show logs for a specific job by its UUID.
@@ -83,10 +81,10 @@ public class JobLogsCommand implements Runnable {
                     try {
                         System.out.println("\n=== Cursor Agent Conversation ===");
                         var conversation = cliAgent.getConversation(job.cursorAgentId());
-                        if (conversation != null && conversation.getMessages() != null) {
-                            logger.debug("Retrieved {} conversation messages", conversation.getMessages().size());
-                            for (ConversationMessage message : conversation.getMessages()) {
-                                System.out.println("[conversation] " + message.getText());
+                        if (conversation != null && conversation.messages() != null) {
+                            logger.debug("Retrieved {} conversation messages", conversation.messages().size());
+                            for (ConversationMessage message : conversation.messages()) {
+                                System.out.println("[conversation] " + message.text());
                             }
                         } else {
                             logger.debug("No conversation messages available");

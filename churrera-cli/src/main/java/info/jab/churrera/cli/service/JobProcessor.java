@@ -3,7 +3,7 @@ package info.jab.churrera.cli.service;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.Prompt;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.workflow.WorkflowParser;
 import info.jab.churrera.workflow.WorkflowData;
 import info.jab.churrera.workflow.PromptInfo;
@@ -29,8 +29,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import info.jab.churrera.util.ConversationJsonDeserializer;
 import info.jab.churrera.util.PropertyResolver;
 import info.jab.churrera.util.PmlConverter;
-import info.jab.cursor.CursorAgentManagementImpl;
-import info.jab.cursor.CursorAgentInformationImpl;
+import info.jab.cursor.client.impl.CursorAgentManagementImpl;
+import info.jab.cursor.client.impl.CursorAgentInformationImpl;
 
 /**
  * Background job processor that automatically processes unfinished jobs,
@@ -617,7 +617,7 @@ public class JobProcessor {
                         null, // cursorAgentId starts as null
                         sequenceInfo.getModel() != null ? sequenceInfo.getModel() : parentJob.model(),
                         sequenceInfo.getRepository() != null ? sequenceInfo.getRepository() : parentJob.repository(),
-                        info.jab.churrera.agent.AgentState.UNKNOWN,
+                        AgentState.UNKNOWN,
                         now,
                         now,
                         parentJob.jobId(), // Set parent job ID

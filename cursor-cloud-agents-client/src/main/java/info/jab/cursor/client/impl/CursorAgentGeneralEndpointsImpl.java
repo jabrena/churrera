@@ -1,10 +1,11 @@
-package info.jab.cursor;
+package info.jab.cursor.client.impl;
 
-import info.jab.cursor.client.ApiClient;
-import info.jab.cursor.client.api.GeneralEndpointsApi;
+import info.jab.cursor.client.CursorAgentGeneralEndpoints;
 import info.jab.cursor.client.model.ApiKeyInfo;
 import info.jab.cursor.client.model.RepositoriesList;
-import info.jab.cursor.client.ApiException;
+import info.jab.cursor.generated.client.ApiClient;
+import info.jab.cursor.generated.client.api.GeneralEndpointsApi;
+import info.jab.cursor.generated.client.ApiException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class CursorAgentGeneralEndpointsImpl implements CursorAgentGeneralEndpoi
     @Override
     public ApiKeyInfo getApiKeyInfo() {
         try {
-           return generalEndpointsApi.getApiKeyInfo(getAuthHeaders());
+           return ApiKeyInfo.from(generalEndpointsApi.getApiKeyInfo(getAuthHeaders()));
         } catch (ApiException e) {
             logger.error("Failed to get API key info: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get API key info: " + e.getMessage(), e);
@@ -73,10 +74,11 @@ public class CursorAgentGeneralEndpointsImpl implements CursorAgentGeneralEndpoi
     @Override
     public RepositoriesList getRepositories() {
         try {
-            return generalEndpointsApi.listRepositories(getAuthHeaders());
+            return RepositoriesList.from(generalEndpointsApi.listRepositories(getAuthHeaders()));
         } catch (ApiException e) {
             logger.error("Failed to get repositories: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get repositories: " + e.getMessage(), e);
         }
     }
 }
+

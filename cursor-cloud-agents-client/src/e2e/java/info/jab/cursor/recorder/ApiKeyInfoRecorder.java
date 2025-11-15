@@ -3,10 +3,10 @@ package info.jab.cursor.recorder;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.jab.cursor.CursorAgentGeneralEndpoints;
-import info.jab.cursor.CursorAgentGeneralEndpointsImpl;
-import info.jab.cursor.client.ApiException;
-import info.jab.cursor.client.model.ApiKeyInfo;
+import info.jab.cursor.client.CursorAgentGeneralEndpoints;
+import info.jab.cursor.client.impl.CursorAgentGeneralEndpointsImpl;
+import info.jab.cursor.generated.client.ApiException;
+import info.jab.cursor.generated.client.model.ApiKeyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

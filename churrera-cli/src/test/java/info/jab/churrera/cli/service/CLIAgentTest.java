@@ -3,12 +3,15 @@ package info.jab.churrera.cli.service;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.repository.JobRepository;
-import info.jab.cursor.CursorAgentManagement;
-import info.jab.cursor.CursorAgentInformation;
+import info.jab.cursor.client.CursorAgentManagement;
+import info.jab.cursor.client.CursorAgentInformation;
 import info.jab.cursor.client.model.AgentResponse;
 import info.jab.cursor.client.model.ConversationResponse;
 import info.jab.cursor.client.model.FollowUpResponse;
-import info.jab.churrera.agent.AgentState;
+import info.jab.cursor.client.model.Source;
+import info.jab.cursor.client.model.Target;
+import info.jab.cursor.client.model.ConversationMessage;
+import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.util.PropertyResolver;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,14 +45,29 @@ class CLIAgentTest {
     @Mock
     private CursorAgentInformation cursorAgentInformation;
 
-    @Mock
-    private AgentResponse mockAgent;
+    // Helper method to create test AgentResponse
+    private AgentResponse createTestAgentResponse(String id, String status) {
+        return new AgentResponse(
+            id,
+            "Test Agent",
+            status,
+            new Source(URI.create("https://github.com/test/repo"), "main"),
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
+            null,
+            OffsetDateTime.now(),
+            null
+        );
+    }
 
-    @Mock
-    private FollowUpResponse mockFollowUpResponse;
+    // Helper method to create test FollowUpResponse
+    private FollowUpResponse createTestFollowUpResponse(String id) {
+        return new FollowUpResponse(id);
+    }
 
-    @Mock
-    private ConversationResponse mockConversationResponse;
+    // Helper method to create test ConversationResponse
+    private ConversationResponse createTestConversationResponse(String id, List<ConversationMessage> messages) {
+        return new ConversationResponse(id, messages);
+    }
 
     @Mock
     private PmlConverter mockPmlConverter;
@@ -87,8 +108,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+                .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
             // When
             String result = cliAgent.launchAgentForJob(testJob, "pml content", "pml", null, true);
@@ -111,8 +132,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+                .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
             // When
             String result = cliAgent.launchAgentForJob(testJob, "pml content", "pml", null, true);
@@ -135,8 +156,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+                .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
             // When
             String result = cliAgent.launchAgentForJob(testJob, "pml content", "pml", null, true);
@@ -172,8 +193,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.followUp(anyString(), anyString())).thenReturn(mockFollowUpResponse);
-        when(mockFollowUpResponse.getId()).thenReturn("follow-up-id");
+            when(cursorAgentManagement.followUp(anyString(), anyString()))
+                .thenReturn(createTestFollowUpResponse("follow-up-id"));
 
             // When
             String result = cliAgent.followUpForPrompt("agent-id", "pml content", "pml", null);
@@ -207,8 +228,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getStatus(anyString())).thenReturn(mockAgent);
-        when(mockAgent.getStatus()).thenReturn(AgentResponse.StatusEnum.FINISHED);
+            when(cursorAgentInformation.getStatus(anyString()))
+                .thenReturn(createTestAgentResponse("agent-id", "FINISHED"));
 
             // When
             AgentState result = cliAgent.monitorAgent("agent-id", 1);
@@ -226,9 +247,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getStatus(anyString())).thenReturn(mockAgent);
-            // Always return FINISHED
-            when(mockAgent.getStatus()).thenReturn(AgentResponse.StatusEnum.FINISHED);
+            when(cursorAgentInformation.getStatus(anyString()))
+                .thenReturn(createTestAgentResponse("agent-id", "FINISHED"));
 
             // When - Using delay of 0 to avoid actual sleep in test
             AgentState result = cliAgent.monitorAgent("agent-id", 0);
@@ -246,8 +266,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getStatus(anyString())).thenReturn(mockAgent);
-        when(mockAgent.getStatus()).thenReturn(AgentResponse.StatusEnum.RUNNING);
+            when(cursorAgentInformation.getStatus(anyString()))
+                .thenReturn(createTestAgentResponse("agent-id", "RUNNING"));
 
             // Interrupt the current thread
             Thread.currentThread().interrupt();
@@ -268,8 +288,7 @@ class CLIAgentTest {
 
             when(cursorAgentInformation.getStatus(anyString()))
                 .thenThrow(new RuntimeException("Temporary error"))
-                .thenReturn(mockAgent);
-        when(mockAgent.getStatus()).thenReturn(AgentResponse.StatusEnum.FINISHED);
+                .thenReturn(createTestAgentResponse("agent-id", "FINISHED"));
 
             // When
             Thread monitorThread = new Thread(() -> {
@@ -291,13 +310,14 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getAgentConversation(anyString())).thenReturn(mockConversationResponse);
+            ConversationResponse testConversation = createTestConversationResponse("agent-id", List.of());
+            when(cursorAgentInformation.getAgentConversation(anyString())).thenReturn(testConversation);
 
             // When
             ConversationResponse result = cliAgent.getConversation("agent-id");
 
             // Then
-            assertEquals(mockConversationResponse, result);
+            assertEquals(testConversation, result);
             verify(cursorAgentInformation).getAgentConversation("agent-id");
     }
 
@@ -435,8 +455,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getStatus(anyString())).thenReturn(mockAgent);
-        when(mockAgent.getStatus()).thenReturn(AgentResponse.StatusEnum.RUNNING);
+            when(cursorAgentInformation.getStatus(anyString()))
+                .thenReturn(createTestAgentResponse("agent-id", "RUNNING"));
 
             // When
             AgentState result = cliAgent.getAgentStatus("agent-id");
@@ -469,8 +489,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-        when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+        when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+            .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
         // When
         String result = cliAgent.launchAgentForJob(testJob, "pml content", "pml", "test-value", true);
@@ -488,8 +508,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+                .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
             // When - empty bindValue should skip replacement
             String result = cliAgent.launchAgentForJob(testJob, "pml content", "pml", "", true);
@@ -506,8 +526,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockAgent);
-        when(mockAgent.getId()).thenReturn("new-agent-id");
+            when(cursorAgentManagement.launch(anyString(), anyString(), anyString(), anyBoolean()))
+                .thenReturn(createTestAgentResponse("new-agent-id", "CREATING"));
 
             // When - md type should not trigger PML conversion
             String result = cliAgent.launchAgentForJob(testJob, "markdown content", "md", null, true);
@@ -525,8 +545,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-        when(cursorAgentManagement.followUp(anyString(), anyString())).thenReturn(mockFollowUpResponse);
-        when(mockFollowUpResponse.getId()).thenReturn("follow-up-id");
+        when(cursorAgentManagement.followUp(anyString(), anyString()))
+            .thenReturn(createTestFollowUpResponse("follow-up-id"));
 
         // When
         String result = cliAgent.followUpForPrompt("agent-id", "pml content", "pml", "bound-value");
@@ -544,8 +564,8 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.followUp(anyString(), anyString())).thenReturn(mockFollowUpResponse);
-        when(mockFollowUpResponse.getId()).thenReturn("follow-up-id");
+            when(cursorAgentManagement.followUp(anyString(), anyString()))
+                .thenReturn(createTestFollowUpResponse("follow-up-id"));
 
             // When - empty bindValue should skip replacement
             String result = cliAgent.followUpForPrompt("agent-id", "pml content", "pml", "");
@@ -560,8 +580,8 @@ class CLIAgentTest {
         // Given
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentManagement.followUp(anyString(), anyString())).thenReturn(mockFollowUpResponse);
-        when(mockFollowUpResponse.getId()).thenReturn("follow-up-id");
+            when(cursorAgentManagement.followUp(anyString(), anyString()))
+                .thenReturn(createTestFollowUpResponse("follow-up-id"));
 
             // When - md type should not trigger PML conversion
             String result = cliAgent.followUpForPrompt("agent-id", "markdown content", "md", null);
@@ -576,8 +596,8 @@ class CLIAgentTest {
         // Given
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            when(cursorAgentInformation.getAgentConversation(anyString())).thenReturn(mockConversationResponse);
-        when(mockConversationResponse.getMessages()).thenReturn(null);
+            when(cursorAgentInformation.getAgentConversation(anyString()))
+                .thenReturn(createTestConversationResponse("agent-id", null));
 
             // When
             String result = cliAgent.getConversationContent("agent-id");
@@ -594,11 +614,9 @@ class CLIAgentTest {
 
         cliAgent = new CLIAgent(jobRepository, cursorAgentManagement, cursorAgentInformation, mockPmlConverter, mockPropertyResolver);
 
-            var mockMessage = mock(info.jab.cursor.client.model.ConversationMessage.class);
-        when(mockMessage.getText()).thenReturn(null);
-
-            when(cursorAgentInformation.getAgentConversation(anyString())).thenReturn(mockConversationResponse);
-        when(mockConversationResponse.getMessages()).thenReturn(java.util.List.of(mockMessage));
+            ConversationMessage mockMessage = new ConversationMessage("msg-id", "user_message", null);
+            when(cursorAgentInformation.getAgentConversation(anyString()))
+                .thenReturn(createTestConversationResponse("agent-id", List.of(mockMessage)));
 
             // When
             String result = cliAgent.getConversationContent("agent-id");

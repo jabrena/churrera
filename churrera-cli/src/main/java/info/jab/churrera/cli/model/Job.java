@@ -1,6 +1,5 @@
 package info.jab.churrera.cli.model;
 
-import info.jab.churrera.agent.AgentState;
 import info.jab.churrera.workflow.WorkflowType;
 import java.time.LocalDateTime;
 import java.util.Objects;

@@ -10,7 +10,7 @@ import info.jab.churrera.workflow.WorkflowData;
 import info.jab.churrera.workflow.PromptInfo;
 import info.jab.churrera.workflow.WorkflowParseException;
 import info.jab.churrera.workflow.PmlValidator;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.basex.core.BaseXException;
 import org.basex.query.QueryException;
 import org.junit.jupiter.api.*;

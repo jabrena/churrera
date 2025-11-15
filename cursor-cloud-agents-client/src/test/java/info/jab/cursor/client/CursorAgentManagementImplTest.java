@@ -1,12 +1,13 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
-import info.jab.cursor.client.ApiException;
-import info.jab.cursor.client.api.AgentManagementApi;
-import info.jab.cursor.client.model.AgentResponse;
-import info.jab.cursor.client.model.DeleteAgentResponse;
-import info.jab.cursor.client.model.FollowUpResponse;
-import info.jab.cursor.client.model.LaunchAgentRequest;
-import info.jab.cursor.client.model.TargetRequest;
+import info.jab.cursor.client.impl.CursorAgentManagementImpl;
+import info.jab.cursor.generated.client.ApiException;
+import info.jab.cursor.generated.client.api.AgentManagementApi;
+import info.jab.cursor.generated.client.model.AgentResponse;
+import info.jab.cursor.generated.client.model.DeleteAgentResponse;
+import info.jab.cursor.generated.client.model.FollowUpResponse;
+import info.jab.cursor.generated.client.model.LaunchAgentRequest;
+import info.jab.cursor.generated.client.model.TargetRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -411,6 +412,18 @@ class CursorAgentManagementImplTest {
 
             AgentResponse mockResponse = new AgentResponse();
             mockResponse.setId(TEST_AGENT_ID);
+            mockResponse.setName("Test Agent");
+            mockResponse.setStatus(AgentResponse.StatusEnum.CREATING);
+            mockResponse.setCreatedAt(java.time.OffsetDateTime.now());
+            info.jab.cursor.generated.client.model.Source source = new info.jab.cursor.generated.client.model.Source();
+            source.setRepository(java.net.URI.create(repository));
+            source.setRef("main");
+            mockResponse.setSource(source);
+            info.jab.cursor.generated.client.model.Target target = new info.jab.cursor.generated.client.model.Target();
+            target.setBranchName("cursor/test");
+            target.setUrl(java.net.URI.create("https://cursor.com/agents?id=" + TEST_AGENT_ID));
+            target.setAutoCreatePr(false);
+            mockResponse.setTarget(target);
             when(agentManagementApi.launchAgent(any(), any())).thenReturn(mockResponse);
 
             // When
@@ -435,6 +448,18 @@ class CursorAgentManagementImplTest {
 
             AgentResponse mockResponse = new AgentResponse();
             mockResponse.setId(TEST_AGENT_ID);
+            mockResponse.setName("Test Agent");
+            mockResponse.setStatus(AgentResponse.StatusEnum.CREATING);
+            mockResponse.setCreatedAt(java.time.OffsetDateTime.now());
+            info.jab.cursor.generated.client.model.Source source = new info.jab.cursor.generated.client.model.Source();
+            source.setRepository(java.net.URI.create(repository));
+            source.setRef("main");
+            mockResponse.setSource(source);
+            info.jab.cursor.generated.client.model.Target target = new info.jab.cursor.generated.client.model.Target();
+            target.setBranchName("cursor/test");
+            target.setUrl(java.net.URI.create("https://cursor.com/agents?id=" + TEST_AGENT_ID));
+            target.setAutoCreatePr(false);
+            mockResponse.setTarget(target);
             when(agentManagementApi.launchAgent(any(), any())).thenReturn(mockResponse);
 
             // When

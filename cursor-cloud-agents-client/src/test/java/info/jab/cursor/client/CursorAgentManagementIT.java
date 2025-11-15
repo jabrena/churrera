@@ -1,5 +1,6 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
+import info.jab.cursor.client.impl.CursorAgentManagementImpl;
 import info.jab.cursor.client.model.AgentResponse;
 import info.jab.cursor.client.model.DeleteAgentResponse;
 import info.jab.cursor.client.model.FollowUpResponse;
@@ -68,12 +69,12 @@ class CursorAgentManagementIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getId()).isEqualTo(TEST_AGENT_ID);
-            assertThat(response.getName()).isEqualTo("Add installation instructions to readme");
-            assertThat(response.getStatus()).isEqualTo(AgentResponse.StatusEnum.CREATING);
-            assertThat(response.getSource().getRepository().toString()).isEqualTo(repository);
-            assertThat(response.getSource().getRef()).isEqualTo("main");
-            assertThat(response.getTarget().getBranchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
+            assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
+            assertThat(response.name()).isEqualTo("Add installation instructions to readme");
+            assertThat(response.status()).isEqualTo("CREATING");
+            assertThat(response.source().repository().toString()).isEqualTo(repository);
+            assertThat(response.source().ref()).isEqualTo("main");
+            assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
 
             verify(postRequestedFor(urlEqualTo("/v0/agents"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY))
@@ -100,7 +101,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -125,7 +126,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -150,7 +151,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents")));
         }
@@ -177,7 +178,7 @@ class CursorAgentManagementIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getId()).isEqualTo(TEST_AGENT_ID);
+            assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID + "/followup"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -201,7 +202,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                     .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID + "/followup")));
         }
@@ -225,7 +226,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                     .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class);
+                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + nonExistentAgentId + "/followup")));
         }
@@ -250,7 +251,7 @@ class CursorAgentManagementIT {
 
             // Then
             assertThat(response).isNotNull();
-            assertThat(response.getId()).isEqualTo(TEST_AGENT_ID);
+            assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
 
             verify(deleteRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -272,7 +273,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");
 
             verify(deleteRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID)));
@@ -296,7 +297,7 @@ class CursorAgentManagementIT {
             // Then
             assertThat(thrown)
                 .isInstanceOf(RuntimeException.class)
-                .hasCauseInstanceOf(info.jab.cursor.client.ApiException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");
 
             verify(deleteRequestedFor(urlEqualTo("/v0/agents/" + nonExistentAgentId)));

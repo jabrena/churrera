@@ -5,7 +5,7 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.workflow.WorkflowType;
-import info.jab.churrera.agent.AgentState;
+import info.jab.churrera.cli.model.AgentState;
 import org.basex.core.BaseXException;
 import org.basex.core.Context;
 import org.basex.core.StaticOptions;

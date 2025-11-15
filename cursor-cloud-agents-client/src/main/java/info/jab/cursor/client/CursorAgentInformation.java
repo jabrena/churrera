@@ -1,4 +1,4 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
 import info.jab.cursor.client.model.AgentResponse;
 import info.jab.cursor.client.model.AgentsList;

@@ -1,10 +1,15 @@
-package info.jab.churrera.agent;
+package info.jab.churrera.cli.model;
 
 import info.jab.cursor.client.model.AgentResponse;
+import info.jab.cursor.client.model.Source;
+import info.jab.cursor.client.model.Target;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.net.URI;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +17,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test class for AgentState enum.
  */
 public class AgentStateTest {
+
+    private static AgentResponse createAgentResponse(String status) {
+        return new AgentResponse(
+            "test-id",
+            "Test Agent",
+            status,
+            new Source(URI.create("https://github.com/test/repo"), "main"),
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
+            null,
+            OffsetDateTime.now(),
+            null
+        );
+    }
 
     @Test
     public void testIsTerminal() {
@@ -85,8 +103,16 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithNullStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(null);
+        AgentResponse agent = new AgentResponse(
+            "test-id",
+            "Test Agent",
+            null,
+            new Source(URI.create("https://github.com/test/repo"), "main"),
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
+            null,
+            OffsetDateTime.now(),
+            null
+        );
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.UNKNOWN, result);
@@ -94,8 +120,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithPendingStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.CREATING); // Note: PENDING is not in the enum, so we test with CREATING
+        AgentResponse agent = createAgentResponse("CREATING"); // Note: PENDING is not in the enum, so we test with CREATING
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.CREATING, result);
@@ -103,8 +128,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithCreatingStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.CREATING);
+        AgentResponse agent = createAgentResponse("CREATING");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.CREATING, result);
@@ -112,8 +136,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithRunningStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.RUNNING);
+        AgentResponse agent = createAgentResponse("RUNNING");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.RUNNING, result);
@@ -121,8 +144,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithCompletedStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.COMPLETED);
+        AgentResponse agent = createAgentResponse("COMPLETED");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.COMPLETED, result);
@@ -130,8 +152,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithFailedStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.FAILED);
+        AgentResponse agent = createAgentResponse("FAILED");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.FAILED, result);
@@ -139,8 +160,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithCancelledStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.CANCELLED);
+        AgentResponse agent = createAgentResponse("CANCELLED");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.CANCELLED, result);
@@ -148,8 +168,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithExpiredStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.EXPIRED);
+        AgentResponse agent = createAgentResponse("EXPIRED");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.EXPIRED, result);
@@ -157,8 +176,7 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithFinishedStatus() {
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(AgentResponse.StatusEnum.FINISHED);
+        AgentResponse agent = createAgentResponse("FINISHED");
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.FINISHED, result);
@@ -166,33 +184,26 @@ public class AgentStateTest {
 
     @Test
     public void testAllValidStatusEnums() {
-        // Test all valid StatusEnum values from the Agent class
-        AgentResponse creatingAgent = new AgentResponse();
-        creatingAgent.setStatus(AgentResponse.StatusEnum.CREATING);
+        // Test all valid status values
+        AgentResponse creatingAgent = createAgentResponse("CREATING");
         assertEquals(AgentState.CREATING, AgentState.of(creatingAgent));
 
-        AgentResponse runningAgent = new AgentResponse();
-        runningAgent.setStatus(AgentResponse.StatusEnum.RUNNING);
+        AgentResponse runningAgent = createAgentResponse("RUNNING");
         assertEquals(AgentState.RUNNING, AgentState.of(runningAgent));
 
-        AgentResponse completedAgent = new AgentResponse();
-        completedAgent.setStatus(AgentResponse.StatusEnum.COMPLETED);
+        AgentResponse completedAgent = createAgentResponse("COMPLETED");
         assertEquals(AgentState.COMPLETED, AgentState.of(completedAgent));
 
-        AgentResponse failedAgent = new AgentResponse();
-        failedAgent.setStatus(AgentResponse.StatusEnum.FAILED);
+        AgentResponse failedAgent = createAgentResponse("FAILED");
         assertEquals(AgentState.FAILED, AgentState.of(failedAgent));
 
-        AgentResponse cancelledAgent = new AgentResponse();
-        cancelledAgent.setStatus(AgentResponse.StatusEnum.CANCELLED);
+        AgentResponse cancelledAgent = createAgentResponse("CANCELLED");
         assertEquals(AgentState.CANCELLED, AgentState.of(cancelledAgent));
 
-        AgentResponse expiredAgent = new AgentResponse();
-        expiredAgent.setStatus(AgentResponse.StatusEnum.EXPIRED);
+        AgentResponse expiredAgent = createAgentResponse("EXPIRED");
         assertEquals(AgentState.EXPIRED, AgentState.of(expiredAgent));
 
-        AgentResponse finishedAgent = new AgentResponse();
-        finishedAgent.setStatus(AgentResponse.StatusEnum.FINISHED);
+        AgentResponse finishedAgent = createAgentResponse("FINISHED");
         assertEquals(AgentState.FINISHED, AgentState.of(finishedAgent));
     }
 
@@ -256,10 +267,17 @@ public class AgentStateTest {
 
     @Test
     public void testOfWithAgentHavingEmptyStatus() {
-        // Test with Agent having empty status string (edge case)
-        // Note: This depends on how Agent.StatusEnum handles empty/null toString
-        AgentResponse agent = new AgentResponse();
-        agent.setStatus(null);
+        // Test with Agent having null status (edge case)
+        AgentResponse agent = new AgentResponse(
+            "test-id",
+            "Test Agent",
+            null,
+            new Source(URI.create("https://github.com/test/repo"), "main"),
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
+            null,
+            OffsetDateTime.now(),
+            null
+        );
 
         AgentState result = AgentState.of(agent);
         assertEquals(AgentState.UNKNOWN, result);
@@ -400,3 +418,4 @@ public class AgentStateTest {
         assertEquals("UNKNOWN", AgentState.UNKNOWN.name());
     }
 }
+

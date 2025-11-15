@@ -1,4 +1,4 @@
-package info.jab.cursor;
+package info.jab.cursor.client;
 
 import info.jab.cursor.client.model.ApiKeyInfo;
 import info.jab.cursor.client.model.RepositoriesList;

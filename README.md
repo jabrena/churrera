@@ -220,13 +220,13 @@ jobs pr     <job-id>    # Show PR link
 ## Build in local
 
 ```bash
-./mvnw clean package
+./mvnw clean test verify
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --help
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-success-completion
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-completion
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --retrieve-models
 java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --retrieve-repositories
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/failed-job/workflow.xml
+java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/failed-job/workflow.xml --delete-on-completion
 ```
 
 ## Changelog

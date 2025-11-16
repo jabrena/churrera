@@ -1,6 +1,6 @@
 package info.jab.churrera.cli;
 
-import info.jab.churrera.cli.command.ChurreraCLICommand;
+import info.jab.churrera.cli.command.CliCommand;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.JobProcessor;
 import info.jab.churrera.cli.service.CLIAgent;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for ChurreraCLICommand (REPL functionality).
+ * Unit tests for CliCommand (REPL functionality).
  * These tests use the public constructor to inject mocked dependencies.
  */
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +41,7 @@ class ChurreraCLITest {
     @Mock
     private CLIAgent cliAgent;
 
-    private ChurreraCLICommand churreraCLI;
+    private CliCommand churreraCLI;
     private ByteArrayOutputStream outputStream;
     private ByteArrayOutputStream errorStream;
     private PrintStream originalOut;
@@ -69,14 +69,14 @@ class ChurreraCLITest {
         System.setIn(originalIn);
     }
 
-    private ChurreraCLICommand createCLI(String input) {
+    private CliCommand createCLI(String input) {
         when(propertyResolver.getProperty("application.properties", "cli.prompt"))
                 .thenReturn(Optional.of("> "));
         when(propertyResolver.getProperty("application.properties", "cli.polling.interval.seconds"))
                 .thenReturn(Optional.of("5"));
 
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
-        return new ChurreraCLICommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
+        return new CliCommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
     }
 
     @Test
@@ -353,7 +353,7 @@ class ChurreraCLITest {
                 .thenReturn(Optional.of("5"));
 
         Scanner scanner = new Scanner(new ByteArrayInputStream("quit\n".getBytes()));
-        churreraCLI = new ChurreraCLICommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
+        churreraCLI = new CliCommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
 
         // When
         churreraCLI.run();

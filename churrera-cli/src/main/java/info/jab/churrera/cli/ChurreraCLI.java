@@ -1,6 +1,6 @@
 package info.jab.churrera.cli;
 
-import info.jab.churrera.cli.command.ChurreraCLICommand;
+import info.jab.churrera.cli.command.CliCommand;
 import info.jab.churrera.cli.command.RunCommand;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.workflow.WorkflowParser;
@@ -33,7 +33,7 @@ import java.util.Scanner;
 @CommandLine.Command(
     name = "churrera",
     mixinStandardHelpOptions = true,
-    subcommands = {ChurreraCLICommand.class, RunCommand.class}
+    subcommands = {CliCommand.class, RunCommand.class}
 )
 public class ChurreraCLI implements Runnable {
 
@@ -47,7 +47,7 @@ public class ChurreraCLI implements Runnable {
      * Creates and initializes the CLI command with all required dependencies.
      * This method is used by the CLI subcommand to get initialized components.
      */
-    static ChurreraCLICommand createCLICommand() throws IOException, BaseXException {
+    static CliCommand createCLICommand() throws IOException, BaseXException {
         // Validate API key at startup
         CursorApiKeyResolver apiKeyResolver = new CursorApiKeyResolver();
         String apiKey = apiKeyResolver.resolveApiKey();
@@ -84,7 +84,7 @@ public class ChurreraCLI implements Runnable {
         jobRepository.initialize();
         logger.info("Churrera CLI initialized successfully");
 
-        return new ChurreraCLICommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
+        return new CliCommand(jobRepository, jobProcessor, propertyResolver, scanner, cliAgent);
     }
 
     /**
@@ -154,17 +154,17 @@ public class ChurreraCLI implements Runnable {
             ChurreraCLI cli = new ChurreraCLI();
 
             // Store references for shutdown hook
-            final ChurreraCLICommand[] cliCommandRef = new ChurreraCLICommand[1];
+            final CliCommand[] cliCommandRef = new CliCommand[1];
             final RunCommand[] runCommandRef = new RunCommand[1];
 
             // Set up factory for creating subcommands
             CommandLine.IFactory factory = new CommandLine.IFactory() {
                 @Override
                 public <T> T create(Class<T> cls) throws Exception {
-                    if (cls == ChurreraCLICommand.class) {
+                    if (cls == CliCommand.class) {
                         @SuppressWarnings("unchecked")
                         T cmd = (T) createCLICommand();
-                        cliCommandRef[0] = (ChurreraCLICommand) cmd; // Store reference for shutdown hook
+                        cliCommandRef[0] = (CliCommand) cmd; // Store reference for shutdown hook
                         return cmd;
                     }
                     if (cls == RunCommand.class) {

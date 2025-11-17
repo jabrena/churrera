@@ -26,19 +26,20 @@ public record AgentResponse(
         Objects.requireNonNull(createdAt, "Created at cannot be null");
     }
 
+
     /**
-     * Factory method to create AgentResponse from generated OpenAPI model.
+     * Factory method to create AgentResponse from CreateAgent201Response.
      *
      * @param generated the generated OpenAPI model
      * @return domain model instance, or null if input is null
      */
-    public static AgentResponse from(info.jab.cursor.generated.client.model.AgentResponse generated) {
+    public static AgentResponse from(info.jab.cursor.generated.client.model.CreateAgent201Response generated) {
         if (generated == null) {
             return null;
         }
         AgentStatus status = AgentStatus.CREATING; // default
         if (generated.getStatus() != null) {
-            status = mapStatusEnum(generated.getStatus());
+            status = mapStatusEnumFromString(generated.getStatus().getValue());
         }
         return new AgentResponse(
             generated.getId(),
@@ -51,21 +52,47 @@ public record AgentResponse(
     }
 
     /**
-     * Maps StatusEnum from generated OpenAPI model to AgentStatus enum.
+     * Factory method to create AgentResponse from ListAgents200ResponseAgentsInner.
      *
-     * @param statusEnum the StatusEnum from generated model
+     * @param generated the generated OpenAPI model
+     * @return domain model instance, or null if input is null
+     */
+    public static AgentResponse from(info.jab.cursor.generated.client.model.ListAgents200ResponseAgentsInner generated) {
+        if (generated == null) {
+            return null;
+        }
+        AgentStatus status = AgentStatus.CREATING; // default
+        if (generated.getStatus() != null) {
+            status = mapStatusEnumFromString(generated.getStatus().getValue());
+        }
+        return new AgentResponse(
+            generated.getId(),
+            generated.getName(),
+            status,
+            Source.from(generated.getSource()),
+            Target.from(generated.getTarget()),
+            generated.getCreatedAt()
+        );
+    }
+
+
+    /**
+     * Maps status string to AgentStatus enum.
+     *
+     * @param statusValue the status string value
      * @return corresponding AgentStatus enum, or CREATING if unknown
      */
-    private static AgentStatus mapStatusEnum(info.jab.cursor.generated.client.model.AgentResponse.StatusEnum statusEnum) {
-        if (statusEnum == null) {
+    private static AgentStatus mapStatusEnumFromString(String statusValue) {
+        if (statusValue == null) {
             return AgentStatus.CREATING;
         }
-        return switch (statusEnum) {
-            case CREATING -> AgentStatus.CREATING;
-            case RUNNING -> AgentStatus.RUNNING;
-            case FINISHED -> AgentStatus.FINISHED;
-            case ERROR -> AgentStatus.ERROR;
-            case EXPIRED -> AgentStatus.EXPIRED;
+        return switch (statusValue) {
+            case "CREATING" -> AgentStatus.CREATING;
+            case "RUNNING" -> AgentStatus.RUNNING;
+            case "FINISHED" -> AgentStatus.FINISHED;
+            case "ERROR" -> AgentStatus.ERROR;
+            case "EXPIRED" -> AgentStatus.EXPIRED;
+            default -> AgentStatus.CREATING;
         };
     }
 

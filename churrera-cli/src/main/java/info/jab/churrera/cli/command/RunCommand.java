@@ -76,12 +76,18 @@ public class RunCommand implements Runnable {
     )
     private boolean retrieveRepositories;
 
+    @CommandLine.Option(
+        names = "--polling-interval",
+        description = "Polling interval in seconds (overrides value from application.properties)"
+    )
+    private Integer pollingIntervalOverride;
+
     private final JobRepository jobRepository;
     private final JobProcessor jobProcessor;
     private final WorkflowValidator workflowValidator;
     private final WorkflowParser workflowParser;
     private final PmlValidator pmlValidator;
-    private final int pollingIntervalSeconds;
+    private int pollingIntervalSeconds;
     private final CLIAgent cliAgent;
 
     /**
@@ -97,6 +103,16 @@ public class RunCommand implements Runnable {
         this.pmlValidator = pmlValidator;
         this.pollingIntervalSeconds = pollingIntervalSeconds;
         this.cliAgent = cliAgent;
+    }
+
+    /**
+     * Gets the effective polling interval in seconds.
+     * Returns the command-line option value if provided, otherwise returns the value from application.properties.
+     *
+     * @return the polling interval in seconds
+     */
+    private int getEffectivePollingIntervalSeconds() {
+        return pollingIntervalOverride != null ? pollingIntervalOverride : pollingIntervalSeconds;
     }
 
     @Override
@@ -121,6 +137,14 @@ public class RunCommand implements Runnable {
         }
 
         logger.info("Running workflow file in blocking mode: {}", workflowPath);
+
+        // Log polling interval being used
+        if (pollingIntervalOverride != null) {
+            logger.info("Using polling interval from command-line option: {} seconds (overriding application.properties value: {} seconds)",
+                pollingIntervalOverride, pollingIntervalSeconds);
+        } else {
+            logger.info("Using polling interval from application.properties: {} seconds", pollingIntervalSeconds);
+        }
 
         try {
             // Create the job (reusing logic from NewJobRunCommand)
@@ -218,7 +242,8 @@ public class RunCommand implements Runnable {
 
                 // Sleep for polling interval
                 try {
-                    Thread.sleep(pollingIntervalSeconds * 1000L);
+                    int effectiveInterval = getEffectivePollingIntervalSeconds();
+                    Thread.sleep(effectiveInterval * 1000L);
                 } catch (InterruptedException e) {
                     logger.warn("Polling interrupted: {}", e.getMessage());
                     Thread.currentThread().interrupt();

@@ -56,10 +56,8 @@ class CLIAgentTest {
             "Test Agent",
             status,
             new Source(URI.create("https://github.com/test/repo"), "main"),
-            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
-            null,
-            OffsetDateTime.now(),
-            null
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, false, false),
+            OffsetDateTime.now()
         );
     }
 

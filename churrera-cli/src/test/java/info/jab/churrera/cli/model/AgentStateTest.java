@@ -24,10 +24,8 @@ public class AgentStateTest {
             "Test Agent",
             status,
             new Source(URI.create("https://github.com/test/repo"), "main"),
-            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
-            null,
-            OffsetDateTime.now(),
-            null
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, false, false),
+            OffsetDateTime.now()
         );
     }
 
@@ -108,10 +106,8 @@ public class AgentStateTest {
             "Test Agent",
             null,
             new Source(URI.create("https://github.com/test/repo"), "main"),
-            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
-            null,
-            OffsetDateTime.now(),
-            null
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, false, false),
+            OffsetDateTime.now()
         );
 
         AgentState result = AgentState.of(agent);
@@ -273,10 +269,8 @@ public class AgentStateTest {
             "Test Agent",
             null,
             new Source(URI.create("https://github.com/test/repo"), "main"),
-            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, null, false, false),
-            null,
-            OffsetDateTime.now(),
-            null
+            new Target("cursor/test", URI.create("https://cursor.com/agents?id=test"), false, false, false),
+            OffsetDateTime.now()
         );
 
         AgentState result = AgentState.of(agent);

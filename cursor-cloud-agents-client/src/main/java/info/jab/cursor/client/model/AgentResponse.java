@@ -12,9 +12,7 @@ public record AgentResponse(
     String status,
     Source source,
     Target target,
-    String summary,
-    OffsetDateTime createdAt,
-    OffsetDateTime updatedAt
+    OffsetDateTime createdAt
 ) {
     public AgentResponse {
         Objects.requireNonNull(id, "ID cannot be null");
@@ -49,9 +47,7 @@ public record AgentResponse(
             status,
             Source.from(generated.getSource()),
             Target.from(generated.getTarget()),
-            generated.getSummary(),
-            generated.getCreatedAt(),
-            generated.getUpdatedAt()
+            generated.getCreatedAt()
         );
     }
 }

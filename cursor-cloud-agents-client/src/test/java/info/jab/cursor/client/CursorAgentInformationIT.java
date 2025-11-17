@@ -124,7 +124,6 @@ class CursorAgentInformationIT {
             assertThat(response.source().ref()).isEqualTo("main");
             assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
             assertThat(response.createdAt()).isNotNull();
-            assertThat(response.updatedAt()).isNotNull();
 
             verify(getRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));

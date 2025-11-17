@@ -904,21 +904,11 @@ components:
           $ref: '#/components/schemas/Source'
         target:
           $ref: '#/components/schemas/Target'
-        summary:
-          type: string
-          description: Summary of the agent's task and results
-          maxLength: 1000
-          example: "Added README.md with installation instructions and usage examples"
         createdAt:
           type: string
           format: date-time
           description: Timestamp when the agent was created
           example: "2024-01-15T10:30:00Z"
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp when the agent was last updated
-          example: "2024-01-15T11:45:00Z"
 
     TargetRequest:
       type: object
@@ -961,11 +951,6 @@ components:
           format: uri
           description: URL to access the agent in Cursor
           example: "https://cursor.com/agents?id=bc_abc123"
-        prUrl:
-          type: string
-          format: uri
-          description: URL of the associated pull request
-          example: "https://github.com/your-org/your-repo/pull/1234"
         autoCreatePr:
           type: boolean
           description: Whether a pull request is automatically created

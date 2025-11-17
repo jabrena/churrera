@@ -10,7 +10,6 @@ public record Target(
     String branchName,
     URI url,
     boolean autoCreatePr,
-    URI prUrl,
     boolean openAsCursorGithubApp,
     boolean skipReviewerRequest
 ) {
@@ -33,7 +32,6 @@ public record Target(
             generated.getBranchName(),
             generated.getUrl(),
             generated.getAutoCreatePr() != null ? generated.getAutoCreatePr() : false,
-            generated.getPrUrl(),
             generated.getOpenAsCursorGithubApp() != null ? generated.getOpenAsCursorGithubApp() : false,
             generated.getSkipReviewerRequest() != null ? generated.getSkipReviewerRequest() : false
         );

@@ -71,6 +71,10 @@
         <!-- Quality thresholds -->
         <coverage.level>70</coverage.level>
 
+        <!-- SonarQube properties -->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            $(pwd)/jacoco-report-aggregated/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
         <!-- Surefire argLine property (overridden by JaCoCo when active) -->
         <argLine></argLine>
     </properties>

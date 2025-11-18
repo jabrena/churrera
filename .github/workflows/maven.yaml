@@ -16,7 +16,7 @@ jobs:
           java-version: '25'
       - name: Maven build
         run: ./mvnw --batch-mode --no-transfer-progress \
-          clean test verify site -Pjacoco \
+          clean test verify site -Pjacoco,sonar \
           sonar:sonar
 
       - name: Get Maven project version

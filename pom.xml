@@ -565,6 +565,23 @@
             </build>
         </profile>
 
+        <!-- SonarQube Analysis Profile -->
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>${maven-plugin-sonar.version}</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Cyclomatic Complexity Analysis Profile -->
         <profile>
             <id>cyclomatic-complexity</id>

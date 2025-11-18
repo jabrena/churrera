@@ -1,3 +1,23 @@
+# Git Hooks Setup
+
+This project uses git hooks to validate commit messages against the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) specification.
+
+## Install Git Hooks
+
+Run the installation script to set up the commit message validation hook:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+After installation, all commit messages will be validated. Example valid formats:
+- `feat: add new feature`
+- `fix(parser): resolve parsing bug`
+- `docs: update README`
+- `feat!: breaking change`
+
+---
+
 # Essential Maven Goals:
 
 ```bash

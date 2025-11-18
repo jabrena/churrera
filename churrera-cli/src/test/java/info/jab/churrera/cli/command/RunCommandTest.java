@@ -211,9 +211,10 @@ class RunCommandTest {
         }
 
         // When
-        runCommand.run();
+        Integer exitCode = runCommand.call();
 
         // Then
+        assertEquals(0, exitCode);
         verify(cliAgent).getModels();
         verify(jobRepository, never()).save(any(Job.class));
     }
@@ -235,9 +236,10 @@ class RunCommandTest {
         }
 
         // When
-        runCommand.run();
+        Integer exitCode = runCommand.call();
 
         // Then
+        assertEquals(0, exitCode);
         verify(cliAgent).getRepositories();
         verify(jobRepository, never()).save(any(Job.class));
     }
@@ -258,9 +260,10 @@ class RunCommandTest {
         }
 
         // When
-        runCommand.run();
+        Integer exitCode = runCommand.call();
 
         // Then
+        assertEquals(1, exitCode);
         verify(jobRepository, never()).save(any(Job.class));
     }
 

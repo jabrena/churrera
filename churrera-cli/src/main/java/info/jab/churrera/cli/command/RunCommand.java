@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 /**
  * Command to run a workflow file in a blocking manner with continuous status updates.
@@ -41,7 +42,7 @@ import java.util.UUID;
     mixinStandardHelpOptions = true,
     usageHelpAutoWidth = true
 )
-public class RunCommand implements Runnable {
+public class RunCommand implements Callable<Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(RunCommand.class);
     private static final int JOB_ID_PREFIX_LENGTH = 8;
@@ -116,24 +117,24 @@ public class RunCommand implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Integer call() {
         // Handle --retrieve-models option
         if (retrieveModels) {
             retrieveAndDisplayModels();
-            return;
+            return 0;
         }
 
         // Handle --retrieve-repositories option
         if (retrieveRepositories) {
             retrieveAndDisplayRepositories();
-            return;
+            return 0;
         }
 
         // Validate that if --workflow is used, it must have a value
         if (workflowPath != null && workflowPath.trim().isEmpty()) {
             logger.error("--workflow option was used but no value provided");
             System.err.println("Error: --workflow option requires a value (path to workflow XML file)");
-            return;
+            return 1;
         }
 
         logger.info("Running workflow file in blocking mode: {}", workflowPath);
@@ -152,7 +153,7 @@ public class RunCommand implements Runnable {
             if (jobId == null) {
                 logger.error("Failed to create job");
                 System.err.println("Error: Failed to create job");
-                return;
+                return 1;
             }
 
             logger.info("Job created with ID: {}, starting blocking execution", jobId);
@@ -161,6 +162,9 @@ public class RunCommand implements Runnable {
 
             // Blocking polling loop
             final String finalJobId = jobId; // Make effectively final for lambda
+            AgentState finalStatus = null;
+            boolean interrupted = false;
+            
             while (true) {
                 // Process the job
                 jobProcessor.processJobs();
@@ -189,6 +193,7 @@ public class RunCommand implements Runnable {
                         if (childJobs.isEmpty()) {
                             logger.info("Parent job {} reached terminal state with no child jobs", finalJobId);
                             System.out.println("\nJob completed with status: " + job.status());
+                            finalStatus = job.status();
                             break;
                         }
 
@@ -206,6 +211,22 @@ public class RunCommand implements Runnable {
                             logger.info("Parent job {} and all {} child jobs reached terminal state", finalJobId, childJobs.size());
                             System.out.println("\nJob completed with status: " + job.status());
                             System.out.println("All " + childJobs.size() + " child jobs completed.");
+
+                            // Determine final status: all jobs (parent + children) must be FINISHED for success
+                            boolean allSuccessful = job.status().isSuccessful();
+                            for (Job childJob : childJobs) {
+                                if (!childJob.status().isSuccessful()) {
+                                    allSuccessful = false;
+                                    // If any child failed, use that status as final
+                                    if (finalStatus == null || finalStatus.isSuccessful()) {
+                                        finalStatus = childJob.status();
+                                    }
+                                }
+                            }
+                            // If all successful, use parent status (FINISHED)
+                            if (allSuccessful) {
+                                finalStatus = job.status();
+                            }
 
                             // Delete job and all child jobs if --delete-on-completion is set (regardless of status)
                             if (deleteOnCompletion) {
@@ -227,6 +248,7 @@ public class RunCommand implements Runnable {
                     if (job.status().isTerminal()) {
                         logger.info("Job {} reached terminal state: {}", finalJobId, job.status());
                         System.out.println("\nJob completed with status: " + job.status());
+                        finalStatus = job.status();
 
                         // Delete job if --delete-on-completion is set (regardless of status)
                         if (deleteOnCompletion) {
@@ -247,16 +269,44 @@ public class RunCommand implements Runnable {
                 } catch (InterruptedException e) {
                     logger.warn("Polling interrupted: {}", e.getMessage());
                     Thread.currentThread().interrupt();
+                    interrupted = true;
                     break;
                 }
             }
 
             System.out.println("\nThanks for using Churrera! ✨");
 
+            // Determine exit code based on final status
+            if (interrupted) {
+                logger.warn("Job execution was interrupted by signal");
+                return 1;
+            }
+
+            if (finalStatus == null) {
+                logger.error("Job completed but final status is unknown");
+                return 1;
+            }
+
+            // Return exit code based on final job status
+            if (finalStatus.isSuccessful()) {
+                // FINISHED status
+                logger.info("Job completed successfully with status: {}", finalStatus);
+                return 0;
+            } else if (finalStatus.isFailed()) {
+                // ERROR or EXPIRED status
+                logger.info("Job completed with failure status: {}", finalStatus);
+                return 1;
+            } else {
+                // Should not happen for terminal states, but handle gracefully
+                logger.warn("Job completed with unexpected terminal status: {}", finalStatus);
+                return 1;
+            }
+
         } catch (Exception e) {
             logger.error("Error running workflow: {}", e.getMessage(), e);
             System.err.println("Error running workflow: " + e.getMessage());
             e.printStackTrace();
+            return 1;
         } finally {
             // Cleanup is handled by shutdown hook in ChurreraCLI
         }

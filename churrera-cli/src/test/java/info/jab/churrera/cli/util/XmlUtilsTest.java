@@ -1,5 +1,6 @@
 package info.jab.churrera.cli.util;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,9 +9,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Unit tests for XmlUtils.
  */
+@DisplayName("XmlUtils Tests")
 class XmlUtilsTest {
 
     @Test
+    @DisplayName("Should escape XML special characters")
     void shouldEscapeXmlSpecialCharacters() {
         // Given
         String text = "Hello <world> & \"friends\" 'test'";
@@ -23,6 +26,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should return empty string when text is null")
     void shouldReturnEmptyStringWhenTextIsNull() {
         // When
         String escaped = XmlUtils.escapeXml(null);
@@ -32,6 +36,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should not escape normal text")
     void shouldNotEscapeNormalText() {
         // Given
         String text = "Hello World";
@@ -44,6 +49,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should extract XML value")
     void shouldExtractXmlValue() {
         // Given
         String xml = "<root><name>John</name><age>30</age></root>";
@@ -58,6 +64,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should throw exception when start tag is not found")
     void shouldThrowExceptionWhenStartTagNotFound() {
         // Given
         String xml = "<root><name>John</name></root>";
@@ -69,6 +76,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should throw exception when end tag is not found")
     void shouldThrowExceptionWhenEndTagNotFound() {
         // Given
         String xml = "<root><name>John</root>";
@@ -80,6 +88,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should extract XML value optionally")
     void shouldExtractXmlValueOptional() {
         // Given
         String xml = "<root><name>John</name><age>30</age></root>";
@@ -96,6 +105,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should return null when optional tag is not found")
     void shouldReturnNullWhenOptionalTagNotFound() {
         // Given
         String xml = "<root><name>John</name></root>";
@@ -108,6 +118,7 @@ class XmlUtilsTest {
     }
 
     @Test
+    @DisplayName("Should handle XML with escaped characters")
     void shouldHandleXmlWithEscapedCharacters() {
         // Given
         String xml = "<root><text>Hello &lt;world&gt;</text></root>";

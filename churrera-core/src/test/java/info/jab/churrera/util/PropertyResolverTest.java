@@ -4,15 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Test class for PropertyResolver utility.
  */
 @DisplayName("PropertyResolver Tests")
-public class PropertyResolverTest {
+class PropertyResolverTest {
 
     @Nested
     @DisplayName("getProperty Tests")
@@ -20,7 +21,7 @@ public class PropertyResolverTest {
 
         @Test
         @DisplayName("Should get string property")
-        public void shouldGetStringProperty() {
+        void shouldGetStringProperty() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -29,14 +30,13 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("application.properties", "model");
 
             // Then
-            assertTrue(modelProperty.isPresent());
-            assertNotNull(modelProperty.get());
-            assertFalse(modelProperty.get().isEmpty());
+            assertThat(modelProperty).isPresent();
+            assertThat(modelProperty.get()).isNotNull().isNotEmpty();
         }
 
         @Test
         @DisplayName("Should get numeric property as string")
-        public void shouldGetNumericPropertyAsString() {
+        void shouldGetNumericPropertyAsString() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -45,14 +45,14 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("application.properties", "delay");
 
             // Then
-            assertTrue(delayProperty.isPresent());
-            assertNotNull(delayProperty.get());
-            assertDoesNotThrow(() -> Integer.parseInt(delayProperty.get()));
+            assertThat(delayProperty).isPresent();
+            assertThat(delayProperty.get()).isNotNull();
+            assertThatCode(() -> Integer.parseInt(delayProperty.get())).doesNotThrowAnyException();
         }
 
         @Test
         @DisplayName("Should return empty Optional for non-existent property")
-        public void shouldReturnEmptyOptionalForNonExistentProperty() {
+        void shouldReturnEmptyOptionalForNonExistentProperty() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -61,12 +61,12 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("application.properties", "nonExistent");
 
             // Then
-            assertFalse(nonExistentProperty.isPresent());
+            assertThat(nonExistentProperty).isEmpty();
         }
 
         @Test
         @DisplayName("Should return empty Optional for null resource path")
-        public void shouldReturnEmptyOptionalForNullResourcePath() {
+        void shouldReturnEmptyOptionalForNullResourcePath() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -75,12 +75,12 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty(null, "model");
 
             // Then
-            assertFalse(result.isPresent());
+            assertThat(result).isEmpty();
         }
 
         @Test
         @DisplayName("Should return empty Optional for null key")
-        public void shouldReturnEmptyOptionalForNullKey() {
+        void shouldReturnEmptyOptionalForNullKey() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -89,12 +89,12 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("application.properties", null);
 
             // Then
-            assertFalse(result.isPresent());
+            assertThat(result).isEmpty();
         }
 
         @Test
         @DisplayName("Should return empty Optional for empty resource path")
-        public void shouldReturnEmptyOptionalForEmptyResourcePath() {
+        void shouldReturnEmptyOptionalForEmptyResourcePath() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -103,12 +103,12 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("", "model");
 
             // Then
-            assertFalse(result.isPresent());
+            assertThat(result).isEmpty();
         }
 
         @Test
         @DisplayName("Should return empty Optional for empty key")
-        public void shouldReturnEmptyOptionalForEmptyKey() {
+        void shouldReturnEmptyOptionalForEmptyKey() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -117,12 +117,12 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("application.properties", "");
 
             // Then
-            assertFalse(result.isPresent());
+            assertThat(result).isEmpty();
         }
 
         @Test
         @DisplayName("Should return empty Optional for non-existent resource")
-        public void shouldReturnEmptyOptionalForNonExistentResource() {
+        void shouldReturnEmptyOptionalForNonExistentResource() {
             // Given
             PropertyResolver propertyResolver = new PropertyResolver();
 
@@ -131,7 +131,7 @@ public class PropertyResolverTest {
                 propertyResolver.getProperty("non-existent.properties", "key");
 
             // Then
-            assertFalse(result.isPresent());
+            assertThat(result).isEmpty();
         }
     }
 }

@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for WorkflowValidator.
@@ -52,7 +52,7 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = workflowValidator.validate(testWorkflowFile);
 
         // Then
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         // Note: This test might fail if the XSD schema is not found or doesn't match
         // In a real scenario, you would need to ensure the schema is available
     }
@@ -75,7 +75,7 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = workflowValidator.validate(testWorkflowFile.toPath());
 
         // Then
-        assertNotNull(result);
+        assertThat(result).isNotNull();
     }
 
     @Test
@@ -88,9 +88,9 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = workflowValidator.validate(testWorkflowFile);
 
         // Then
-        assertNotNull(result);
-        assertFalse(result.isValid());
-        assertFalse(result.getErrors().isEmpty());
+        assertThat(result).isNotNull();
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).isNotEmpty();
     }
 
     @Test
@@ -102,9 +102,9 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = workflowValidator.validate(nonExistentFile);
 
         // Then
-        assertNotNull(result);
-        assertFalse(result.isValid());
-        assertFalse(result.getErrors().isEmpty());
+        assertThat(result).isNotNull();
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).isNotEmpty();
     }
 
     @Test
@@ -116,9 +116,9 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = workflowValidator.validate(nonExistentPath);
 
         // Then
-        assertNotNull(result);
-        assertFalse(result.isValid());
-        assertFalse(result.getErrors().isEmpty());
+        assertThat(result).isNotNull();
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).isNotEmpty();
     }
 
     @Test
@@ -128,9 +128,9 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = new WorkflowValidator.ValidationResult(true, errors);
 
         // When & Then
-        assertTrue(result.isValid());
-        assertTrue(result.getErrors().isEmpty());
-        assertEquals("No validation errors.", result.getFormattedErrors());
+        assertThat(result.isValid()).isTrue();
+        assertThat(result.getErrors()).isEmpty();
+        assertThat(result.getFormattedErrors()).isEqualTo("No validation errors.");
     }
 
     @Test
@@ -140,17 +140,17 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = new WorkflowValidator.ValidationResult(false, errors);
 
         // When & Then
-        assertFalse(result.isValid());
-        assertEquals(3, result.getErrors().size());
-        assertEquals("Error 1", result.getErrors().get(0));
-        assertEquals("Error 2", result.getErrors().get(1));
-        assertEquals("Error 3", result.getErrors().get(2));
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).hasSize(3);
+        assertThat(result.getErrors().get(0)).isEqualTo("Error 1");
+        assertThat(result.getErrors().get(1)).isEqualTo("Error 2");
+        assertThat(result.getErrors().get(2)).isEqualTo("Error 3");
 
         String formattedErrors = result.getFormattedErrors();
-        assertTrue(formattedErrors.contains("Validation errors:"));
-        assertTrue(formattedErrors.contains("1. Error 1"));
-        assertTrue(formattedErrors.contains("2. Error 2"));
-        assertTrue(formattedErrors.contains("3. Error 3"));
+        assertThat(formattedErrors).contains("Validation errors:");
+        assertThat(formattedErrors).contains("1. Error 1");
+        assertThat(formattedErrors).contains("2. Error 2");
+        assertThat(formattedErrors).contains("3. Error 3");
     }
 
     @Test
@@ -160,9 +160,9 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = new WorkflowValidator.ValidationResult(false, errors);
 
         // When & Then
-        assertFalse(result.isValid());
-        assertTrue(result.getErrors().isEmpty());
-        assertEquals("No validation errors.", result.getFormattedErrors());
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).isEmpty();
+        assertThat(result.getFormattedErrors()).isEqualTo("No validation errors.");
     }
 
     @Test
@@ -176,9 +176,9 @@ class WorkflowValidatorTest {
         returnedErrors.add("Error 3");
 
         // Then
-        assertEquals(2, result.getErrors().size());
-        assertEquals("Error 1", result.getErrors().get(0));
-        assertEquals("Error 2", result.getErrors().get(1));
+        assertThat(result.getErrors()).hasSize(2);
+        assertThat(result.getErrors().get(0)).isEqualTo("Error 1");
+        assertThat(result.getErrors().get(1)).isEqualTo("Error 2");
     }
 
     @Test
@@ -188,13 +188,13 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = new WorkflowValidator.ValidationResult(false, errors);
 
         // When & Then
-        assertFalse(result.isValid());
-        assertEquals(1, result.getErrors().size());
-        assertEquals("Single error message", result.getErrors().get(0));
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors().get(0)).isEqualTo("Single error message");
 
         String formattedErrors = result.getFormattedErrors();
-        assertTrue(formattedErrors.contains("Validation errors:"));
-        assertTrue(formattedErrors.contains("1. Single error message"));
+        assertThat(formattedErrors).contains("Validation errors:");
+        assertThat(formattedErrors).contains("1. Single error message");
     }
 
     @Test
@@ -207,13 +207,13 @@ class WorkflowValidatorTest {
         WorkflowValidator.ValidationResult result = new WorkflowValidator.ValidationResult(false, errors);
 
         // When & Then
-        assertFalse(result.isValid());
-        assertEquals(10, result.getErrors().size());
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getErrors()).hasSize(10);
 
         String formattedErrors = result.getFormattedErrors();
-        assertTrue(formattedErrors.contains("Validation errors:"));
-        assertTrue(formattedErrors.contains("1. Error 1"));
-        assertTrue(formattedErrors.contains("10. Error 10"));
+        assertThat(formattedErrors).contains("Validation errors:");
+        assertThat(formattedErrors).contains("1. Error 1");
+        assertThat(formattedErrors).contains("10. Error 10");
     }
 
     @Test
@@ -226,7 +226,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -240,7 +240,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -253,9 +253,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertEquals(1, errors.size());
-        assertTrue(errors.get(0).contains("fallback-src is specified but timeout is not"));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).contains("fallback-src is specified but timeout is not");
     }
 
     @Test
@@ -273,7 +273,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -287,8 +287,8 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(e -> e.contains("Fallback file not found")));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -302,8 +302,8 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(e -> e.contains("must have extension .xml, .md, or .txt")));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(e -> e.contains("must have extension .xml, .md, or .txt"));
     }
 
     @Test
@@ -321,7 +321,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -339,7 +339,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -357,7 +357,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -371,7 +371,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -385,7 +385,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -401,8 +401,8 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(e -> e.contains("Sequence fallback-src is specified but timeout is not")));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(e -> e.contains("Sequence fallback-src is specified but timeout is not"));
     }
 
     @Test
@@ -423,7 +423,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -440,8 +440,8 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(e -> e.contains("Fallback file not found")));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -467,8 +467,8 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(e -> e.contains("Fallback file not found")));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -477,7 +477,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, null);
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -486,7 +486,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -495,7 +495,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "   ");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -509,7 +509,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.xml");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -523,7 +523,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.md");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -537,7 +537,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.txt");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -551,7 +551,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.XML");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -560,9 +560,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.exe");
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertEquals(1, errors.size());
-        assertTrue(errors.get(0).contains("must have extension .xml, .md, or .txt"));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).contains("must have extension .xml, .md, or .txt");
     }
 
     @Test
@@ -571,9 +571,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "nonexistent.xml");
 
         // Then
-        assertFalse(errors.isEmpty());
-        assertEquals(1, errors.size());
-        assertTrue(errors.get(0).contains("Fallback file not found"));
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).contains("Fallback file not found");
     }
 
     @Test
@@ -591,7 +591,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "subdir/fallback.xml");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Test
@@ -609,7 +609,7 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(rootWorkflowFile, "fallback.xml");
 
         // Then
-        assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 }
 

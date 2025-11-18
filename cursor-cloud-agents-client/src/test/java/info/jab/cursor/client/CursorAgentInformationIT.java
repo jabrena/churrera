@@ -125,7 +125,6 @@ class CursorAgentInformationIT {
             assertThat(response).isNotNull();
             assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
             assertThat(response.name()).isEqualTo("Add installation instructions to readme");
-            //assertThat(response.status()).isEqualTo("COMPLETED");
             assertThat(response.source().repository().toString()).isEqualTo("https://github.com/jabrena/churrera");
             assertThat(response.source().ref()).isEqualTo("main");
             assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");

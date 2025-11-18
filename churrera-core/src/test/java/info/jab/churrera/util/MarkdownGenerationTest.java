@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class for generating markdown output files in the target directory for local debugging.
@@ -60,15 +60,16 @@ class MarkdownGenerationTest {
             Files.write(outputPath, markdownContent.getBytes(StandardCharsets.UTF_8));
 
             // Then
-            assertTrue(Files.exists(outputPath), "Markdown file should be created");
-            assertTrue(Files.size(outputPath) > 0, "Markdown file should not be empty");
+            assertThat(Files.exists(outputPath)).isTrue();
+            assertThat(Files.size(outputPath)).isGreaterThan(0);
 
             // Verify content structure
             String content = Files.readString(outputPath, StandardCharsets.UTF_8);
-            assertTrue(content.contains("## Role"), "Generated markdown should contain Role section");
-            assertTrue(content.contains("## Goal"), "Generated markdown should contain Goal section");
-            assertTrue(content.contains("## Output Format"), "Generated markdown should contain Output Format section");
-            assertTrue(content.contains("## Safeguards"), "Generated markdown should contain Safeguards section");
+            assertThat(content)
+                .contains("## Role")
+                .contains("## Goal")
+                .contains("## Output Format")
+                .contains("## Safeguards");
         }
 
         @Test
@@ -84,22 +85,19 @@ class MarkdownGenerationTest {
             Files.write(outputPath, markdownContent.getBytes(StandardCharsets.UTF_8));
 
             // Then
-            assertTrue(Files.exists(outputPath), "Markdown file should be created");
-            assertTrue(Files.size(outputPath) > 0, "Markdown file should not be empty");
+            assertThat(Files.exists(outputPath)).isTrue();
+            assertThat(Files.size(outputPath)).isGreaterThan(0);
 
             // Verify content structure and basic formatting
             String content = Files.readString(outputPath, StandardCharsets.UTF_8);
-            assertNotNull(content, "Generated markdown content should not be null");
-            assertTrue(content.length() > 50, "Generated markdown should have substantial content");
-
-            // Verify required sections exist
-            assertTrue(content.contains("## Role"), "Generated markdown should contain Role section");
-            assertTrue(content.contains("## Goal"), "Generated markdown should contain Goal section");
-            assertTrue(content.contains("## Safeguards"), "Generated markdown should contain Safeguards section");
-
-            // Verify basic markdown structure
-            assertTrue(content.contains("# "), "Generated markdown should contain a title (H1 header)");
-            assertTrue(content.contains("## "), "Generated markdown should contain section headers (H2 headers)");
+            assertThat(content)
+                .isNotNull()
+                .hasSizeGreaterThan(50)
+                .contains("## Role")
+                .contains("## Goal")
+                .contains("## Safeguards")
+                .contains("# ")
+                .contains("## ");
         }
 
 
@@ -113,9 +111,9 @@ class MarkdownGenerationTest {
         @DisplayName("Should create proper directory structure in target")
         void shouldCreateProperDirectoryStructureInTarget() {
             // When & Then
-            assertTrue(Files.exists(targetDir), "Target directory should exist");
-            assertTrue(Files.exists(markdownOutputDir), "Markdown output directory should exist");
-            assertTrue(Files.isDirectory(markdownOutputDir), "Markdown output should be a directory");
+            assertThat(Files.exists(targetDir)).isTrue();
+            assertThat(Files.exists(markdownOutputDir)).isTrue();
+            assertThat(Files.isDirectory(markdownOutputDir)).isTrue();
         }
 
     }

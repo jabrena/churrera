@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test class for validating XML files against XSD schemas and ensuring they are well-formed.
@@ -55,8 +57,8 @@ class XmlValidationTest {
             String xmlContent = resolver.retrieve("examples/hello-world/prompt1.xml");
 
             // When & Then
-            assertDoesNotThrow(() -> parseXml(xmlContent),
-                "prompt1.xml should be well-formed XML");
+            assertThatCode(() -> parseXml(xmlContent))
+                .doesNotThrowAnyException();
         }
 
         @Test
@@ -66,8 +68,8 @@ class XmlValidationTest {
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertDoesNotThrow(() -> parseXml(xmlContent),
-                "pml-to-md.xsl should be well-formed XML");
+            assertThatCode(() -> parseXml(xmlContent))
+                .doesNotThrowAnyException();
         }
 
         @Test
@@ -81,8 +83,8 @@ class XmlValidationTest {
                     "    <goal>Test goal\n";
 
             // When & Then
-            assertThrows(Exception.class, () -> parseXml(malformedXml),
-                "Malformed XML should throw an exception");
+            assertThatThrownBy(() -> parseXml(malformedXml))
+                .isInstanceOf(Exception.class);
         }
     }
 
@@ -98,8 +100,8 @@ class XmlValidationTest {
             String schemaUrl = "https://jabrena.github.io/pml/schemas/0.1.0/pml.xsd";
 
             // When & Then
-            assertDoesNotThrow(() -> validateAgainstSchema(xmlContent, schemaUrl),
-                "prompt1.xml should be valid against PML XSD schema");
+            assertThatCode(() -> validateAgainstSchema(xmlContent, schemaUrl))
+                .doesNotThrowAnyException();
         }
 
         @Test
@@ -110,8 +112,8 @@ class XmlValidationTest {
             String schemaUrl = "http://www.w3.org/1999/XSL/Transform";
 
             // When & Then
-            assertDoesNotThrow(() -> validateXslFile(xmlContent),
-                "pml-to-md.xsl should be valid XSLT");
+            assertThatCode(() -> validateXslFile(xmlContent))
+                .doesNotThrowAnyException();
         }
 
         @Test
@@ -126,8 +128,8 @@ class XmlValidationTest {
             String schemaUrl = "https://jabrena.github.io/pml/schemas/0.1.0/pml.xsd";
 
             // When & Then
-            assertThrows(SAXException.class, () -> validateAgainstSchema(invalidXml, schemaUrl),
-                "Invalid XML structure should be detected by schema validation");
+            assertThatThrownBy(() -> validateAgainstSchema(invalidXml, schemaUrl))
+                .isInstanceOf(SAXException.class);
         }
     }
 
@@ -143,14 +145,14 @@ class XmlValidationTest {
             Document document = parseXml(xmlContent);
 
             // When & Then
-            assertNotNull(document.getElementsByTagName("role").item(0),
-                "prompt1.xml should contain a role element");
-            assertNotNull(document.getElementsByTagName("goal").item(0),
-                "prompt1.xml should contain a goal element");
-            assertNotNull(document.getElementsByTagName("output-format").item(0),
-                "prompt1.xml should contain an output-format element");
-            assertNotNull(document.getElementsByTagName("safeguards").item(0),
-                "prompt1.xml should contain a safeguards element");
+            assertThat(document.getElementsByTagName("role").item(0))
+                .isNotNull();
+            assertThat(document.getElementsByTagName("goal").item(0))
+                .isNotNull();
+            assertThat(document.getElementsByTagName("output-format").item(0))
+                .isNotNull();
+            assertThat(document.getElementsByTagName("safeguards").item(0))
+                .isNotNull();
         }
 
         @Test
@@ -161,10 +163,10 @@ class XmlValidationTest {
             Document document = parseXml(xmlContent);
 
             // When & Then
-            assertNotNull(document.getElementsByTagName("xsl:stylesheet").item(0),
-                "XSL file should contain xsl:stylesheet element");
-            assertNotNull(document.getElementsByTagName("xsl:template").item(0),
-                "XSL file should contain xsl:template elements");
+            assertThat(document.getElementsByTagName("xsl:stylesheet").item(0))
+                .isNotNull();
+            assertThat(document.getElementsByTagName("xsl:template").item(0))
+                .isNotNull();
         }
     }
 
@@ -180,10 +182,9 @@ class XmlValidationTest {
             Document document = parseXml(xmlContent);
 
             // When & Then
-            assertTrue(xmlContent.contains("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""),
-                "prompt1.xml should declare xsi namespace");
-            assertTrue(xmlContent.contains("xsi:noNamespaceSchemaLocation=\"https://jabrena.github.io/pml/schemas/0.2.0/pml.xsd\""),
-                "prompt1.xml should reference PML schema");
+            assertThat(xmlContent)
+                .contains("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+                .contains("xsi:noNamespaceSchemaLocation=\"https://jabrena.github.io/pml/schemas/0.2.0/pml.xsd\"");
         }
 
         @Test
@@ -193,10 +194,9 @@ class XmlValidationTest {
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertTrue(xmlContent.contains("xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\""),
-                "XSL file should declare xsl namespace");
-            assertTrue(xmlContent.contains("xmlns:xi=\"http://www.w3.org/2001/XInclude\""),
-                "XSL file should declare xi namespace for XInclude");
+            assertThat(xmlContent)
+                .contains("xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"")
+                .contains("xmlns:xi=\"http://www.w3.org/2001/XInclude\"");
         }
     }
 

@@ -68,10 +68,13 @@ class CursorAgentGeneralEndpointsIT {
             ApiKeyInfo response = cursorAgentGeneralEndpoints.getApiKeyInfo();
 
             // Then
-            assertThat(response).isNotNull();
-            assertThat(response.apiKeyName()).isEqualTo("API_KEY_TOKEN_V2");
-            assertThat(response.userEmail()).isEqualTo("bren@juanantonio.info");
-            assertThat(response.createdAt()).isNotNull();
+            assertThat(response)
+                .isNotNull()
+                .satisfies(apiKeyInfo -> {
+                    assertThat(apiKeyInfo.apiKeyName()).isEqualTo("API_KEY_TOKEN_V2");
+                    assertThat(apiKeyInfo.userEmail()).isEqualTo("bren@juanantonio.info");
+                    assertThat(apiKeyInfo.createdAt()).isNotNull();
+                });
 
             verify(getRequestedFor(urlEqualTo("/v0/me"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -89,7 +92,8 @@ class CursorAgentGeneralEndpointsIT {
 
             // When & Then
             assertThatThrownBy(() -> cursorAgentGeneralEndpoints.getApiKeyInfo())
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Failed to get API key info");
 
             verify(getRequestedFor(urlEqualTo("/v0/me")));
         }
@@ -113,15 +117,16 @@ class CursorAgentGeneralEndpointsIT {
             List<String> response = cursorAgentGeneralEndpoints.getModels();
 
             // Then
-            assertThat(response).isNotNull();
-            assertThat(response).hasSize(5);
-            assertThat(response).containsExactly(
-                "claude-4.5-sonnet-thinking",
-                "default",
-                "gpt-5",
-                "gpt-5-high",
-                "code-supernova-1-million"
-            );
+            assertThat(response)
+                .isNotNull()
+                .hasSize(5)
+                .containsExactly(
+                    "claude-4.5-sonnet-thinking",
+                    "default",
+                    "gpt-5",
+                    "gpt-5-high",
+                    "code-supernova-1-million"
+                );
 
             verify(getRequestedFor(urlEqualTo("/v0/models"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -139,7 +144,8 @@ class CursorAgentGeneralEndpointsIT {
 
             // When & Then
             assertThatThrownBy(() -> cursorAgentGeneralEndpoints.getModels())
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Failed to get models");
 
             verify(getRequestedFor(urlEqualTo("/v0/models")));
         }
@@ -163,15 +169,14 @@ class CursorAgentGeneralEndpointsIT {
             List<String> response = cursorAgentGeneralEndpoints.getRepositories();
 
             // Then
-            assertThat(response).isNotNull();
-            assertThat(response).hasSize(18);
+            assertThat(response)
+                .isNotNull()
+                .hasSize(18)
+                .contains("https://github.com/jabrena/churrera");
 
             // Verify the first repository URL
             assertThat(response.get(0))
                 .isEqualTo("https://github.com/jabrena/101-cursor");
-
-            // Verify churrera repository is in the list
-            assertThat(response).contains("https://github.com/jabrena/churrera");
 
             verify(getRequestedFor(urlEqualTo("/v0/repositories"))
                 .withHeader("Authorization", equalTo("Bearer " + TEST_API_KEY)));
@@ -189,7 +194,8 @@ class CursorAgentGeneralEndpointsIT {
 
             // When & Then
             assertThatThrownBy(() -> cursorAgentGeneralEndpoints.getRepositories())
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Failed to get repositories");
 
             verify(getRequestedFor(urlEqualTo("/v0/repositories")));
         }

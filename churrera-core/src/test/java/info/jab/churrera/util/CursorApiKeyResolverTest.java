@@ -3,6 +3,7 @@ package info.jab.churrera.util;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -12,12 +13,14 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test class for CursorApiKeyResolver utility.
  */
-public class CursorApiKeyResolverTest {
+@DisplayName("CursorApiKeyResolver Tests")
+class CursorApiKeyResolverTest {
 
     private String originalApiKey;
     private String originalWorkingDir;
@@ -26,7 +29,7 @@ public class CursorApiKeyResolverTest {
     Path tempDir;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         // Save original environment variable
         originalApiKey = System.getenv(CursorApiKeyResolver.CURSOR_API_KEY);
 
@@ -38,7 +41,7 @@ public class CursorApiKeyResolverTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         // Restore original environment variable
         if (originalApiKey != null) {
             setEnvironmentVariable(originalApiKey);
@@ -51,7 +54,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyFromSystemEnvironment() {
+    @DisplayName("Should throw exception when API key is not found")
+    void shouldThrowExceptionWhenApiKeyIsNotFound() {
         // Note: This test may not work in all environments due to environment variable limitations
         // In a real CI/CD environment, you would set the environment variable externally
         // For now, we'll test the error case when no API key is found
@@ -59,16 +63,16 @@ public class CursorApiKeyResolverTest {
 
         // Test that exception is thrown when no API key is found
         CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            resolver::resolveApiKey
-        );
-
-        assertTrue(exception.getMessage().contains("API key not found"));
+        
+        // When & Then
+        assertThatThrownBy(resolver::resolveApiKey)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("API key not found");
     }
 
     @Test
-    public void testResolveApiKeyFromEnvFile() throws IOException {
+    @DisplayName("Should resolve API key from .env file")
+    void shouldResolveApiKeyFromEnvFile() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -81,8 +85,12 @@ public class CursorApiKeyResolverTest {
 
             // Test resolution
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals("env-file-key-789", result);
+            
+            // Then
+            assertThat(result).isEqualTo("env-file-key-789");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -92,7 +100,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyFromEnvFileWithWhitespace() throws IOException {
+    @DisplayName("Should trim whitespace from API key in .env file")
+    void shouldTrimWhitespaceFromApiKeyInEnvFile() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -105,8 +114,12 @@ public class CursorApiKeyResolverTest {
 
             // Test resolution - should trim whitespace
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals("env-file-key-whitespace", result);
+            
+            // Then
+            assertThat(result).isEqualTo("env-file-key-whitespace");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -116,7 +129,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyPriorityEnvFileOverSystemEnvironment() throws IOException {
+    @DisplayName("Should prioritize .env file over system environment")
+    void shouldPrioritizeEnvFileOverSystemEnvironment() throws IOException {
         // Test that .env file takes priority over system environment
         // Note: This test focuses on .env file functionality since environment variable
         // manipulation in tests is complex and environment-dependent
@@ -133,8 +147,12 @@ public class CursorApiKeyResolverTest {
 
             // Test resolution - .env file should be used
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals("env-file-key", result);
+            
+            // Then
+            assertThat(result).isEqualTo("env-file-key");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -144,40 +162,41 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyThrowsExceptionWhenNotFound() {
+    @DisplayName("Should throw exception when API key is not found")
+    void shouldThrowExceptionWhenApiKeyIsNotFoundInAnySource() {
         // Ensure no API key is set
         clearEnvironmentVariable();
 
         // Test that exception is thrown
         CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            resolver::resolveApiKey
-        );
-
-        assertTrue(exception.getMessage().contains("API key not found"));
-        assertTrue(exception.getMessage().contains(".env file"));
-        assertTrue(exception.getMessage().contains("Environment variable"));
+        
+        // When & Then
+        assertThatThrownBy(resolver::resolveApiKey)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("API key not found")
+            .hasMessageContaining(".env file")
+            .hasMessageContaining("Environment variable");
     }
 
     @Test
-    public void testResolveApiKeyThrowsExceptionWhenEmptyInSystemEnvironment() {
+    @DisplayName("Should throw exception when API key is empty in system environment")
+    void shouldThrowExceptionWhenApiKeyIsEmptyInSystemEnvironment() {
         // Test that empty environment variable causes exception
         // Note: This test may not work in all environments due to environment variable limitations
         clearEnvironmentVariable();
 
         // Test that exception is thrown
         CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            resolver::resolveApiKey
-        );
-
-        assertTrue(exception.getMessage().contains("API key not found"));
+        
+        // When & Then
+        assertThatThrownBy(resolver::resolveApiKey)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("API key not found");
     }
 
     @Test
-    public void testResolveApiKeyThrowsExceptionWhenEmptyInEnvFile() throws IOException {
+    @DisplayName("Should throw exception when API key is empty in .env file")
+    void shouldThrowExceptionWhenApiKeyIsEmptyInEnvFile() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -190,12 +209,11 @@ public class CursorApiKeyResolverTest {
 
             // Test that exception is thrown
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                resolver::resolveApiKey
-            );
-
-            assertTrue(exception.getMessage().contains("API key not found"));
+            
+            // When & Then
+            assertThatThrownBy(resolver::resolveApiKey)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("API key not found");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -205,7 +223,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyThrowsExceptionWhenWhitespaceOnlyInEnvFile() throws IOException {
+    @DisplayName("Should throw exception when API key is whitespace-only in .env file")
+    void shouldThrowExceptionWhenApiKeyIsWhitespaceOnlyInEnvFile() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -218,12 +237,11 @@ public class CursorApiKeyResolverTest {
 
             // Test that exception is thrown
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                resolver::resolveApiKey
-            );
-
-            assertTrue(exception.getMessage().contains("API key not found"));
+            
+            // When & Then
+            assertThatThrownBy(resolver::resolveApiKey)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("API key not found");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -233,7 +251,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyWithMalformedEnvFile() throws IOException {
+    @DisplayName("Should throw exception when .env file is malformed")
+    void shouldThrowExceptionWhenEnvFileIsMalformed() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -246,12 +265,11 @@ public class CursorApiKeyResolverTest {
 
             // Test resolution - should throw exception since no valid API key is found
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                resolver::resolveApiKey
-            );
-
-            assertTrue(exception.getMessage().contains("API key not found"));
+            
+            // When & Then
+            assertThatThrownBy(resolver::resolveApiKey)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("API key not found");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -261,19 +279,20 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyWithMissingEnvFile() {
+    @DisplayName("Should throw exception when .env file is missing")
+    void shouldThrowExceptionWhenEnvFileIsMissing() {
         // Test resolution when no .env file exists - should throw exception since no API key is found
         CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            resolver::resolveApiKey
-        );
-
-        assertTrue(exception.getMessage().contains("API key not found"));
+        
+        // When & Then
+        assertThatThrownBy(resolver::resolveApiKey)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("API key not found");
     }
 
     @Test
-    public void testResolveApiKeyWithEnvFileMissingKey() throws IOException {
+    @DisplayName("Should throw exception when .env file exists but missing CURSOR_API_KEY")
+    void shouldThrowExceptionWhenEnvFileExistsButMissingKey() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -286,12 +305,11 @@ public class CursorApiKeyResolverTest {
 
             // Test resolution - should throw exception since no API key is found
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                resolver::resolveApiKey
-            );
-
-            assertTrue(exception.getMessage().contains("API key not found"));
+            
+            // When & Then
+            assertThatThrownBy(resolver::resolveApiKey)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("API key not found");
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -301,19 +319,25 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testCursorApiKeyConstant() {
-        assertEquals("CURSOR_API_KEY", CursorApiKeyResolver.CURSOR_API_KEY);
+    @DisplayName("Should have correct CURSOR_API_KEY constant")
+    void shouldHaveCorrectCursorApiKeyConstant() {
+        // Then
+        assertThat(CursorApiKeyResolver.CURSOR_API_KEY).isEqualTo("CURSOR_API_KEY");
     }
 
     @Test
-    public void testClassCanBeInstantiated() {
-        // Test that class can be instantiated
+    @DisplayName("Should be able to instantiate CursorApiKeyResolver")
+    void shouldBeAbleToInstantiateCursorApiKeyResolver() {
+        // When
         CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        assertNotNull(resolver);
+        
+        // Then
+        assertThat(resolver).isNotNull();
     }
 
     @Test
-    public void testResolveApiKeyWithSpecialCharacters() throws IOException {
+    @DisplayName("Should resolve API key with special characters from .env file")
+    void shouldResolveApiKeyWithSpecialCharacters() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -327,8 +351,12 @@ public class CursorApiKeyResolverTest {
             }
 
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals(testApiKey, result);
+            
+            // Then
+            assertThat(result).isEqualTo(testApiKey);
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -338,7 +366,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyWithLongKey() throws IOException {
+    @DisplayName("Should resolve very long API key from .env file")
+    void shouldResolveVeryLongApiKey() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -351,8 +380,12 @@ public class CursorApiKeyResolverTest {
             }
 
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals(testApiKey, result);
+            
+            // Then
+            assertThat(result).isEqualTo(testApiKey);
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {
@@ -362,7 +395,8 @@ public class CursorApiKeyResolverTest {
     }
 
     @Test
-    public void testResolveApiKeyWithUnicodeCharacters() throws IOException {
+    @DisplayName("Should resolve API key with Unicode characters from .env file")
+    void shouldResolveApiKeyWithUnicodeCharacters() throws IOException {
         // Create .env file in the current working directory (project root)
         File projectRoot = new File(System.getProperty("user.dir"));
         File envFile = new File(projectRoot, ".env");
@@ -375,8 +409,12 @@ public class CursorApiKeyResolverTest {
             }
 
             CursorApiKeyResolver resolver = new CursorApiKeyResolver();
+            
+            // When
             String result = resolver.resolveApiKey();
-            assertEquals(testApiKey, result);
+            
+            // Then
+            assertThat(result).isEqualTo(testApiKey);
         } finally {
             // Clean up the .env file
             if (envFile.exists()) {

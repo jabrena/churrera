@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -218,7 +218,8 @@ class PromptProcessorTest {
         doThrow(new RuntimeException("Update failed")).when(cliAgent).updatePromptInDatabase(any(), anyString());
 
         // When - Should not throw
-        assertDoesNotThrow(() -> promptProcessor.processPrompt(testJob, testPrompt, new PromptInfo("prompt1.pml", "pml")));
+        assertThatCode(() -> promptProcessor.processPrompt(testJob, testPrompt, new PromptInfo("prompt1.pml", "pml")))
+            .doesNotThrowAnyException();
     }
 }
 

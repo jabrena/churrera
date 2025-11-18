@@ -101,11 +101,8 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-launch-400-model-validation-error.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.launch(prompt, model, repository, true));
-
-            // Then
-            assertThat(thrown)
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.launch(prompt, model, repository, true))
                 .isInstanceOf(RuntimeException.class)
                 .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
@@ -126,11 +123,8 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-launch-400-repository-validation-error.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.launch(prompt, model, repository, true));
-
-            // Then
-            assertThat(thrown)
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.launch(prompt, model, repository, true))
                 .isInstanceOf(RuntimeException.class)
                 .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
@@ -151,11 +145,8 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-launch-401-unauthorized.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.launch(prompt, model, repository, true));
-
-            // Then
-            assertThat(thrown)
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.launch(prompt, model, repository, true))
                 .isInstanceOf(RuntimeException.class)
                 .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
@@ -202,13 +193,10 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-followup-401-unauthorized.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.followUp(TEST_AGENT_ID, prompt));
-
-            // Then
-            assertThat(thrown)
-                    .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.followUp(TEST_AGENT_ID, prompt))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + TEST_AGENT_ID + "/followup")));
         }
@@ -226,13 +214,10 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-followup-404-not-found.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.followUp(nonExistentAgentId, prompt));
-
-            // Then
-            assertThat(thrown)
-                    .isInstanceOf(RuntimeException.class)
-                    .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.followUp(nonExistentAgentId, prompt))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class);
 
             verify(postRequestedFor(urlEqualTo("/v0/agents/" + nonExistentAgentId + "/followup")));
         }
@@ -273,11 +258,8 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-delete-401-unauthorized.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.delete(TEST_AGENT_ID));
-
-            // Then
-            assertThat(thrown)
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.delete(TEST_AGENT_ID))
                 .isInstanceOf(RuntimeException.class)
                 .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");
@@ -297,11 +279,8 @@ class CursorAgentManagementIT {
                     .withHeader("Content-Type", "application/json")
                     .withBodyFile("cursor-agent-management/agent-delete-404-not-found.json")));
 
-            // When
-            Throwable thrown = catchThrowable(() -> cursorAgentManagement.delete(nonExistentAgentId));
-
-            // Then
-            assertThat(thrown)
+            // When & Then
+            assertThatThrownBy(() -> cursorAgentManagement.delete(nonExistentAgentId))
                 .isInstanceOf(RuntimeException.class)
                 .hasCauseInstanceOf(info.jab.cursor.generated.client.ApiException.class)
                 .hasMessageContaining("Failed to delete agent");

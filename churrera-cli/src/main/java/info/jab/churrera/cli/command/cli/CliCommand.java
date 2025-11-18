@@ -30,11 +30,11 @@ public class CliCommand implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(CliCommand.class);
 
-    private static final Pattern JOB_STATUS_PATTERN = Pattern.compile("^jobs\\s+status\\s+(.+)$");
-    private static final Pattern JOB_LOGS_PATTERN = Pattern.compile("^jobs\\s+logs\\s+(.+)$");
-    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+(.+)$");
-    private static final Pattern JOB_DELETE_PATTERN = Pattern.compile("^jobs\\s+delete\\s+(.+)$");
-    private static final Pattern JOB_PR_PATTERN = Pattern.compile("^jobs\\s+pr\\s+(.+)$");
+    private static final Pattern JOB_STATUS_PATTERN = Pattern.compile("^jobs\\s+status\\s+(\\S+)$");
+    private static final Pattern JOB_LOGS_PATTERN = Pattern.compile("^jobs\\s+logs\\s+(\\S+)$");
+    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+([^\n]+)$");
+    private static final Pattern JOB_DELETE_PATTERN = Pattern.compile("^jobs\\s+delete\\s+(\\S+)$");
+    private static final Pattern JOB_PR_PATTERN = Pattern.compile("^jobs\\s+pr\\s+(\\S+)$");
 
     private final JobRepository jobRepository;
     private final JobProcessor jobProcessor;

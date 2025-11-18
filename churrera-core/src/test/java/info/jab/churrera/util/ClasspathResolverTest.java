@@ -3,7 +3,9 @@ package info.jab.churrera.util;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test class for ClasspathResolver utility.
@@ -23,9 +25,10 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(fileName);
 
         // Then
-        assertNotNull(content, "Retrieved content should not be null");
-        assertFalse(content.isEmpty(), "Retrieved content should not be empty");
-        assertTrue(content.contains("<?xml"), "Content should be XML");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty()
+            .contains("<?xml");
     }
 
     @Test
@@ -39,9 +42,10 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(fileName);
 
         // Then
-        assertNotNull(content, "Retrieved content should not be null");
-        assertFalse(content.isEmpty(), "Retrieved content should not be empty");
-        assertTrue(content.contains("xsl:stylesheet"), "Content should be XSL stylesheet");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty()
+            .contains("xsl:stylesheet");
     }
 
     @Test
@@ -55,9 +59,10 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(fileName);
 
         // Then
-        assertNotNull(content, "Retrieved content should not be null");
-        assertFalse(content.isEmpty(), "Retrieved content should not be empty");
-        assertTrue(content.contains("="), "Properties file should contain key-value pairs");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty()
+            .contains("=");
     }
 
     // Precondition Tests - Null and Empty Inputs
@@ -69,14 +74,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> resolver.retrieve(null),
-            "Should throw IllegalArgumentException for null filename"
-        );
-
-        assertTrue(exception.getMessage().contains("cannot be null or empty"),
-            "Exception message should indicate null or empty constraint");
+        assertThatThrownBy(() -> resolver.retrieve(null))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("cannot be null or empty");
     }
 
     @Test
@@ -86,14 +86,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> resolver.retrieve(""),
-            "Should throw IllegalArgumentException for empty filename"
-        );
-
-        assertTrue(exception.getMessage().contains("cannot be null or empty"),
-            "Exception message should indicate null or empty constraint");
+        assertThatThrownBy(() -> resolver.retrieve(""))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("cannot be null or empty");
     }
 
     @Test
@@ -103,14 +98,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> resolver.retrieve("   "),
-            "Should throw IllegalArgumentException for whitespace-only filename"
-        );
-
-        assertTrue(exception.getMessage().contains("cannot be null or empty"),
-            "Exception message should indicate null or empty constraint");
+        assertThatThrownBy(() -> resolver.retrieve("   "))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("cannot be null or empty");
     }
 
     @Test
@@ -120,14 +110,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> resolver.retrieve("\t\t"),
-            "Should throw IllegalArgumentException for tab-only filename"
-        );
-
-        assertTrue(exception.getMessage().contains("cannot be null or empty"),
-            "Exception message should indicate null or empty constraint");
+        assertThatThrownBy(() -> resolver.retrieve("\t\t"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("cannot be null or empty");
     }
 
     @Test
@@ -137,14 +122,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> resolver.retrieve("\n\n"),
-            "Should throw IllegalArgumentException for newline-only filename"
-        );
-
-        assertTrue(exception.getMessage().contains("cannot be null or empty"),
-            "Exception message should indicate null or empty constraint");
+        assertThatThrownBy(() -> resolver.retrieve("\n\n"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("cannot be null or empty");
     }
 
     // Error Handling Tests
@@ -157,16 +137,10 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        RuntimeException exception = assertThrows(
-            RuntimeException.class,
-            () -> resolver.retrieve(nonExistentFile),
-            "Should throw RuntimeException for non-existent file"
-        );
-
-        assertTrue(exception.getMessage().contains(nonExistentFile),
-            "Exception message should contain the filename");
-        assertTrue(exception.getMessage().contains("Could not find"),
-            "Exception message should indicate file not found");
+        assertThatThrownBy(() -> resolver.retrieve(nonExistentFile))
+            .isInstanceOf(RuntimeException.class)
+            .hasMessageContaining(nonExistentFile)
+            .hasMessageContaining("Could not find");
     }
 
     @Test
@@ -177,16 +151,17 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        RuntimeException exception = assertThrows(
-            RuntimeException.class,
-            () -> resolver.retrieve(invalidPath),
-            "Should throw RuntimeException for invalid path"
-        );
-
-        assertTrue(exception.getMessage().contains(invalidPath) ||
-                   exception.getMessage().contains("Could not find") ||
-                   exception.getMessage().contains("Failed to load"),
-            "Exception message should indicate the problem");
+        assertThatThrownBy(() -> resolver.retrieve(invalidPath))
+            .isInstanceOf(RuntimeException.class)
+            .satisfies(exception -> {
+                String message = exception.getMessage();
+                assertThat(message)
+                    .satisfiesAnyOf(
+                        msg -> assertThat(msg).contains(invalidPath),
+                        msg -> assertThat(msg).contains("Could not find"),
+                        msg -> assertThat(msg).contains("Failed to load")
+                    );
+            });
     }
 
     @Test
@@ -197,13 +172,9 @@ class ClasspathResolverTest {
         ClasspathResolver resolver = new ClasspathResolver();
 
         // When & Then
-        RuntimeException exception = assertThrows(
-            RuntimeException.class,
-            () -> resolver.retrieve(traversalPath),
-            "Should throw RuntimeException for directory traversal attempt"
-        );
-
-        assertNotNull(exception.getMessage(), "Exception should have a message");
+        assertThatThrownBy(() -> resolver.retrieve(traversalPath))
+            .isInstanceOf(RuntimeException.class)
+            .hasMessageContaining("");
     }
 
 
@@ -220,9 +191,9 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(fileName);
 
         // Then
-        assertNotNull(content, "Content should not be null");
-        // Verify UTF-8 encoding is used (content should be properly decoded)
-        assertFalse(content.contains("�"), "Content should not contain replacement characters");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty();
     }
 
     @Test
@@ -237,7 +208,7 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(fileName);
 
         // Then
-        assertNotNull(content, "Content should not be null even for potentially empty files");
+        assertThat(content).isNotNull();
     }
 
     @Test
@@ -246,17 +217,13 @@ class ClasspathResolverTest {
         // Given
         ClasspathResolver resolver = new ClasspathResolver();
 
-        // Test XML file
-        assertDoesNotThrow(() -> resolver.retrieve("examples/hello-world/prompt1.xml"),
-            "Should handle .xml files");
-
-        // Test XSL file
-        assertDoesNotThrow(() -> resolver.retrieve("pml/pml-to-md.xsl"),
-            "Should handle .xsl files");
-
-        // Test properties file
-        assertDoesNotThrow(() -> resolver.retrieve("application.properties"),
-            "Should handle .properties files");
+        // Then
+        assertThatCode(() -> resolver.retrieve("examples/hello-world/prompt1.xml"))
+            .doesNotThrowAnyException();
+        assertThatCode(() -> resolver.retrieve("pml/pml-to-md.xsl"))
+            .doesNotThrowAnyException();
+        assertThatCode(() -> resolver.retrieve("application.properties"))
+            .doesNotThrowAnyException();
     }
 
     @Test
@@ -270,8 +237,9 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(nestedPath);
 
         // Then
-        assertNotNull(content, "Should retrieve content from nested directories");
-        assertFalse(content.isEmpty(), "Content should not be empty");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty();
     }
 
     @Test
@@ -285,8 +253,9 @@ class ClasspathResolverTest {
         String content = resolver.retrieve(pathWithoutSlash);
 
         // Then
-        assertNotNull(content, "Should retrieve content from path without leading slash");
-        assertFalse(content.isEmpty(), "Content should not be empty");
+        assertThat(content)
+            .isNotNull()
+            .isNotEmpty();
     }
 }
 

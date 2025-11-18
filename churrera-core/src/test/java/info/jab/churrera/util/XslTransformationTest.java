@@ -15,7 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test class for validating XSL transformations on PML XML files.
@@ -49,14 +51,18 @@ class XslTransformationTest {
             String result = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertNotNull(result, "Transformation result should not be null");
-            assertFalse(result.trim().isEmpty(), "Transformation result should not be empty");
+            assertThat(result)
+                .isNotNull()
+                .isNotEmpty();
+            assertThat(result.trim())
+                .isNotEmpty();
 
             // Verify key sections are present in the output
-            assertTrue(result.contains("## Role"), "Result should contain Role section");
-            assertTrue(result.contains("## Goal"), "Result should contain Goal section");
-            assertTrue(result.contains("## Output Format"), "Result should contain Output Format section");
-            assertTrue(result.contains("## Safeguards"), "Result should contain Safeguards section");
+            assertThat(result)
+                .contains("## Role")
+                .contains("## Goal")
+                .contains("## Output Format")
+                .contains("## Safeguards");
         }
 
         @Test
@@ -67,8 +73,8 @@ class XslTransformationTest {
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertDoesNotThrow(() -> performTransformation(pmlContent, xsltContent),
-                "XSL transformation should complete without exceptions");
+            assertThatCode(() -> performTransformation(pmlContent, xsltContent))
+                .doesNotThrowAnyException();
         }
 
         @Test
@@ -83,7 +89,7 @@ class XslTransformationTest {
             String result2 = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertEquals(result1, result2, "Multiple transformations should produce identical results");
+            assertThat(result1).isEqualTo(result2);
         }
     }
 
@@ -98,16 +104,12 @@ class XslTransformationTest {
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertTrue(xsltContent.contains("<xsl:template match=\"/prompt\">"),
-                "XSL should contain root prompt template");
-            assertTrue(xsltContent.contains("<xsl:template match=\"goal\">"),
-                "XSL should contain goal template");
-            assertTrue(xsltContent.contains("<xsl:template match=\"output-format\">"),
-                "XSL should contain output-format template");
-            assertTrue(xsltContent.contains("<xsl:template match=\"safeguards\">"),
-                "XSL should contain safeguards template");
-            assertTrue(xsltContent.contains("<xsl:template match=\"examples\">"),
-                "XSL should contain examples template");
+            assertThat(xsltContent)
+                .contains("<xsl:template match=\"/prompt\">")
+                .contains("<xsl:template match=\"goal\">")
+                .contains("<xsl:template match=\"output-format\">")
+                .contains("<xsl:template match=\"safeguards\">")
+                .contains("<xsl:template match=\"examples\">");
         }
 
         @Test
@@ -117,12 +119,10 @@ class XslTransformationTest {
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertTrue(xsltContent.contains("<xsl:template name=\"trim-code-block\">"),
-                "XSL should contain trim-code-block utility template");
-            assertTrue(xsltContent.contains("<xsl:template name=\"remove-trailing-spaces\">"),
-                "XSL should contain remove-trailing-spaces utility template");
-            assertTrue(xsltContent.contains("<xsl:template name=\"preserve-indentation\">"),
-                "XSL should contain preserve-indentation utility template");
+            assertThat(xsltContent)
+                .contains("<xsl:template name=\"trim-code-block\">")
+                .contains("<xsl:template name=\"remove-trailing-spaces\">")
+                .contains("<xsl:template name=\"preserve-indentation\">");
         }
 
         @Test
@@ -132,8 +132,8 @@ class XslTransformationTest {
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertTrue(xsltContent.contains("<xsl:output method=\"text\" encoding=\"UTF-8\"/>"),
-                "XSL should specify text output method with UTF-8 encoding");
+            assertThat(xsltContent)
+                .contains("<xsl:output method=\"text\" encoding=\"UTF-8\"/>");
         }
     }
 
@@ -152,8 +152,8 @@ class XslTransformationTest {
             String result = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertTrue(result.contains("System Administrator with expertise in Java development"),
-                "Result should contain the role description");
+            assertThat(result)
+                .contains("System Administrator with expertise in Java development");
         }
 
         @Test
@@ -167,10 +167,9 @@ class XslTransformationTest {
             String result = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertTrue(result.contains("Update the VM to Java 25"),
-                "Result should contain the goal description");
-            assertTrue(result.contains("sudo apt install -y openjdk-25-jdk"),
-                "Result should contain the command");
+            assertThat(result)
+                .contains("Update the VM to Java 25")
+                .contains("sudo apt install -y openjdk-25-jdk");
         }
 
         @Test
@@ -184,12 +183,10 @@ class XslTransformationTest {
             String result = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertTrue(result.contains("- not invest time in planning"),
-                "Result should contain first output format item");
-            assertTrue(result.contains("- only install the component with the given command"),
-                "Result should contain second output format item");
-            assertTrue(result.contains("- not explain anything"),
-                "Result should contain third output format item");
+            assertThat(result)
+                .contains("- not invest time in planning")
+                .contains("- only install the component with the given command")
+                .contains("- not explain anything");
         }
 
         @Test
@@ -203,10 +200,9 @@ class XslTransformationTest {
             String result = performTransformation(pmlContent, xsltContent);
 
             // Then
-            assertTrue(result.contains("- verify that java is configured for java 25 executing `java -version`"),
-                "Result should contain first safeguard");
-            assertTrue(result.contains("- if the java installation and the verification is successful, then the goal is achieved"),
-                "Result should contain second safeguard");
+            assertThat(result)
+                .contains("- verify that java is configured for java 25 executing `java -version`")
+                .contains("- if the java installation and the verification is successful, then the goal is achieved");
         }
     }
 
@@ -226,8 +222,8 @@ class XslTransformationTest {
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
             // When & Then
-            assertThrows(Exception.class, () -> performTransformation(malformedXml, xsltContent),
-                "Malformed XML should cause transformation to fail");
+            assertThatThrownBy(() -> performTransformation(malformedXml, xsltContent))
+                .isInstanceOf(Exception.class);
         }
 
         @Test
@@ -242,8 +238,8 @@ class XslTransformationTest {
                     "        <xsl:value-of select=\"role\"/>\n";
 
             // When & Then
-            assertThrows(Exception.class, () -> performTransformation(pmlContent, malformedXsl),
-                "Malformed XSL should cause transformation to fail");
+            assertThatThrownBy(() -> performTransformation(pmlContent, malformedXsl))
+                .isInstanceOf(Exception.class);
         }
     }
 
@@ -258,12 +254,13 @@ class XslTransformationTest {
             String pmlFile = "examples/hello-world/prompt1.xml";
 
             // When & Then
-            assertDoesNotThrow(() -> {
+            assertThatCode(() -> {
                 PmlConverter converter = new PmlConverter();
                 String result = converter.toMarkdown(pmlFile);
-                assertNotNull(result, "PmlConverter result should not be null");
-                assertFalse(result.trim().isEmpty(), "PmlConverter result should not be empty");
-            }, "PmlConverter.toMarkdown should work without exceptions");
+                assertThat(result)
+                    .isNotNull()
+                    .isNotEmpty();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -280,8 +277,7 @@ class XslTransformationTest {
             String converterResult = converter.toMarkdown(pmlFile);
 
             // Then
-            assertEquals(directResult, converterResult,
-                "PmlConverter should produce same result as direct transformation");
+            assertThat(converterResult).isEqualTo(directResult);
         }
     }
 

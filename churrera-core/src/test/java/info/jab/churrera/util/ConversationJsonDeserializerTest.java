@@ -1,197 +1,282 @@
 package info.jab.churrera.util;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test class for ConversationJsonDeserializer.
  */
+@DisplayName("ConversationJsonDeserializer Tests")
 class ConversationJsonDeserializerTest {
 
     @Test
-    void testDeserializeListWithDirectArray() {
-        // Test with direct array format: [1, 2, 3, 4]
+    @DisplayName("Should deserialize list from direct array format")
+    void shouldDeserializeListWithDirectArray() {
+        // Given
         String conversationContent = "Some conversation text\n<result>[1, 2, 3, 4]</result>\nMore text";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize direct array");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithObjectWrapper() {
-        // Test with object wrapper format: {"integers": [1, 2, 3, 4]}
+    @DisplayName("Should deserialize list from object wrapper format")
+    void shouldDeserializeListWithObjectWrapper() {
+        // Given
         String conversationContent = "Some conversation text\n<result>{\"integers\": [1, 2, 3, 4]}</result>\nMore text";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize object with array property");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithRealConversationSample() throws IOException {
-        // Load the real conversation sample from resources using classpath
+    @DisplayName("Should deserialize list from real conversation sample")
+    void shouldDeserializeListWithRealConversationSample() throws IOException {
+        // Given
         java.io.InputStream inputStream = getClass().getClassLoader()
             .getResourceAsStream("conversation-result-sample.txt");
-        assertNotNull(inputStream, "Resource file should exist");
+        assertThat(inputStream).isNotNull();
         String conversationContent = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize real conversation sample");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithComplexObjectWrapper() {
-        // Test with nested object structure
+    @DisplayName("Should deserialize list from complex object wrapper")
+    void shouldDeserializeListWithComplexObjectWrapper() {
+        // Given
         String conversationContent = "<result>{\"data\": {\"values\": [5, 10, 15]}}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize nested array");
-        assertEquals(3, result.get().size(), "Should have 3 elements");
-        assertEquals(List.of(5, 10, 15), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(3)
+                    .containsExactly(5, 10, 15);
+            });
     }
 
     @Test
-    void testDeserializeListWithAPILikeConversationFormat() {
-        // Test with format similar to how getConversationContent() concatenates API messages
-        // Each message is on a new line
+    @DisplayName("Should deserialize list from API-like conversation format")
+    void shouldDeserializeListWithAPILikeConversationFormat() {
+        // Given
         String conversationContent =
             "Let me help you with that task.\n" +
             "I'll process the data now.\n" +
             "<result>{\"numbers\": [10, 20, 30, 40]}</result>\n" +
             "The task is complete.\n";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize from API-like format");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(10, 20, 30, 40), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(10, 20, 30, 40);
+            });
     }
 
     @Test
-    void testDeserializeListWithNoResultTag() {
+    @DisplayName("Should return empty when no result tag found")
+    void shouldReturnEmptyWhenNoResultTagFound() {
+        // Given
         String conversationContent = "Just some conversation text without result tags";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertFalse(result.isPresent(), "Should return empty when no result tag found");
+        // Then
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void testDeserializeListWithEmptyResult() {
+    @DisplayName("Should return empty when result tag is empty")
+    void shouldReturnEmptyWhenResultTagIsEmpty() {
+        // Given
         String conversationContent = "<result></result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertFalse(result.isPresent(), "Should return empty when result tag is empty");
+        // Then
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void testDeserializeListWithInvalidJson() {
+    @DisplayName("Should return empty when JSON is invalid")
+    void shouldReturnEmptyWhenJsonIsInvalid() {
+        // Given
         String conversationContent = "<result>{invalid json}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertFalse(result.isPresent(), "Should return empty when JSON is invalid");
+        // Then
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void testDeserializeListWithMultipleResultTags() {
-        // Should use the last result tag
+    @DisplayName("Should use the last result tag when multiple result tags exist")
+    void shouldUseLastResultTagWhenMultipleResultTagsExist() {
+        // Given
         String conversationContent =
             "<result>[1, 2]</result>\n" +
             "Some text\n" +
             "<result>[3, 4, 5]</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(conversationContent, Integer.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize last result");
-        assertEquals(List.of(3, 4, 5), result.get(), "Should use the last result tag");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValue(List.of(3, 4, 5));
     }
 
     @Test
-    void testDeserializeWithNullConversationContent() {
-        assertThrows(IllegalArgumentException.class,
-            () -> ConversationJsonDeserializer.deserializeList(null, Integer.class),
-            "Should throw IllegalArgumentException for null conversation content");
+    @DisplayName("Should throw exception when conversation content is null")
+    void shouldThrowExceptionWhenConversationContentIsNull() {
+        // When & Then
+        assertThatThrownBy(() -> ConversationJsonDeserializer.deserializeList(null, Integer.class))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void testDeserializeWithNullTargetType() {
-        assertThrows(IllegalArgumentException.class,
-            () -> ConversationJsonDeserializer.deserializeList("<result>[1, 2]</result>", null),
-            "Should throw IllegalArgumentException for null target type");
+    @DisplayName("Should throw exception when target type is null")
+    void shouldThrowExceptionWhenTargetTypeIsNull() {
+        // When & Then
+        assertThatThrownBy(() -> ConversationJsonDeserializer.deserializeList("<result>[1, 2]</result>", null))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void testDeserializeListWithStrings() {
+    @DisplayName("Should deserialize list of strings")
+    void shouldDeserializeListWithStrings() {
+        // Given
         String conversationContent = "<result>[\"apple\", \"banana\", \"cherry\"]</result>";
 
+        // When
         Optional<List<String>> result = ConversationJsonDeserializer.deserializeList(conversationContent, String.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize string array");
-        assertEquals(3, result.get().size(), "Should have 3 elements");
-        assertEquals(List.of("apple", "banana", "cherry"), result.get(), "Should contain correct strings");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(3)
+                    .containsExactly("apple", "banana", "cherry");
+            });
     }
 
     @Test
-    void testDeserializeListWithObjectWrapperAndStrings() {
+    @DisplayName("Should deserialize list of strings from object wrapper")
+    void shouldDeserializeListWithObjectWrapperAndStrings() {
+        // Given
         String conversationContent = "<result>{\"names\": [\"Alice\", \"Bob\", \"Charlie\"]}</result>";
 
+        // When
         Optional<List<String>> result = ConversationJsonDeserializer.deserializeList(conversationContent, String.class);
 
-        assertTrue(result.isPresent(), "Should successfully deserialize object with string array");
-        assertEquals(3, result.get().size(), "Should have 3 elements");
-        assertEquals(List.of("Alice", "Bob", "Charlie"), result.get(), "Should contain correct strings");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(3)
+                    .containsExactly("Alice", "Bob", "Charlie");
+            });
     }
 
     @Test
-    void testDeserializeListWithSpecificKeyMatching() {
-        // Test with specific key matching bindResultType
+    @DisplayName("Should deserialize list with specific key matching")
+    void shouldDeserializeListWithSpecificKeyMatching() {
+        // Given
         String conversationContent = "<result>{\"List_Integer\": [1, 2, 3, 4]}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(
             conversationContent, Integer.class, "List_Integer");
 
-        assertTrue(result.isPresent(), "Should successfully deserialize with specific key");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithMultipleResultTagsAndSpecificKey() {
-        // Simulates real scenario: first <result> has template, second has actual data
+    @DisplayName("Should deserialize last result with specific key when multiple result tags exist")
+    void shouldDeserializeLastResultWithSpecificKeyWhenMultipleResultTagsExist() {
+        // Given
         String conversationContent =
             "Here's the format:\n" +
             "<result>RESULT</result>\n" +
             "Now processing...\n" +
             "<result>{\"List_Integer\": [1, 2, 3, 4]}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(
             conversationContent, Integer.class, "List_Integer");
 
-        assertTrue(result.isPresent(), "Should successfully deserialize last result with specific key");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithRealScenarioFromLogs() {
-        // This is based on the actual conversation from logs
+    @DisplayName("Should deserialize list from real scenario in logs")
+    void shouldDeserializeListWithRealScenarioFromLogs() {
+        // Given
         String conversationContent =
             "## Role\n\n" +
             "You are a Senior software engineer\n\n" +
@@ -204,40 +289,59 @@ class ConversationJsonDeserializerTest {
             "Perfect! I can see the homework assignments. Let me extract the first 4:\n\n" +
             "<result>{\"List_Integer\":[1,2,3,4]}</result>\n";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(
             conversationContent, Integer.class, "List_Integer");
 
-        assertTrue(result.isPresent(), "Should successfully deserialize real scenario");
-        assertEquals(4, result.get().size(), "Should have 4 elements");
-        assertEquals(List.of(1, 2, 3, 4), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(4)
+                    .containsExactly(1, 2, 3, 4);
+            });
     }
 
     @Test
-    void testDeserializeListWithSpecificKeyFallbackToAnyArray() {
-        // When specific key not found, should fall back to first array found
+    @DisplayName("Should fall back to any array when specific key not found")
+    void shouldFallBackToAnyArrayWhenSpecificKeyNotFound() {
+        // Given
         String conversationContent = "<result>{\"integers\": [7, 8, 9]}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(
             conversationContent, Integer.class, "List_Integer");
 
-        assertTrue(result.isPresent(), "Should fall back to any array when specific key not found");
-        assertEquals(3, result.get().size(), "Should have 3 elements");
-        assertEquals(List.of(7, 8, 9), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(3)
+                    .containsExactly(7, 8, 9);
+            });
     }
 
     @Test
-    void testDeserializeListWithWrongKeyButCorrectData() {
-        // Even if key doesn't match, should still find the array as fallback
+    @DisplayName("Should find array even with wrong key as fallback")
+    void shouldFindArrayEvenWithWrongKeyAsFallback() {
+        // Given
         String conversationContent =
             "<result>RESULT</result>\n" +
             "<result>{\"integers\": [10, 20, 30]}</result>";
 
+        // When
         Optional<List<Integer>> result = ConversationJsonDeserializer.deserializeList(
             conversationContent, Integer.class, "List_Integer");
 
-        assertTrue(result.isPresent(), "Should find array even with wrong key as fallback");
-        assertEquals(3, result.get().size(), "Should have 3 elements");
-        assertEquals(List.of(10, 20, 30), result.get(), "Should contain correct integers");
+        // Then
+        assertThat(result)
+            .isPresent()
+            .hasValueSatisfying(list -> {
+                assertThat(list)
+                    .hasSize(3)
+                    .containsExactly(10, 20, 30);
+            });
     }
 }
-

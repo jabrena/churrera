@@ -570,7 +570,7 @@
                         <version>${maven-plugin-pmd.version}</version>
                         <configuration>
                             <rulesets>
-                                <ruleset>${maven.multiModuleProjectDirectory}/pmd/pmd-cyclomatic-complexity.xml</ruleset>
+                                <ruleset>${maven.multiModuleProjectDirectory}/documentation/pmd/pmd-cyclomatic-complexity.xml</ruleset>
                             </rulesets>
                             <printFailingErrors>true</printFailingErrors>
                             <linkXRef>true</linkXRef>
@@ -605,7 +605,7 @@
                         <version>${maven-plugin-pmd.version}</version>
                         <configuration>
                             <rulesets>
-                                <ruleset>${maven.multiModuleProjectDirectory}/pmd/pmd-cyclomatic-complexity.xml</ruleset>
+                                <ruleset>${maven.multiModuleProjectDirectory}/documentation/pmd/pmd-cyclomatic-complexity.xml</ruleset>
                             </rulesets>
                             <linkXRef>true</linkXRef>
                         </configuration>

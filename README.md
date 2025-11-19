@@ -247,11 +247,12 @@ java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow chu
 
 - https://github.com/jabrena/101-cursor
 - https://github.com/jabrena/pml
-- https://github.com/jabrena/churrera
+- https://github.com/jabrena/churrera-cli
+- https://github.com/jabrena/cursor-cloud-agent-rest-api-status
 - https://github.com/jabrena/cursor-rules-agile
 - https://github.com/jabrena/cursor-rules-java
 - https://github.com/jabrena/cursor-rules-spring-boot
-- https://github.com/jabrena/plantuml-to-png-cli
+- https://github.com/jabrena/puml-to-png-cli
 - https://github.com/jabrena/setup-cli
 - https://github.com/jabrena/jbang-catalog
 

@@ -32,9 +32,11 @@ public class CliCommand implements Runnable {
 
     private static final Pattern JOB_STATUS_PATTERN = Pattern.compile("^jobs\\s+status\\s+(\\S+)$");
     private static final Pattern JOB_LOGS_PATTERN = Pattern.compile("^jobs\\s+logs\\s+(\\S+)$");
-    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+([^\n]+)$");
+    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+([^\n]++)$");
     private static final Pattern JOB_DELETE_PATTERN = Pattern.compile("^jobs\\s+delete\\s+(\\S+)$");
     private static final Pattern JOB_PR_PATTERN = Pattern.compile("^jobs\\s+pr\\s+(\\S+)$");
+    
+    private static final int CLEAR_SCREEN_FALLBACK_LINES = 50;
 
     private final JobRepository jobRepository;
     private final JobProcessor jobProcessor;
@@ -234,7 +236,7 @@ public class CliCommand implements Runnable {
             System.out.flush();
         } catch (Exception e) {
             // Fallback: print newlines to clear most of the screen
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < CLEAR_SCREEN_FALLBACK_LINES; i++) {
                 System.out.println();
             }
         }

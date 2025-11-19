@@ -1,5 +1,7 @@
 package info.jab.churrera.cli.model;
 
+import info.jab.churrera.workflow.WorkflowType;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,433 +13,259 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-/**
- * Tests for Job record.
- */
-@DisplayName("Job Model Tests")
+@DisplayName("Job model")
 class JobTest {
 
-    @Test
-    @DisplayName("Should create valid job")
-    void shouldCreateValidJob() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String cursorAgentId = "agent-123";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
+    private static final String JOB_ID = "test-job-id";
+    private static final String PATH = "/path/to/workflow.xml";
+    private static final String CURSOR_AGENT_ID = "agent-123";
+    private static final String MODEL = "gpt-4";
+    private static final String REPOSITORY = "test-repo";
+    private static final AgentState STATUS = AgentState.CREATING();
+    private static final LocalDateTime CREATED_AT = LocalDateTime.of(2024, 10, 11, 8, 0);
+    private static final LocalDateTime LAST_UPDATE = CREATED_AT.plusMinutes(5);
 
+    @Test
+    @DisplayName("should create a valid job with minimal data")
+    void shouldCreateValidJob() {
         // When
-        Job job = new Job(jobId, path, cursorAgentId, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null);
+        Job job = jobFixture(CREATED_AT, LAST_UPDATE);
 
         // Then
-        assertThat(job.jobId()).isEqualTo(jobId);
-        assertThat(job.path()).isEqualTo(path);
-        assertThat(job.cursorAgentId()).isEqualTo(cursorAgentId);
-        assertThat(job.model()).isEqualTo(model);
-        assertThat(job.repository()).isEqualTo(repository);
-        assertThat(job.status()).isEqualTo(status);
-        assertThat(job.createdAt()).isEqualTo(createdAt);
-        assertThat(job.lastUpdate()).isEqualTo(lastUpdate);
+        assertThat(job.jobId()).isEqualTo(JOB_ID);
+        assertThat(job.path()).isEqualTo(PATH);
+        assertThat(job.cursorAgentId()).isEqualTo(CURSOR_AGENT_ID);
+        assertThat(job.model()).isEqualTo(MODEL);
+        assertThat(job.repository()).isEqualTo(REPOSITORY);
+        assertThat(job.status()).isEqualTo(STATUS);
+        assertThat(job.createdAt()).isEqualTo(CREATED_AT);
+        assertThat(job.lastUpdate()).isEqualTo(LAST_UPDATE);
         assertThat(job.parentJobId()).isNull();
         assertThat(job.result()).isNull();
+        assertThat(job.type()).isNull();
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("mandatoryFieldProvider")
+    @DisplayName("should enforce mandatory constructor arguments")
+    void shouldValidateMandatoryConstructorArguments(String description, ThrowingCallable factory, String expectedMessage) {
+        assertThatThrownBy(factory)
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage(expectedMessage);
+    }
+
+    private static Stream<Arguments> mandatoryFieldProvider() {
+        return Stream.of(
+            arguments("should reject null job id", (ThrowingCallable) () -> new Job(null, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null), "Job ID cannot be null"),
+            arguments("should reject null path", (ThrowingCallable) () -> new Job(JOB_ID, null, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null), "Path cannot be null"),
+            arguments("should reject null model", (ThrowingCallable) () -> new Job(JOB_ID, PATH, CURSOR_AGENT_ID, null, REPOSITORY, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null), "Model cannot be null"),
+            arguments("should reject null repository", (ThrowingCallable) () -> new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, null, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null), "Repository cannot be null"),
+            arguments("should reject null status", (ThrowingCallable) () -> new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, null, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null), "Status cannot be null"),
+            arguments("should reject null createdAt", (ThrowingCallable) () -> new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, null, LAST_UPDATE, null, null, null, null, null, null, null), "Created at cannot be null"),
+            arguments("should reject null lastUpdate", (ThrowingCallable) () -> new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, CREATED_AT, null, null, null, null, null, null, null, null), "Last update cannot be null")
+        );
     }
 
     @Test
-    @DisplayName("Should create job with null cursor agent ID")
-    void shouldCreateJobWithNullCursorAgentId() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
+    @DisplayName("should allow null cursor agent id")
+    void shouldAllowNullCursorAgentId() {
+        Job job = new Job(JOB_ID, PATH, null, MODEL, REPOSITORY, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null);
 
-        // When
-        Job job = new Job(jobId, path, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null);
-
-        // Then
         assertThat(job.cursorAgentId()).isNull();
-        assertThat(job.jobId()).isEqualTo(jobId);
+        assertThat(job.jobId()).isEqualTo(JOB_ID);
     }
 
     @Test
-    @DisplayName("Should throw exception when job ID is null")
-    void shouldThrowExceptionWhenJobIdIsNull() {
-        // Given
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(null, path, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Job ID cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when path is null")
-    void shouldThrowExceptionWhenPathIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, null, null, model, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Path cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when model is null")
-    void shouldThrowExceptionWhenModelIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, null, repository, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Model cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when repository is null")
-    void shouldThrowExceptionWhenRepositoryIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, null, status, createdAt, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Repository cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when status is null")
-    void shouldThrowExceptionWhenStatusIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, null, createdAt, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Status cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when created at is null")
-    void shouldThrowExceptionWhenCreatedAtIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime lastUpdate = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, null, lastUpdate, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Created at cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when last update is null")
-    void shouldThrowExceptionWhenLastUpdateIsNull() {
-        // Given
-        String jobId = "test-job-id";
-        String path = "/path/to/workflow.xml";
-        String model = "gpt-4";
-        String repository = "test-repo";
-        AgentState status = AgentState.CREATING();
-        LocalDateTime createdAt = LocalDateTime.now();
-
-        // When & Then
-        assertThatThrownBy(() -> new Job(jobId, path, null, model, repository, status, createdAt, null, null, null, null, null, null, null, null))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("Last update cannot be null");
-    }
-
-    @Test
-    @DisplayName("Should create job with updated path")
-    void shouldCreateJobWithUpdatedPath() {
-        // Given
-        LocalDateTime createdAt = LocalDateTime.now().minusHours(1);
-        Job originalJob = new Job(
-            "test-job-id",
-            "/original/path.xml",
-            "agent-123",
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            createdAt,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
+    @DisplayName("should update path and refresh timestamp")
+    void shouldUpdatePath() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
         String newPath = "/new/path.xml";
 
-        // When
-        Job updatedJob = originalJob.withPath(newPath);
+        Job updated = original.withPath(newPath);
 
-        // Then
-        assertThat(updatedJob.path()).isEqualTo(newPath);
-        assertThat(updatedJob.jobId()).isEqualTo(originalJob.jobId());
-        assertThat(updatedJob.cursorAgentId()).isEqualTo(originalJob.cursorAgentId());
-        assertThat(updatedJob.model()).isEqualTo(originalJob.model());
-        assertThat(updatedJob.repository()).isEqualTo(originalJob.repository());
-        assertThat(updatedJob.status()).isEqualTo(originalJob.status());
-        assertThat(updatedJob.createdAt()).isEqualTo(originalJob.createdAt());
-        assertThat(updatedJob.lastUpdate()).isAfter(originalJob.lastUpdate());
+        assertThat(updated.path()).isEqualTo(newPath);
+        assertThat(updated.jobId()).isEqualTo(original.jobId());
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
     }
 
     @Test
-    @DisplayName("Should create job with updated cursor agent ID")
-    void shouldCreateJobWithUpdatedCursorAgentId() {
-        // Given
-        LocalDateTime createdAt = LocalDateTime.now().minusHours(1);
-        Job originalJob = new Job(
-            "test-job-id",
-            "/path/to/workflow.xml",
-            null,
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            createdAt,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
-        String newAgentId = "agent-456";
+    @DisplayName("should update cursor agent id and refresh timestamp")
+    void shouldUpdateCursorAgentId() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String newCursorId = "agent-456";
 
-        // When
-        Job updatedJob = originalJob.withCursorAgentId(newAgentId);
+        Job updated = original.withCursorAgentId(newCursorId);
 
-        // Then
-        assertThat(updatedJob.cursorAgentId()).isEqualTo(newAgentId);
-        assertThat(updatedJob.jobId()).isEqualTo(originalJob.jobId());
-        assertThat(updatedJob.path()).isEqualTo(originalJob.path());
-        assertThat(updatedJob.model()).isEqualTo(originalJob.model());
-        assertThat(updatedJob.repository()).isEqualTo(originalJob.repository());
-        assertThat(updatedJob.status()).isEqualTo(originalJob.status());
-        assertThat(updatedJob.createdAt()).isEqualTo(originalJob.createdAt());
+        assertThat(updated.cursorAgentId()).isEqualTo(newCursorId);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
     }
 
     @Test
-    @DisplayName("Should create job with updated status")
-    void shouldCreateJobWithUpdatedStatus() {
-        // Given
-        LocalDateTime createdAt = LocalDateTime.now().minusHours(1);
-        Job originalJob = new Job(
-            "test-job-id",
-            "/path/to/workflow.xml",
-            "agent-123",
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            createdAt,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
-        AgentState newStatus = AgentState.RUNNING();
+    @DisplayName("should update status and refresh timestamp")
+    void shouldUpdateStatus() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        AgentState running = AgentState.RUNNING();
 
-        // When
-        Job updatedJob = originalJob.withStatus(newStatus);
+        Job updated = original.withStatus(running);
 
-        // Then
-        assertThat(updatedJob.status()).isEqualTo(newStatus);
-        assertThat(updatedJob.jobId()).isEqualTo(originalJob.jobId());
-        assertThat(updatedJob.path()).isEqualTo(originalJob.path());
-        assertThat(updatedJob.cursorAgentId()).isEqualTo(originalJob.cursorAgentId());
-        assertThat(updatedJob.model()).isEqualTo(originalJob.model());
-        assertThat(updatedJob.repository()).isEqualTo(originalJob.repository());
-        assertThat(updatedJob.createdAt()).isEqualTo(originalJob.createdAt());
+        assertThat(updated.status()).isEqualTo(running);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
     }
 
     @Test
-    @DisplayName("Should create job with updated model")
-    void shouldCreateJobWithUpdatedModel() {
-        // Given
-        LocalDateTime createdAt = LocalDateTime.now().minusHours(1);
-        Job originalJob = new Job(
-            "test-job-id",
-            "/path/to/workflow.xml",
-            "agent-123",
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            createdAt,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
-        String newModel = "gpt-4-turbo";
+    @DisplayName("should update model and refresh timestamp")
+    void shouldUpdateModel() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String newModel = "gpt-4o";
 
-        // When
-        Job updatedJob = originalJob.withModel(newModel);
+        Job updated = original.withModel(newModel);
 
-        // Then
-        assertThat(updatedJob.model()).isEqualTo(newModel);
-        assertThat(updatedJob.jobId()).isEqualTo(originalJob.jobId());
-        assertThat(updatedJob.path()).isEqualTo(originalJob.path());
-        assertThat(updatedJob.cursorAgentId()).isEqualTo(originalJob.cursorAgentId());
-        assertThat(updatedJob.repository()).isEqualTo(originalJob.repository());
-        assertThat(updatedJob.status()).isEqualTo(originalJob.status());
-        assertThat(updatedJob.createdAt()).isEqualTo(originalJob.createdAt());
+        assertThat(updated.model()).isEqualTo(newModel);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
     }
 
     @Test
-    @DisplayName("Should create job with updated repository")
-    void shouldCreateJobWithUpdatedRepository() {
-        // Given
-        LocalDateTime createdAt = LocalDateTime.now().minusHours(1);
-        Job originalJob = new Job(
-            "test-job-id",
-            "/path/to/workflow.xml",
-            "agent-123",
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            createdAt,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
-        String newRepository = "new-repo";
+    @DisplayName("should update repository and refresh timestamp")
+    void shouldUpdateRepository() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String newRepository = "another-repo";
 
-        // When
-        Job updatedJob = originalJob.withRepository(newRepository);
+        Job updated = original.withRepository(newRepository);
 
-        // Then
-        assertThat(updatedJob.repository()).isEqualTo(newRepository);
-        assertThat(updatedJob.jobId()).isEqualTo(originalJob.jobId());
-        assertThat(updatedJob.path()).isEqualTo(originalJob.path());
-        assertThat(updatedJob.cursorAgentId()).isEqualTo(originalJob.cursorAgentId());
-        assertThat(updatedJob.model()).isEqualTo(originalJob.model());
-        assertThat(updatedJob.status()).isEqualTo(originalJob.status());
-        assertThat(updatedJob.createdAt()).isEqualTo(originalJob.createdAt());
+        assertThat(updated.repository()).isEqualTo(newRepository);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
     }
 
     @Test
-    @DisplayName("Should have proper equality")
+    @DisplayName("should update parent job id and refresh timestamp")
+    void shouldUpdateParentJobId() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String parentJobId = "parent-123";
+
+        Job updated = original.withParentJobId(parentJobId);
+
+        assertThat(updated.parentJobId()).isEqualTo(parentJobId);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update result and refresh timestamp")
+    void shouldUpdateResult() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String result = "SUCCESS";
+
+        Job updated = original.withResult(result);
+
+        assertThat(updated.result()).isEqualTo(result);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update workflow type and refresh timestamp")
+    void shouldUpdateType() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+
+        Job updated = original.withType(WorkflowType.SEQUENCE);
+
+        assertThat(updated.type()).isEqualTo(WorkflowType.SEQUENCE);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update timeout and refresh timestamp")
+    void shouldUpdateTimeout() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        long timeoutMillis = 5_000L;
+
+        Job updated = original.withTimeoutMillis(timeoutMillis);
+
+        assertThat(updated.timeoutMillis()).isEqualTo(timeoutMillis);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update workflow start time and refresh timestamp")
+    void shouldUpdateWorkflowStartTime() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        LocalDateTime startTime = CREATED_AT.plusMinutes(30);
+
+        Job updated = original.withWorkflowStartTime(startTime);
+
+        assertThat(updated.workflowStartTime()).isEqualTo(startTime);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update fallback source and refresh timestamp")
+    void shouldUpdateFallbackSrc() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+        String fallbackSrc = "fallback.pml";
+
+        Job updated = original.withFallbackSrc(fallbackSrc);
+
+        assertThat(updated.fallbackSrc()).isEqualTo(fallbackSrc);
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should update fallback executed flag and refresh timestamp")
+    void shouldUpdateFallbackExecuted() {
+        Job original = jobFixture(CREATED_AT, LAST_UPDATE);
+
+        Job updated = original.withFallbackExecuted(Boolean.TRUE);
+
+        assertThat(updated.fallbackExecuted()).isTrue();
+        assertThat(updated.lastUpdate()).isAfter(original.lastUpdate());
+    }
+
+    @Test
+    @DisplayName("should implement equality and hashCode")
     void shouldHaveProperEquality() {
-        // Given
-        LocalDateTime timestamp = LocalDateTime.now();
-        Job job1 = new Job("id", "/path", "agent", "model", "repo", AgentState.CREATING(), timestamp, timestamp, null, null, null, null, null, null, null);
-        Job job2 = new Job("id", "/path", "agent", "model", "repo", AgentState.CREATING(), timestamp, timestamp, null, null, null, null, null, null, null);
-        Job job3 = new Job("id2", "/path", "agent", "model", "repo", AgentState.CREATING(), timestamp, timestamp, null, null, null, null, null, null, null);
+        Job job1 = jobFixture(CREATED_AT, LAST_UPDATE);
+        Job job2 = jobFixture(CREATED_AT, LAST_UPDATE);
+        Job job3 = new Job("another-id", PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null);
 
-        // When & Then
-        assertThat(job1).isEqualTo(job2);
-        assertThat(job1).isNotEqualTo(job3);
-        assertThat(job1.hashCode()).isEqualTo(job2.hashCode());
+        assertThat(job1)
+            .isEqualTo(job2)
+            .hasSameHashCodeAs(job2)
+            .isNotEqualTo(job3);
     }
 
     @Test
-    @DisplayName("Should have proper toString")
+    @DisplayName("should expose useful toString representation")
     void shouldHaveProperToString() {
-        // Given
-        LocalDateTime timestamp = LocalDateTime.of(2024, 10, 11, 14, 30);
-        Job job = new Job(
-            "test-id",
-            "/path/to/file.xml",
-            "agent-123",
-            "gpt-4",
-            "test-repo",
-            AgentState.CREATING(),
-            timestamp,
-            timestamp,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        , null);
+        Job job = jobFixture(CREATED_AT, LAST_UPDATE);
 
-        // When
-        String toString = job.toString();
-
-        // Then
-        assertThat(toString).contains("test-id");
-        assertThat(toString).contains("/path/to/file.xml");
-        assertThat(toString).contains("agent-123");
-        assertThat(toString).contains("gpt-4");
-        assertThat(toString).contains("test-repo");
-        assertThat(toString).contains("CREATING");
+        assertThat(job.toString())
+            .contains(JOB_ID)
+            .contains(PATH)
+            .contains(MODEL)
+            .contains(REPOSITORY)
+            .contains(STATUS.toString());
     }
 
-    @ParameterizedTest(name = "Should create job with {0} state")
+    @ParameterizedTest(name = "should create job with {0} state")
     @MethodSource("agentStateProvider")
-    @DisplayName("Should create job with all agent states")
-    void shouldTestAllAgentStates(AgentState state) {
-        // Given
-        LocalDateTime timestamp = LocalDateTime.now();
+    @DisplayName("should accept all AgentState factory methods")
+    void shouldSupportAllAgentStates(AgentState state) {
+        Job job = new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, state, CREATED_AT, LAST_UPDATE, null, null, null, null, null, null, null);
 
-        // When
-        Job job = new Job("id", "/path", "agent", "model", "repo", state, timestamp, timestamp, null, null, null, null, null, null, null);
-
-        // Then
         assertThat(job.status()).isEqualTo(state);
     }
 
-    private static Stream<Arguments> agentStateProvider() {
+    private static Stream<AgentState> agentStateProvider() {
         return Stream.of(
-            Arguments.of(AgentState.CREATING()),
-            Arguments.of(AgentState.RUNNING()),
-            Arguments.of(AgentState.FINISHED()),
-            Arguments.of(AgentState.ERROR()),
-            Arguments.of(AgentState.EXPIRED())
+            AgentState.CREATING(),
+            AgentState.RUNNING(),
+            AgentState.FINISHED(),
+            AgentState.ERROR(),
+            AgentState.EXPIRED()
         );
     }
-}
 
+    private static Job jobFixture(LocalDateTime createdAt, LocalDateTime lastUpdate) {
+        return new Job(JOB_ID, PATH, CURSOR_AGENT_ID, MODEL, REPOSITORY, STATUS, createdAt, lastUpdate, null, null, null, null, null, null, null);
+    }
+}

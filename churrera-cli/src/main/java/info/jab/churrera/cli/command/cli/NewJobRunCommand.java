@@ -208,11 +208,9 @@ public class NewJobRunCommand implements Runnable {
         } catch (BaseXException e) {
             logger.error("Error creating job: {}", jobPath, e);
             System.err.println("Error creating job: " + e.getMessage());
-            e.printStackTrace();
         } catch (IOException | QueryException e) {
             logger.error("Error creating job: {}", jobPath, e);
             System.err.println("Error creating job: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

@@ -3,6 +3,11 @@ package info.jab.churrera.cli.util;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,9 +18,46 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("XmlUtils Tests")
 class XmlUtilsTest {
 
+    private static Stream<Arguments> escapeSamples() {
+        return Stream.of(
+                Arguments.of("plain text", "plain text"),
+                Arguments.of("<tag>", "&lt;tag&gt;"),
+                Arguments.of("5 > 3 & 2 < 4", "5 &gt; 3 &amp; 2 &lt; 4"),
+                Arguments.of("\"quoted\" and 'single'", "&quot;quoted&quot; and &apos;single&apos;")
+        );
+    }
+
+    private static Stream<Arguments> unescapeSamples() {
+        return Stream.of(
+                Arguments.of("plain text", "plain text"),
+                Arguments.of("&lt;tag&gt;", "<tag>"),
+                Arguments.of("5 &gt; 3 &amp; 2 &lt; 4", "5 > 3 & 2 < 4"),
+                Arguments.of("&quot;quoted&quot; and &apos;single&apos;", "\"quoted\" and 'single'")
+        );
+    }
+
+    private static Stream<Arguments> roundTripSamples() {
+        return Stream.of(
+                Arguments.of("Hello World"),
+                Arguments.of("<script>alert('xss')</script>"),
+                Arguments.of("5 > 3 & 2 < 4"),
+                Arguments.of("\"quoted\" and 'single'")
+        );
+    }
+
     @Nested
     @DisplayName("EscapeXml Tests")
     class EscapeXmlTests {
+
+        @ParameterizedTest(name = "should escape ''{0}''")
+        @MethodSource("info.jab.churrera.cli.util.XmlUtilsTest#escapeSamples")
+        void shouldEscapeValues(String input, String expected) {
+            // When
+            String escaped = XmlUtils.escapeXml(input);
+
+            // Then
+            assertThat(escaped).isEqualTo(expected);
+        }
 
         @Test
         @DisplayName("Should escape XML special characters")
@@ -68,8 +110,34 @@ class XmlUtilsTest {
     }
 
     @Nested
+    @DisplayName("Escape/Unescape round trip")
+    class EscapeRoundTripTests {
+
+        @ParameterizedTest
+        @MethodSource("info.jab.churrera.cli.util.XmlUtilsTest#roundTripSamples")
+        void shouldRoundTripEscapeAndUnescape(String value) {
+            // When
+            String escaped = XmlUtils.escapeXml(value);
+            String roundTrip = XmlUtils.unescapeXml(escaped);
+
+            // Then
+            assertThat(roundTrip).isEqualTo(value);
+        }
+    }
+
+    @Nested
     @DisplayName("UnescapeXml Tests")
     class UnescapeXmlTests {
+
+        @ParameterizedTest(name = "should unescape ''{0}''")
+        @MethodSource("info.jab.churrera.cli.util.XmlUtilsTest#unescapeSamples")
+        void shouldUnescapeValues(String input, String expected) {
+            // When
+            String unescaped = XmlUtils.unescapeXml(input);
+
+            // Then
+            assertThat(unescaped).isEqualTo(expected);
+        }
 
         @Test
         @DisplayName("Should unescape XML special characters")
@@ -189,6 +257,31 @@ class XmlUtilsTest {
             // Then
             assertThat(value).isEmpty();
         }
+
+        @Test
+        @DisplayName("Should extract the first occurrence when multiple tags exist")
+        void shouldExtractFirstMatchingTag() {
+            // Given
+            String xml = "<root><name>primary</name><name>secondary</name></root>";
+
+            // When
+            String value = XmlUtils.extractXmlValue(xml, "name");
+
+            // Then
+            assertThat(value).isEqualTo("primary");
+        }
+
+        @Test
+        void shouldNotConfuseSimilarTagNames() {
+            // Given
+            String xml = "<root><name>primary</name><nameExtended>secondary</nameExtended></root>";
+
+            // When
+            String value = XmlUtils.extractXmlValue(xml, "name");
+
+            // Then
+            assertThat(value).isEqualTo("primary");
+        }
     }
 
     @Nested
@@ -249,6 +342,19 @@ class XmlUtilsTest {
 
             // Then
             assertThat(value).isEmpty();
+        }
+
+        @Test
+        @DisplayName("Should extract first optional occurrence when multiple tags exist")
+        void shouldExtractFirstOptionalValue() {
+            // Given
+            String xml = "<root><tag>first</tag><tag>second</tag></root>";
+
+            // When
+            String value = XmlUtils.extractXmlValueOptional(xml, "tag");
+
+            // Then
+            assertThat(value).isEqualTo("first");
         }
     }
 }

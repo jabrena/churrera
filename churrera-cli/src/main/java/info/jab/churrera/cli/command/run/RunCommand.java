@@ -162,7 +162,6 @@ public class RunCommand implements Callable<Integer> {
         } catch (Exception e) {
             logger.error("Error running workflow: {}", e.getMessage(), e);
             System.err.println("Error running workflow: " + e.getMessage());
-            e.printStackTrace();
             return 1;
         } finally {
             // Cleanup is handled by shutdown hook in ChurreraCLI
@@ -291,7 +290,6 @@ public class RunCommand implements Callable<Integer> {
         } catch (Exception e) {
             logger.error("Error retrieving models: {}", e.getMessage(), e);
             System.err.println("Error retrieving models: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -324,7 +322,6 @@ public class RunCommand implements Callable<Integer> {
         } catch (Exception e) {
             logger.error("Error retrieving repositories: {}", e.getMessage(), e);
             System.err.println("Error retrieving repositories: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

@@ -26,7 +26,6 @@ public class JobLogsCommand implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(JobLogsCommand.class);
 
-    private static final String DEFAULT_API_BASE_URL = "https://api.cursor.com";
     private static final int JOB_ID_PREFIX_LENGTH = 8;
 
     private final JobRepository jobRepository;

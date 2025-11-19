@@ -284,7 +284,7 @@ class ChurreraCLITest {
             "jobs new \"/path with spaces/workflow.xml\"",
             "jobs new '/path with spaces/workflow.xml'"
     })
-    void should_report_error_for_invalid_workflow_paths(String command) throws Exception {
+    void should_report_error_for_invalid_workflow_paths(String command) {
         // When
         CliTestResult result = runCliWithInput(command + "\nquit\n");
 
@@ -531,8 +531,9 @@ class ChurreraCLITest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("Available commands");
-        assertThat(output).contains("Goodbye!");
+        assertThat(output)
+            .contains("Available commands")
+            .contains("Goodbye!");
     }
 
 

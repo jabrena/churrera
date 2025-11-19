@@ -80,9 +80,11 @@ public record AgentResponse(
      * @return corresponding AgentStatus enum, or CREATING if null or unknown
      */
     private static AgentStatus mapStatusEnum(CreateAgent201Response.StatusEnum statusEnum) {
+        if (statusEnum == null) {
+            return AgentStatus.CREATING;
+        }
         return switch (statusEnum) {
             case CreateAgent201Response.StatusEnum.CREATING -> AgentStatus.CREATING;
-            default -> AgentStatus.CREATING;
         };
     }
 

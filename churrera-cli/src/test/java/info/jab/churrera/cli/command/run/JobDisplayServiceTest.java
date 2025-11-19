@@ -71,9 +71,10 @@ class JobDisplayServiceTest {
 
         String output = captureStdout(() -> jobDisplayService.displayFilteredJobsTable(jobId));
 
-        assertThat(output).contains("12345678");
-        assertThat(output).contains("1/2");
-        assertThat(output).contains("Started 1 hour ago");
+        assertThat(output)
+            .contains("12345678")
+            .contains("1/2")
+            .contains("Started 1 hour ago");
     }
 
     @Test
@@ -124,8 +125,9 @@ class JobDisplayServiceTest {
 
         String output = captureStdout(() -> jobDisplayService.displayFilteredJobsTable(parentId));
 
-        assertThat(output).contains("parent-j");
-        assertThat(output).contains("ERROR");
+        assertThat(output)
+            .contains("parent-j")
+            .contains("ERROR");
     }
 
     private String captureStdout(Runnable action) {

@@ -66,9 +66,6 @@ public class RunCommand implements Callable<Integer> {
 
     private final JobRepository jobRepository;
     private final JobProcessor jobProcessor;
-    private final WorkflowValidator workflowValidator;
-    private final WorkflowParser workflowParser;
-    private final PmlValidator pmlValidator;
     private final int pollingIntervalSeconds;
     private final CLIAgent cliAgent;
 
@@ -86,9 +83,6 @@ public class RunCommand implements Callable<Integer> {
                      PmlValidator pmlValidator, int pollingIntervalSeconds, CLIAgent cliAgent) {
         this.jobRepository = jobRepository;
         this.jobProcessor = jobProcessor;
-        this.workflowValidator = workflowValidator;
-        this.workflowParser = workflowParser;
-        this.pmlValidator = pmlValidator;
         this.pollingIntervalSeconds = pollingIntervalSeconds;
         this.cliAgent = cliAgent;
 

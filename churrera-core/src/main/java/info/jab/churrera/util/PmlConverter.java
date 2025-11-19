@@ -1,6 +1,8 @@
 package info.jab.churrera.util;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -38,6 +40,31 @@ public final class PmlConverter {
     }
 
     /**
+     * Creates a secure TransformerFactory with external entity access disabled
+     * to prevent XXE (XML External Entity) attacks.
+     *
+     * @return a configured TransformerFactory with security features enabled
+     * @throws TransformerConfigurationException if the factory cannot be configured
+     */
+    private static TransformerFactory createSecureTransformerFactory() throws TransformerConfigurationException {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        
+        // Enable secure processing feature
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        
+        // Disable external DTD access
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        
+        // Disable external stylesheet access
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        
+        // Disable external schema access
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        
+        return factory;
+    }
+
+    /**
      * Converts a PML XML file to Markdown format using the specified XSLT transformation.
      *
      * @param pmlFile the path to the PML XML file in classpath resources
@@ -65,8 +92,8 @@ public final class PmlConverter {
             InputStream pmlStream = new ByteArrayInputStream(pmlContent.getBytes(StandardCharsets.UTF_8));
             InputStream xsltStream = new ByteArrayInputStream(xsltContent.getBytes(StandardCharsets.UTF_8));
 
-            // Create transformer
-            TransformerFactory factory = TransformerFactory.newInstance();
+            // Create secure transformer factory and transformer
+            TransformerFactory factory = createSecureTransformerFactory();
             Transformer transformer = factory.newTransformer(new StreamSource(xsltStream));
 
             // Perform transformation
@@ -119,8 +146,8 @@ public final class PmlConverter {
             InputStream pmlStream = new ByteArrayInputStream(pmlContent.getBytes(StandardCharsets.UTF_8));
             InputStream xsltStream = new ByteArrayInputStream(xsltContent.getBytes(StandardCharsets.UTF_8));
 
-            // Create transformer
-            TransformerFactory factory = TransformerFactory.newInstance();
+            // Create secure transformer factory and transformer
+            TransformerFactory factory = createSecureTransformerFactory();
             Transformer transformer = factory.newTransformer(new StreamSource(xsltStream));
 
             // Perform transformation

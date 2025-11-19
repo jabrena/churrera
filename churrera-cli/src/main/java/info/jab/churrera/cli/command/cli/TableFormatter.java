@@ -11,6 +11,8 @@ import java.util.List;
 public final class TableFormatter {
 
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final int MIN_COLUMN_WIDTH = 3;
+    private static final int MAX_COLUMN_WIDTH = 50;
 
     /**
      * Private constructor to prevent instantiation of utility class.
@@ -106,7 +108,7 @@ public final class TableFormatter {
 
         // Apply minimum and maximum constraints
         for (int i = 0; i < widths.length; i++) {
-            widths[i] = Math.max(3, Math.min(widths[i], 50)); // Min 3, Max 50
+            widths[i] = Math.max(MIN_COLUMN_WIDTH, Math.min(widths[i], MAX_COLUMN_WIDTH));
         }
 
         return widths;

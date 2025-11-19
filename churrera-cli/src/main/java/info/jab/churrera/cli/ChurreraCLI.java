@@ -204,7 +204,6 @@ public class ChurreraCLI implements Runnable {
         } catch (Exception e) {
             logger.error("Failed to start Churrera CLI: {}", e.getMessage(), e);
             System.err.println("Failed to start Churrera CLI: " + e.getMessage());
-            e.printStackTrace();
             System.exit(1);
         }
     }

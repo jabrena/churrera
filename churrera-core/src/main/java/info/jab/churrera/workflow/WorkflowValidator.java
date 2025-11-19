@@ -160,6 +160,28 @@ public class WorkflowValidator {
     }
 
     /**
+     * Creates a secure SchemaFactory with external entity access disabled
+     * to prevent XXE (XML External Entity) attacks.
+     *
+     * @return a configured SchemaFactory with security features enabled
+     * @throws SAXException if the factory cannot be configured
+     */
+    private static SchemaFactory createSecureSchemaFactory() throws SAXException {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        
+        // Enable secure processing feature
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        
+        // Disable external DTD access
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        
+        // Disable external schema access
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        
+        return factory;
+    }
+
+    /**
      * Loads the XSD schema from the external URL.
      *
      * @return the loaded Schema object
@@ -167,7 +189,7 @@ public class WorkflowValidator {
      * @throws IOException if there's an error reading the schema file
      */
     private Schema loadSchema() throws SAXException, IOException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory factory = createSecureSchemaFactory();
         String schemaUrl = getSchemaUrl();
         return factory.newSchema(new java.net.URL(schemaUrl));
     }

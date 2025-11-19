@@ -33,6 +33,8 @@ public class JobsCommand implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(JobsCommand.class);
 
     private static final int JOB_ID_PREFIX_LENGTH = 8;
+    private static final int SECONDS_PER_MINUTE = 60;
+    private static final int SECONDS_PER_HOUR = 3600;
 
     private final JobRepository jobRepository;
 
@@ -91,8 +93,8 @@ public class JobsCommand implements Runnable {
                             // For terminal jobs, calculate duration from job creation to last update in mm:ss
                             Duration duration = Duration.between(job.createdAt(), job.lastUpdate());
                             long totalSeconds = duration.getSeconds();
-                            long minutes = totalSeconds / 60;
-                            long seconds = totalSeconds % 60;
+                            long minutes = totalSeconds / SECONDS_PER_MINUTE;
+                            long seconds = totalSeconds % SECONDS_PER_MINUTE;
 
                             if (minutes == 0) {
                                 timeAgo = String.format("%02d secs", seconds);
@@ -104,13 +106,13 @@ public class JobsCommand implements Runnable {
                             Duration duration = Duration.between(job.createdAt(), LocalDateTime.now());
                             long secondsElapsed = duration.getSeconds();
 
-                            if (secondsElapsed < 60) {
+                            if (secondsElapsed < SECONDS_PER_MINUTE) {
                                 timeAgo = "Started " + secondsElapsed + "s ago";
-                            } else if (secondsElapsed < 3600) {
-                                long minutes = secondsElapsed / 60;
+                            } else if (secondsElapsed < SECONDS_PER_HOUR) {
+                                long minutes = secondsElapsed / SECONDS_PER_MINUTE;
                                 timeAgo = "Started " + minutes + (minutes == 1 ? " min ago" : " mins ago");
                             } else {
-                                long hours = secondsElapsed / 3600;
+                                long hours = secondsElapsed / SECONDS_PER_HOUR;
                                 timeAgo = "Started " + hours + (hours == 1 ? " hour ago" : " hours ago");
                             }
                         }

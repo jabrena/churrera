@@ -42,10 +42,6 @@ After installation, all commit messages will be validated. Example valid formats
 # Run integration tests
 ./mvnw clean verify
 
-# Generate Swagger UI
-./mvnw clean verify -pl cursor-cloud-agents-openapi -Pswagger-ui
-jwebserver -p 8020 -d "$(pwd)/cursor-cloud-agents-openapi/target/swagger-ui/"
-
 # Run tests with code coverage
 # Note: Run 'site' phase after verify to generate aggregated report
 ./mvnw clean test verify

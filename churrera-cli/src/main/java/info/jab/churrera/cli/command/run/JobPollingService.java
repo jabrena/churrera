@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service for polling job execution status.
@@ -23,16 +24,27 @@ public class JobPollingService {
     private final JobDisplayService displayService;
     private final CompletionCheckerFactory completionCheckerFactory;
     private final int pollingIntervalSeconds;
+    private final Sleeper sleeper;
 
     public JobPollingService(JobProcessor jobProcessor, JobRepository jobRepository,
                             JobDisplayService displayService,
                             CompletionCheckerFactory completionCheckerFactory,
                             int pollingIntervalSeconds) {
-        this.jobProcessor = jobProcessor;
-        this.jobRepository = jobRepository;
-        this.displayService = displayService;
-        this.completionCheckerFactory = completionCheckerFactory;
+        this(jobProcessor, jobRepository, displayService, completionCheckerFactory,
+            pollingIntervalSeconds, millis -> Thread.sleep(millis));
+    }
+
+    JobPollingService(JobProcessor jobProcessor, JobRepository jobRepository,
+                      JobDisplayService displayService,
+                      CompletionCheckerFactory completionCheckerFactory,
+                      int pollingIntervalSeconds,
+                      Sleeper sleeper) {
+        this.jobProcessor = Objects.requireNonNull(jobProcessor, "jobProcessor cannot be null");
+        this.jobRepository = Objects.requireNonNull(jobRepository, "jobRepository cannot be null");
+        this.displayService = Objects.requireNonNull(displayService, "displayService cannot be null");
+        this.completionCheckerFactory = Objects.requireNonNull(completionCheckerFactory, "completionCheckerFactory cannot be null");
         this.pollingIntervalSeconds = pollingIntervalSeconds;
+        this.sleeper = Objects.requireNonNull(sleeper, "sleeper cannot be null");
     }
 
     /**
@@ -88,13 +100,18 @@ public class JobPollingService {
      */
     private boolean sleepWithInterruptCheck() {
         try {
-            Thread.sleep(pollingIntervalSeconds * 1000L);
+            sleeper.sleep(pollingIntervalSeconds * 1000L);
             return false;
         } catch (InterruptedException e) {
             logger.warn("Polling interrupted: {}", e.getMessage());
             Thread.currentThread().interrupt();
             return true;
         }
+    }
+
+    @FunctionalInterface
+    interface Sleeper {
+        void sleep(long millis) throws InterruptedException;
     }
 }
 

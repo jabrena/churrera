@@ -12,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service for displaying job information in tables.
@@ -24,11 +26,19 @@ import java.util.List;
 public class JobDisplayService {
     private static final Logger logger = LoggerFactory.getLogger(JobDisplayService.class);
     private static final int JOB_ID_PREFIX_LENGTH = 8;
+    private static final int SECONDS_PER_MINUTE = 60;
+    private static final int SECONDS_PER_HOUR = 3600;
 
     private final JobRepository jobRepository;
+    private final Clock clock;
 
     public JobDisplayService(JobRepository jobRepository) {
-        this.jobRepository = jobRepository;
+        this(jobRepository, Clock.systemDefaultZone());
+    }
+
+    JobDisplayService(JobRepository jobRepository, Clock clock) {
+        this.jobRepository = Objects.requireNonNull(jobRepository, "jobRepository cannot be null");
+        this.clock = Objects.requireNonNull(clock, "clock cannot be null");
     }
 
     /**
@@ -180,8 +190,8 @@ public class JobDisplayService {
             // For terminal jobs, calculate duration from job creation to last update in mm:ss
             Duration duration = Duration.between(job.createdAt(), job.lastUpdate());
             long totalSeconds = duration.getSeconds();
-            long minutes = totalSeconds / 60;
-            long seconds = totalSeconds % 60;
+            long minutes = totalSeconds / SECONDS_PER_MINUTE;
+            long seconds = totalSeconds % SECONDS_PER_MINUTE;
 
             if (minutes == 0) {
                 return String.format("%02d secs", seconds);
@@ -190,16 +200,16 @@ public class JobDisplayService {
             }
         } else {
             // For active jobs, calculate time elapsed since job creation
-            Duration duration = Duration.between(job.createdAt(), LocalDateTime.now());
+            Duration duration = Duration.between(job.createdAt(), LocalDateTime.now(clock));
             long secondsElapsed = duration.getSeconds();
 
-            if (secondsElapsed < 60) {
+            if (secondsElapsed < SECONDS_PER_MINUTE) {
                 return "Started " + secondsElapsed + "s ago";
-            } else if (secondsElapsed < 3600) {
-                long minutes = secondsElapsed / 60;
+            } else if (secondsElapsed < SECONDS_PER_HOUR) {
+                long minutes = secondsElapsed / SECONDS_PER_MINUTE;
                 return "Started " + minutes + (minutes == 1 ? " min ago" : " mins ago");
             } else {
-                long hours = secondsElapsed / 3600;
+                long hours = secondsElapsed / SECONDS_PER_HOUR;
                 return "Started " + hours + (hours == 1 ? " hour ago" : " hours ago");
             }
         }

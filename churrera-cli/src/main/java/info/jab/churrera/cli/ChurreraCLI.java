@@ -29,7 +29,6 @@ import com.github.lalyos.jfiglet.FigletFont;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.function.Supplier;
-import java.io.InputStream;
 
 /**
  * Main CLI application for churrera.
@@ -158,7 +157,7 @@ public class ChurreraCLI implements Runnable {
      */
     public static void main(String[] args) {
         // Print banner first in all cases
-        printBanner(() -> new GitInfo());
+        printBanner(GitInfo::new);
 
         try {
             // Create ChurreraCLI instance with dependencies initialized
@@ -221,10 +220,7 @@ public class ChurreraCLI implements Runnable {
             String asciiArt = FigletFont.convertOneLine("Churrera CLI");
             System.out.println(colorize(asciiArt, Attribute.GREEN_TEXT()));
             gitInfoSupplier.get().print();
-        } catch (IOException e) {
-            logger.error("Error printing banner: {}", e.getMessage(), e);
-            System.out.println("Error printing banner: " + e.getMessage());
-        } catch (RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             logger.error("Error printing banner: {}", e.getMessage(), e);
             System.out.println("Error printing banner: " + e.getMessage());
         }

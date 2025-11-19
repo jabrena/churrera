@@ -39,7 +39,8 @@ class PmlValidatorValidationErrorHandlerTest {
         Class<?>[] innerClasses = validatorClass.getDeclaredClasses();
         
         for (Class<?> innerClass : innerClasses) {
-            if (innerClass.getSimpleName().equals("ValidationErrorHandler")) {
+            if (org.xml.sax.ErrorHandler.class.isAssignableFrom(innerClass)
+                && "ValidationErrorHandler".equals(innerClass.getSimpleName())) {
                 errorHandlerClass = innerClass;
                 break;
             }

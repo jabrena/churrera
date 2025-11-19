@@ -108,7 +108,7 @@ public final class TableFormatter {
 
         // Apply minimum and maximum constraints
         for (int i = 0; i < widths.length; i++) {
-            widths[i] = Math.max(MIN_COLUMN_WIDTH, Math.min(widths[i], MAX_COLUMN_WIDTH));
+            widths[i] = Math.clamp(widths[i], MIN_COLUMN_WIDTH, MAX_COLUMN_WIDTH);
         }
 
         return widths;

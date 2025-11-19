@@ -51,7 +51,7 @@ class JobPollingServiceTest {
     }
 
     @Test
-    void shouldReturnResultWhenJobCompletesImmediately() throws BaseXException, QueryException {
+    void shouldReturnResultWhenJobCompletesImmediately() {
         // Given
         CompletionCheckResult completion = new CompletionCheckResult(true, AgentState.FINISHED(), List.of(job));
         when(completionChecker.checkCompletion(job, JOB_ID)).thenReturn(completion);
@@ -78,7 +78,7 @@ class JobPollingServiceTest {
     }
 
     @Test
-    void shouldReturnInterruptedResultWhenSleepIsInterrupted() throws BaseXException, QueryException {
+    void shouldReturnInterruptedResultWhenSleepIsInterrupted() {
         // Given
         CompletionCheckResult notCompleted = new CompletionCheckResult(false, null, List.of());
         when(completionChecker.checkCompletion(job, JOB_ID)).thenReturn(notCompleted);

@@ -31,7 +31,7 @@ public class JobPollingService {
                             CompletionCheckerFactory completionCheckerFactory,
                             int pollingIntervalSeconds) {
         this(jobProcessor, jobRepository, displayService, completionCheckerFactory,
-            pollingIntervalSeconds, millis -> Thread.sleep(millis));
+            pollingIntervalSeconds, Thread::sleep);
     }
 
     JobPollingService(JobProcessor jobProcessor, JobRepository jobRepository,

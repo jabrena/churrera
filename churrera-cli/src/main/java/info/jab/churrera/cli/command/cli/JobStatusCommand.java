@@ -75,7 +75,7 @@ public class JobStatusCommand implements Runnable {
                 System.out.println("  Last Update: " + job.lastUpdate());
 
                 // Display workflow type
-                String typeDisplay = "Unknown";
+                String typeDisplay;
                 if (job.type() != null) {
                     typeDisplay = job.type().toString();
                 } else {

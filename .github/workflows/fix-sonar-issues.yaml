@@ -1,11 +1,11 @@
-name: Continuous Documentation Agent
+name: Fix Sonar Issues Agent
 
 on:
   workflow_dispatch:
 
 jobs:
-  continuous-documentation-agent:
-    name: Continuous Documentation Agent Execution
+  fix-sonar-issues-agent:
+    name: Fix Sonar Issues Agent Execution
     runs-on: ubuntu-latest
     timeout-minutes: 35
 

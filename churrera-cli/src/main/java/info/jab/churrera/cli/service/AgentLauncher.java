@@ -20,14 +20,12 @@ public class AgentLauncher {
     private final CLIAgent cliAgent;
     private final JobRepository jobRepository;
     private final WorkflowFileService workflowFileService;
-    private final TimeoutManager timeoutManager;
 
     public AgentLauncher(CLIAgent cliAgent, JobRepository jobRepository, 
-                        WorkflowFileService workflowFileService, TimeoutManager timeoutManager) {
+                        WorkflowFileService workflowFileService) {
         this.cliAgent = cliAgent;
         this.jobRepository = jobRepository;
         this.workflowFileService = workflowFileService;
-        this.timeoutManager = timeoutManager;
     }
 
     /**

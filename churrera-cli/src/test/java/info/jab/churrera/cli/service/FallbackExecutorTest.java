@@ -44,7 +44,7 @@ class FallbackExecutorTest {
 
     @BeforeEach
     void setUp() {
-        fallbackExecutor = new FallbackExecutor(cliAgent, jobRepository, workflowFileService, agentLauncher);
+        fallbackExecutor = new FallbackExecutor(cliAgent, jobRepository, workflowFileService);
 
         testJob = new Job("job-id", "/path/workflow.xml", "agent-id", "model", "repo", AgentState.CREATING(),
             LocalDateTime.now(), LocalDateTime.now(), null, null, null, 1000L, null, "fallback.pml", null);

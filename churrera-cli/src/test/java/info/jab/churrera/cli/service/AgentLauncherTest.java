@@ -49,7 +49,7 @@ class AgentLauncherTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        agentLauncher = new AgentLauncher(cliAgent, jobRepository, workflowFileService, timeoutManager);
+        agentLauncher = new AgentLauncher(cliAgent, jobRepository, workflowFileService);
 
         testJob = new Job("job-id", "/path/workflow.xml", null, "model", "repo", AgentState.CREATING(),
             LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null, null, null);

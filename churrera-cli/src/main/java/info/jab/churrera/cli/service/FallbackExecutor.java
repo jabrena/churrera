@@ -22,14 +22,12 @@ public class FallbackExecutor {
     private final CLIAgent cliAgent;
     private final JobRepository jobRepository;
     private final WorkflowFileService workflowFileService;
-    private final AgentLauncher agentLauncher;
 
     public FallbackExecutor(CLIAgent cliAgent, JobRepository jobRepository, 
-                           WorkflowFileService workflowFileService, AgentLauncher agentLauncher) {
+                           WorkflowFileService workflowFileService) {
         this.cliAgent = cliAgent;
         this.jobRepository = jobRepository;
         this.workflowFileService = workflowFileService;
-        this.agentLauncher = agentLauncher;
     }
 
     /**

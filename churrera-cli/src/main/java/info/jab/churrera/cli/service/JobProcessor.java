@@ -37,9 +37,9 @@ public class JobProcessor {
         // Initialize services
         this.workflowFileService = new WorkflowFileService(workflowParser);
         TimeoutManager timeoutManager = new TimeoutManager(jobRepository);
-        AgentLauncher agentLauncher = new AgentLauncher(cliAgent, jobRepository, workflowFileService, timeoutManager);
+        AgentLauncher agentLauncher = new AgentLauncher(cliAgent, jobRepository, workflowFileService);
         PromptProcessor promptProcessor = new PromptProcessor(cliAgent, workflowFileService);
-        FallbackExecutor fallbackExecutor = new FallbackExecutor(cliAgent, jobRepository, workflowFileService, agentLauncher);
+        FallbackExecutor fallbackExecutor = new FallbackExecutor(cliAgent, jobRepository, workflowFileService);
         ResultExtractor resultExtractor = new ResultExtractor(cliAgent, jobRepository);
 
         // Initialize handlers

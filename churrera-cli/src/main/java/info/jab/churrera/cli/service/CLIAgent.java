@@ -28,22 +28,18 @@ public class CLIAgent {
 
     private static final Logger logger = LoggerFactory.getLogger(CLIAgent.class);
 
-    private static final String DEFAULT_API_BASE_URL = "https://api.cursor.com";
-
     private final CursorAgentManagement cursorAgentManagement;
     private final CursorAgentInformation cursorAgentInformation;
     private final CursorAgentGeneralEndpoints cursorAgentGeneralEndpoints;
     private final JobRepository jobRepository;
     private final PmlConverter pmlConverter;
-    private final PropertyResolver propertyResolver;
 
-    public CLIAgent(JobRepository jobRepository, CursorAgentManagement cursorAgentManagement, CursorAgentInformation cursorAgentInformation, CursorAgentGeneralEndpoints cursorAgentGeneralEndpoints, PmlConverter pmlConverter, PropertyResolver propertyResolver) {
+    public CLIAgent(JobRepository jobRepository, CursorAgentManagement cursorAgentManagement, CursorAgentInformation cursorAgentInformation, CursorAgentGeneralEndpoints cursorAgentGeneralEndpoints, PmlConverter pmlConverter) {
         this.cursorAgentManagement = cursorAgentManagement;
         this.cursorAgentInformation = cursorAgentInformation;
         this.cursorAgentGeneralEndpoints = cursorAgentGeneralEndpoints;
         this.jobRepository = jobRepository;
         this.pmlConverter = pmlConverter;
-        this.propertyResolver = propertyResolver;
     }
 
     /**

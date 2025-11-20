@@ -81,8 +81,7 @@ public class ChurreraCLI implements Runnable {
             new CursorAgentManagementImpl(apiKey, defaultApi),
             new CursorAgentInformationImpl(apiKey, defaultApi),
             new CursorAgentGeneralEndpointsImpl(apiKey, defaultApi),
-            new PmlConverter(),
-            propertyResolver
+            new PmlConverter()
         );
 
         // Create WorkflowParser

@@ -87,7 +87,7 @@ class ResultExtractorTest {
         // For now, we'll test the happy path structure
 
         // When
-        List<Object> result = resultExtractor.extractResults(testJob, testParallelData);
+        resultExtractor.extractResults(testJob, testParallelData);
 
         // Then
         // Result may be null if deserialization fails, which is expected behavior

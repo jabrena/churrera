@@ -21,10 +21,6 @@ class JobXmlMapperTest {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private static final LocalDateTime FIXED_TIME = LocalDateTime.of(2025, 1, 1, 12, 0, 0);
 
-    private static String format(LocalDateTime time) {
-        return time.format(FORMATTER);
-    }
-
     private static LocalDateTime now() {
         return FIXED_TIME;
     }

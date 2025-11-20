@@ -74,7 +74,7 @@ public class PromptProcessor {
                 }
 
                 // Send follow-up prompt with type information and optional bind value
-                String followUpId = cliAgent.followUpForPrompt(job.cursorAgentId(), promptContent, promptInfo.getType(), bindValue);
+                cliAgent.followUpForPrompt(job.cursorAgentId(), promptContent, promptInfo.getType(), bindValue);
 
                 // Update prompt status to SENT
                 cliAgent.updatePromptInDatabase(prompt, "SENT");

@@ -36,8 +36,6 @@ public class JobRepository {
     private static final Logger logger = LoggerFactory.getLogger(JobRepository.class);
 
     private static final String DATABASE_NAME = "churrera-jobs";
-    private static final String COLLECTION_NAME = "jobs";
-    private static final String PROMPTS_COLLECTION = "prompts";
     private static final String APPLICATION_PROPERTIES = "application.properties";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -227,7 +225,6 @@ public class JobRepository {
     public Optional<Prompt> findPromptById(String promptId) throws BaseXException, QueryException {
         try {
             String xmlContent = new Get("prompts.xml").execute(context);
-            List<Prompt> prompts = PromptXmlMapper.fromDocument(xmlContent, DATE_TIME_FORMATTER);
 
             // Parse the XML content and find the specific prompt
             return PromptXmlMapper.fromDocument(xmlContent, DATE_TIME_FORMATTER).stream()

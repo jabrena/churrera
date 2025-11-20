@@ -32,7 +32,7 @@ public class CliCommand implements Runnable {
 
     private static final Pattern JOB_STATUS_PATTERN = Pattern.compile("^jobs\\s+status\\s+(\\S+)$");
     private static final Pattern JOB_LOGS_PATTERN = Pattern.compile("^jobs\\s+logs\\s+(\\S+)$");
-    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+([^\n]++)$");
+    private static final Pattern JOB_NEW_PATTERN = Pattern.compile("^jobs\\s+new\\s+([^\n]{1,500})$");
     private static final Pattern JOB_DELETE_PATTERN = Pattern.compile("^jobs\\s+delete\\s+(\\S+)$");
     private static final Pattern JOB_PR_PATTERN = Pattern.compile("^jobs\\s+pr\\s+(\\S+)$");
     

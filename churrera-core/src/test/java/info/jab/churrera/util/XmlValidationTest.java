@@ -105,7 +105,6 @@ class XmlValidationTest {
         void shouldValidateXslAgainstXsltSchema() throws Exception {
             // Given
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
-            String schemaUrl = "http://www.w3.org/1999/XSL/Transform";
 
             // When & Then
             assertThatCode(() -> validateXslFile(xmlContent))
@@ -175,7 +174,6 @@ class XmlValidationTest {
         void shouldVerifyPrompt1XmlHasCorrectNamespaceDeclarations() throws Exception {
             // Given
             String xmlContent = resolver.retrieve("examples/hello-world/prompt1.xml");
-            Document document = parseXml(xmlContent);
 
             // When & Then
             assertThat(xmlContent)

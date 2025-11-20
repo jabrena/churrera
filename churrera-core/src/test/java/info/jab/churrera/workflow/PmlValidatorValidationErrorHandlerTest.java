@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.xml.sax.SAXParseException;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,50 +16,16 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for PmlValidator.ValidationErrorHandler.
- * Uses reflection to test the private inner class.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PmlValidator.ValidationErrorHandler Tests")
 class PmlValidatorValidationErrorHandlerTest {
 
-    private Object errorHandler;
-    private Class<?> errorHandlerClass;
-    private Method warningMethod;
-    private Method errorMethod;
-    private Method fatalErrorMethod;
-    private Method hasErrorsMethod;
-    private Method getErrorsMethod;
+    private PmlValidator.ValidationErrorHandler errorHandler;
 
     @BeforeEach
-    void setUp() throws Exception {
-        // Get the ValidationErrorHandler class using reflection
-        Class<?> validatorClass = PmlValidator.class;
-        Class<?>[] innerClasses = validatorClass.getDeclaredClasses();
-        
-        for (Class<?> innerClass : innerClasses) {
-            if (org.xml.sax.ErrorHandler.class.isAssignableFrom(innerClass) 
-                    && "ValidationErrorHandler".equals(innerClass.getSimpleName())) {
-                errorHandlerClass = innerClass;
-                break;
-            }
-        }
-        
-        assertThat(errorHandlerClass).as("ValidationErrorHandler class not found").isNotNull();
-        
-        // Get constructor and create instance
-        Constructor<?> constructor = errorHandlerClass.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        errorHandler = constructor.newInstance();
-        
-        // Verify it's an ErrorHandler using instanceof
-        assertThat(errorHandler).isInstanceOf(org.xml.sax.ErrorHandler.class);
-        
-        // Get methods
-        warningMethod = errorHandlerClass.getMethod("warning", SAXParseException.class);
-        errorMethod = errorHandlerClass.getMethod("error", SAXParseException.class);
-        fatalErrorMethod = errorHandlerClass.getMethod("fatalError", SAXParseException.class);
-        hasErrorsMethod = errorHandlerClass.getMethod("hasErrors");
-        getErrorsMethod = errorHandlerClass.getMethod("getErrors");
+    void setUp() {
+        errorHandler = new PmlValidator.ValidationErrorHandler();
     }
 
     @Nested
@@ -70,9 +34,9 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should return false when no errors exist")
-        void shouldReturnFalseWhenNoErrorsExist() throws Exception {
+        void shouldReturnFalseWhenNoErrorsExist() {
             // When
-            Boolean result = (Boolean) hasErrorsMethod.invoke(errorHandler);
+            Boolean result = errorHandler.hasErrors();
 
             // Then
             assertThat(result).isFalse();
@@ -80,10 +44,9 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should return empty list when no errors exist")
-        void shouldReturnEmptyListWhenNoErrorsExist() throws Exception {
+        void shouldReturnEmptyListWhenNoErrorsExist() {
             // When
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors).isNotNull().isEmpty();
@@ -96,17 +59,16 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should add warning to errors list")
-        void shouldAddWarningToErrorsList() throws Exception {
+        void shouldAddWarningToErrorsList() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test warning message");
             when(exception.getLineNumber()).thenReturn(10);
 
             // When
-            warningMethod.invoke(errorHandler, exception);
-            Boolean hasErrors = (Boolean) hasErrorsMethod.invoke(errorHandler);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.warning(exception);
+            Boolean hasErrors = errorHandler.hasErrors();
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(hasErrors).isTrue();
@@ -121,17 +83,16 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should add error to errors list")
-        void shouldAddErrorToErrorsList() throws Exception {
+        void shouldAddErrorToErrorsList() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test error message");
             when(exception.getLineNumber()).thenReturn(25);
 
             // When
-            errorMethod.invoke(errorHandler, exception);
-            Boolean hasErrors = (Boolean) hasErrorsMethod.invoke(errorHandler);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception);
+            Boolean hasErrors = errorHandler.hasErrors();
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(hasErrors).isTrue();
@@ -146,17 +107,16 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should add fatal error to errors list")
-        void shouldAddFatalErrorToErrorsList() throws Exception {
+        void shouldAddFatalErrorToErrorsList() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test fatal error message");
             when(exception.getLineNumber()).thenReturn(50);
 
             // When
-            fatalErrorMethod.invoke(errorHandler, exception);
-            Boolean hasErrors = (Boolean) hasErrorsMethod.invoke(errorHandler);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.fatalError(exception);
+            Boolean hasErrors = errorHandler.hasErrors();
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(hasErrors).isTrue();
@@ -176,7 +136,7 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle multiple warnings")
-        void shouldHandleMultipleWarnings() throws Exception {
+        void shouldHandleMultipleWarnings() {
             // Given
             SAXParseException exception1 = mock(SAXParseException.class);
             when(exception1.getMessage()).thenReturn("Warning 1");
@@ -187,10 +147,9 @@ class PmlValidatorValidationErrorHandlerTest {
             when(exception2.getLineNumber()).thenReturn(10);
 
             // When
-            warningMethod.invoke(errorHandler, exception1);
-            warningMethod.invoke(errorHandler, exception2);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.warning(exception1);
+            errorHandler.warning(exception2);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -206,7 +165,7 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle multiple errors")
-        void shouldHandleMultipleErrors() throws Exception {
+        void shouldHandleMultipleErrors() {
             // Given
             SAXParseException exception1 = mock(SAXParseException.class);
             when(exception1.getMessage()).thenReturn("Error 1");
@@ -217,10 +176,9 @@ class PmlValidatorValidationErrorHandlerTest {
             when(exception2.getLineNumber()).thenReturn(20);
 
             // When
-            errorMethod.invoke(errorHandler, exception1);
-            errorMethod.invoke(errorHandler, exception2);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception1);
+            errorHandler.error(exception2);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -238,7 +196,7 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle mixed error types")
-        void shouldHandleMixedErrorTypes() throws Exception {
+        void shouldHandleMixedErrorTypes() {
             // Given
             SAXParseException warning = mock(SAXParseException.class);
             when(warning.getMessage()).thenReturn("Warning message");
@@ -253,11 +211,10 @@ class PmlValidatorValidationErrorHandlerTest {
             when(fatalError.getLineNumber()).thenReturn(3);
 
             // When
-            warningMethod.invoke(errorHandler, warning);
-            errorMethod.invoke(errorHandler, error);
-            fatalErrorMethod.invoke(errorHandler, fatalError);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.warning(warning);
+            errorHandler.error(error);
+            errorHandler.fatalError(fatalError);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -276,19 +233,17 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should return defensive copy of errors list")
-        void shouldReturnDefensiveCopyOfErrorsList() throws Exception {
+        void shouldReturnDefensiveCopyOfErrorsList() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test message");
             when(exception.getLineNumber()).thenReturn(1);
-            errorMethod.invoke(errorHandler, exception);
+            errorHandler.error(exception);
 
             // When
-            @SuppressWarnings("unchecked")
-            List<String> errors1 = (List<String>) getErrorsMethod.invoke(errorHandler);
+            List<String> errors1 = errorHandler.getErrors();
             errors1.add("Should not appear");
-            @SuppressWarnings("unchecked")
-            List<String> errors2 = (List<String>) getErrorsMethod.invoke(errorHandler);
+            List<String> errors2 = errorHandler.getErrors();
 
             // Then
             assertThat(errors2)
@@ -298,16 +253,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle error with null message")
-        void shouldHandleErrorWithNullMessage() throws Exception {
+        void shouldHandleErrorWithNullMessage() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn(null);
             when(exception.getLineNumber()).thenReturn(5);
 
             // When
-            errorMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -320,16 +274,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle error with negative line number")
-        void shouldHandleErrorWithNegativeLineNumber() throws Exception {
+        void shouldHandleErrorWithNegativeLineNumber() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test message");
             when(exception.getLineNumber()).thenReturn(-1);
 
             // When
-            errorMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -342,16 +295,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle error with zero line number")
-        void shouldHandleErrorWithZeroLineNumber() throws Exception {
+        void shouldHandleErrorWithZeroLineNumber() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Test message");
             when(exception.getLineNumber()).thenReturn(0);
 
             // When
-            errorMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -369,16 +321,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should format error with message and line number")
-        void shouldFormatErrorWithMessageAndLineNumber() throws Exception {
+        void shouldFormatErrorWithMessageAndLineNumber() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Custom error message");
             when(exception.getLineNumber()).thenReturn(42);
 
             // When
-            errorMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.error(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -389,16 +340,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should format warning with message and line number")
-        void shouldFormatWarningWithMessageAndLineNumber() throws Exception {
+        void shouldFormatWarningWithMessageAndLineNumber() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Custom warning message");
             when(exception.getLineNumber()).thenReturn(100);
 
             // When
-            warningMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.warning(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -409,16 +359,15 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should format fatal error with message and line number")
-        void shouldFormatFatalErrorWithMessageAndLineNumber() throws Exception {
+        void shouldFormatFatalErrorWithMessageAndLineNumber() {
             // Given
             SAXParseException exception = mock(SAXParseException.class);
             when(exception.getMessage()).thenReturn("Custom fatal error message");
             when(exception.getLineNumber()).thenReturn(200);
 
             // When
-            fatalErrorMethod.invoke(errorHandler, exception);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.fatalError(exception);
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(errors)
@@ -429,7 +378,7 @@ class PmlValidatorValidationErrorHandlerTest {
 
         @Test
         @DisplayName("Should handle all error types correctly")
-        void shouldHandleAllErrorTypesCorrectly() throws Exception {
+        void shouldHandleAllErrorTypesCorrectly() {
             // Given
             SAXParseException warning = mock(SAXParseException.class);
             when(warning.getMessage()).thenReturn("Warning");
@@ -444,12 +393,11 @@ class PmlValidatorValidationErrorHandlerTest {
             when(fatalError.getLineNumber()).thenReturn(3);
 
             // When
-            warningMethod.invoke(errorHandler, warning);
-            errorMethod.invoke(errorHandler, error);
-            fatalErrorMethod.invoke(errorHandler, fatalError);
-            Boolean hasErrors = (Boolean) hasErrorsMethod.invoke(errorHandler);
-            @SuppressWarnings("unchecked")
-            List<String> errors = (List<String>) getErrorsMethod.invoke(errorHandler);
+            errorHandler.warning(warning);
+            errorHandler.error(error);
+            errorHandler.fatalError(fatalError);
+            Boolean hasErrors = errorHandler.hasErrors();
+            List<String> errors = errorHandler.getErrors();
 
             // Then
             assertThat(hasErrors).isTrue();

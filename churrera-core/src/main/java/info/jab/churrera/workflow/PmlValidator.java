@@ -90,16 +90,16 @@ public class PmlValidator {
      */
     private static SchemaFactory createSecureSchemaFactory() throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        
+
         // Enable secure processing feature
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        
+
         // Disable external DTD access
         factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        
+
         // Disable external schema access
         factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        
+
         return factory;
     }
 
@@ -178,7 +178,7 @@ public class PmlValidator {
     /**
      * Custom error handler to collect validation errors.
      */
-    private static class ValidationErrorHandler implements org.xml.sax.ErrorHandler {
+    static class ValidationErrorHandler implements org.xml.sax.ErrorHandler {
         private final List<String> errors = new ArrayList<>();
 
         @Override

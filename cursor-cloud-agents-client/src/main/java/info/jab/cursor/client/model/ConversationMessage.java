@@ -29,10 +29,7 @@ public record ConversationMessage(
         if (generated == null) {
             return null;
         }
-        String type = null;
-        if (generated.getType() != null) {
-            type = generated.getType().toString();
-        }
+        String type = generated.getType().toString();
         return new ConversationMessage(
             generated.getId(),
             type,

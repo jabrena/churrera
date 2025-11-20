@@ -161,7 +161,7 @@ public class CursorAgentManagementImpl implements CursorAgentManagement {
             logger.debug("Successfully followed up agent: {}", agentId);
             return response;
         } catch (ApiException e) {
-            logger.error("Failed to follow up agent: {}", agentId, e.getMessage(), e);
+            logger.error("Failed to follow up agent: {}: {}", agentId, e.getMessage(), e);
             throw new RuntimeException("Failed to follow up agent " + agentId + ": " + e.getMessage(), e);
         }
     }

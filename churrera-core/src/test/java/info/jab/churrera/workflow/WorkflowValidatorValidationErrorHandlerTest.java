@@ -53,7 +53,7 @@ class WorkflowValidatorValidationErrorHandlerTest {
         errorHandler = constructor.newInstance();
         
         // Verify it's an ErrorHandler using instanceof
-        assertThat(errorHandler instanceof org.xml.sax.ErrorHandler).isTrue();
+        assertThat(errorHandler).isInstanceOf(org.xml.sax.ErrorHandler.class);
         
         // Get methods
         warningMethod = errorHandlerClass.getMethod("warning", SAXParseException.class);

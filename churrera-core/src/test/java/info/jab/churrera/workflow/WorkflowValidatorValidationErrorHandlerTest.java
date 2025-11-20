@@ -39,7 +39,8 @@ class WorkflowValidatorValidationErrorHandlerTest {
         Class<?>[] innerClasses = validatorClass.getDeclaredClasses();
         
         for (Class<?> innerClass : innerClasses) {
-            if ("ValidationErrorHandler".equals(innerClass.getSimpleName())) {
+            if (org.xml.sax.ErrorHandler.class.isAssignableFrom(innerClass) 
+                    && "ValidationErrorHandler".equals(innerClass.getSimpleName())) {
                 errorHandlerClass = innerClass;
                 break;
             }

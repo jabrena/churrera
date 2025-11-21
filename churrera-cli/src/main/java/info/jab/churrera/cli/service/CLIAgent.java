@@ -78,7 +78,6 @@ public class CLIAgent {
             AgentResponse cursorAgentResult = cursorAgentManagement.launch(markdownContent, job.model(), job.repository(), pr);
             return cursorAgentResult.id();
         } catch (Exception e) {
-            logger.error("Failed to launch agent: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to launch agent: " + e.getMessage(), e);
         }
     }

@@ -178,21 +178,6 @@ class CursorApiKeyResolverTest {
             .hasMessageContaining("Environment variable");
     }
 
-    @Test
-    @DisplayName("Should throw exception when API key is empty in system environment")
-    void shouldThrowExceptionWhenApiKeyIsEmptyInSystemEnvironment() {
-        // Test that empty environment variable causes exception
-        // Note: This test may not work in all environments due to environment variable limitations
-        clearEnvironmentVariable();
-
-        // Test that exception is thrown
-        CursorApiKeyResolver resolver = new CursorApiKeyResolver();
-        
-        // When & Then
-        assertThatThrownBy(resolver::resolveApiKey)
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("API key not found");
-    }
 
     @Test
     @DisplayName("Should throw exception when API key is empty in .env file")

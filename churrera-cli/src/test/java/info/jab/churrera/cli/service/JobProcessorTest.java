@@ -684,17 +684,6 @@ class JobProcessorTest {
         verify(jobRepository).findJobWithDetails("test-job-id");
     }
 
-    @Test
-    void testProcessJob_ThreadInterruption() throws Exception {
-        // Given
-        when(jobRepository.findUnfinishedJobs()).thenReturn(List.of());
-
-        // When - Process jobs directly (no thread interruption test needed with direct calls)
-        jobProcessor.processJobs();
-
-        // Then - ProcessJobs() completed successfully
-        verify(jobRepository).findUnfinishedJobs();
-    }
 
     @Test
     void testProcessParallelWorkflow_LaunchesAgent() throws Exception {

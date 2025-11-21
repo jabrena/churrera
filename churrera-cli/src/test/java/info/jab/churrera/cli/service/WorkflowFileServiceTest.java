@@ -69,7 +69,10 @@ class WorkflowFileServiceTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class,
-            () -> workflowFileService.parseWorkflow(workflowPath.toString()));
+            () -> {
+                String path = workflowPath.toString();
+                workflowFileService.parseWorkflow(path);
+            });
         assertTrue(exception.getMessage().contains("Failed to parse workflow"));
     }
 
@@ -97,7 +100,10 @@ class WorkflowFileServiceTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class,
-            () -> workflowFileService.readPromptFile(workflowPath.toString(), "nonexistent.pml"));
+            () -> {
+                String path = workflowPath.toString();
+                workflowFileService.readPromptFile(path, "nonexistent.pml");
+            });
         assertTrue(exception.getMessage().contains("Prompt file not found"));
     }
 
@@ -117,7 +123,10 @@ class WorkflowFileServiceTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class,
-            () -> workflowFileService.readPromptFile(workflowPath.toString(), "prompt.pml"));
+            () -> {
+                String path = workflowPath.toString();
+                workflowFileService.readPromptFile(path, "prompt.pml");
+            });
         assertTrue(exception.getMessage().contains("Failed to read prompt file") || 
                    exception.getMessage().contains("Prompt file not found"));
     }

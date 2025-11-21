@@ -147,7 +147,7 @@ public class ChildWorkflowHandler {
                 // Always check agent status to ensure database is synchronized with actual agent state
                 // This is critical for child jobs in parallel workflows where agents may finish
                 // but database status hasn't been updated yet
-                job = checkAndUpdateChildJobStatus(job, prompts, childWorkflowData);
+                checkAndUpdateChildJobStatus(job, prompts, childWorkflowData);
             } else if (justLaunched) {
                 logger.info("Child job {} just launched, will check status on next polling cycle", job.jobId());
             }

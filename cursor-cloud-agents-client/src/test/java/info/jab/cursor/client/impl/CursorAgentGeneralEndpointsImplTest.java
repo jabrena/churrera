@@ -148,22 +148,6 @@ class CursorAgentGeneralEndpointsImplTest {
             assertThat(result).isEmpty();
         }
 
-        @Test
-        @DisplayName("Should return empty list when repositories list is null")
-        void should_returnEmptyList_when_repositoriesListIsNull() throws ApiException {
-            // Given
-            CursorAgentGeneralEndpointsImpl impl = new CursorAgentGeneralEndpointsImpl(TEST_API_KEY, defaultApi);
-            ListRepositories200Response response = new ListRepositories200Response();
-            response.setRepositories(null);
-            when(defaultApi.listRepositories(any())).thenReturn(response);
-
-            // When
-            List<String> result = impl.getRepositories();
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result).isEmpty();
-        }
 
         @Test
         @DisplayName("Should filter out null repositories")

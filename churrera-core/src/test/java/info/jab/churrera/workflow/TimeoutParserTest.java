@@ -3,6 +3,9 @@ package info.jab.churrera.workflow;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,31 +20,13 @@ class TimeoutParserTest {
     @DisplayName("Null and Empty Input Tests")
     class NullAndEmptyInputTests {
 
-        @Test
-        @DisplayName("Should return null for null input")
-        void shouldReturnNullForNullInput() {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"   "})
+        @DisplayName("Should return null for null, empty, or whitespace-only input")
+        void shouldReturnNullForNullOrEmptyInput(String input) {
             // When
-            Long result = TimeoutParser.parseToMillis(null);
-
-            // Then
-            assertThat(result).isNull();
-        }
-
-        @Test
-        @DisplayName("Should return null for empty string")
-        void shouldReturnNullForEmptyString() {
-            // When
-            Long result = TimeoutParser.parseToMillis("");
-
-            // Then
-            assertThat(result).isNull();
-        }
-
-        @Test
-        @DisplayName("Should return null for whitespace only")
-        void shouldReturnNullForWhitespaceOnly() {
-            // When
-            Long result = TimeoutParser.parseToMillis("   ");
+            Long result = TimeoutParser.parseToMillis(input);
 
             // Then
             assertThat(result).isNull();

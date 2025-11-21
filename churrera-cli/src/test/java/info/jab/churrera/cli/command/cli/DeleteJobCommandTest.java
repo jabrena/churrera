@@ -279,25 +279,6 @@ class DeleteJobCommandTest {
         verify(jobRepository).deleteById(grandparentJobId);
     }
 
-    @Test
-    void testRun_JobWithNoChildren_NormalDelete() throws BaseXException, QueryException {
-        // Given
-        String jobId = "test-job-id";
-        deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, jobId);
-
-        when(jobRepository.findById(jobId)).thenReturn(Optional.of(testJob));
-        when(jobRepository.findJobsByParentId(jobId)).thenReturn(Collections.emptyList());
-
-        // When
-        deleteJobCommand.run();
-
-        // Then
-        verify(jobRepository, atLeastOnce()).findById(jobId);
-        verify(jobRepository).findJobsByParentId(jobId);
-        verify(cliAgent).deleteAgent("cursor-agent-123");
-        verify(jobRepository).deletePromptsByJobId(jobId);
-        verify(jobRepository).deleteById(jobId);
-    }
 
     // Tests for resolveJobId method scenarios
 

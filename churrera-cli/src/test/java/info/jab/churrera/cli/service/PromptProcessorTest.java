@@ -98,20 +98,6 @@ class PromptProcessorTest {
         verify(cliAgent, never()).updatePromptInDatabase(any(), anyString());
     }
 
-    @Test
-    void testProcessRemainingPrompts_WithSentPrompt_StillActive() throws Exception {
-        // Given
-        Prompt sentPrompt = testPrompt.withStatus("SENT");
-        List<Prompt> prompts = List.of(sentPrompt);
-        // processRemainingPrompts only processes UNKNOWN prompts, not SENT ones
-
-        // When
-        promptProcessor.processRemainingPrompts(testJob, prompts, testWorkflowData);
-
-        // Then
-        verify(cliAgent, never()).getAgentStatus(anyString());
-        verify(cliAgent, never()).updatePromptInDatabase(any(), anyString());
-    }
 
     @Test
     void testProcessRemainingPrompts_Exception() throws Exception {

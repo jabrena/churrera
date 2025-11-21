@@ -990,18 +990,6 @@ class ChurreraCLITest {
         assertThat(output).contains("Please specify a command");
     }
 
-    @Test
-    void testChurreraCLI_Run_OutputContainsHelpMessage() {
-        // Given
-        ChurreraCLI cli = createChurreraCLIWithMocks();
-
-        // When
-        cli.run();
-
-        // Then
-        String output = outputStream.toString();
-        assertThat(output).contains("Please specify a command");
-    }
 
     @Test
     void testChurreraCLI_Run_CanBeCalledMultipleTimes() {
@@ -1127,34 +1115,6 @@ class ChurreraCLITest {
         assertThat(result).isNotNull();
     }
 
-    @Test
-    void testCreateCLICommand_ThrowsExceptionWhenPropertyMissing() throws IOException, BaseXException {
-        // Given
-        // Note: CliCommand creation doesn't check properties, so this test verifies
-        // that it doesn't throw an exception even when properties are missing
-        String testApiKey = "test-api-key";
-        InputStream testInputStream = new ByteArrayInputStream("test".getBytes());
-
-        ChurreraCLI cli = new ChurreraCLI(
-            apiKeyResolver,
-            testApiKey,
-            propertyResolver,
-            jobRepository,
-            apiClient,
-            defaultApi,
-            cliAgent,
-            workflowParser,
-            jobProcessor,
-            workflowValidator,
-            pmlValidator
-        );
-
-        // When
-        CliCommand result = new CliCommand(cli.jobRepository, cli.jobProcessor, cli.propertyResolver, new Scanner(testInputStream), cli.cliAgent);
-
-        // Then
-        assertThat(result).isNotNull();
-    }
 
     @Test
     void testCreateCLICommand_WithInjectedDependencies() {

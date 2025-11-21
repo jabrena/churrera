@@ -392,7 +392,10 @@ class CLIAgentTest {
 
             // When & Then
             RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> cliAgent.updateJobCursorIdInDatabase(testJob, "new-agent-id", AgentState.CREATING()));
+                () -> {
+                    AgentState state = AgentState.CREATING();
+                    cliAgent.updateJobCursorIdInDatabase(testJob, "new-agent-id", state);
+                });
             assertTrue(exception.getMessage().contains("Failed to update job in database"));    }
 
     @Test
@@ -675,7 +678,10 @@ class CLIAgentTest {
 
             // When & Then
             RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> cliAgent.updateJobStatusInDatabase(testJob, AgentState.FINISHED()));
+                () -> {
+                    AgentState state = AgentState.FINISHED();
+                    cliAgent.updateJobStatusInDatabase(testJob, state);
+                });
             assertTrue(exception.getMessage().contains("Failed to update job status in database"));    }
 
     @Test

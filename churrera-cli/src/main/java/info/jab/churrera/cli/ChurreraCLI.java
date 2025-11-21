@@ -95,31 +95,62 @@ public class ChurreraCLI implements Runnable {
     }
 
     /**
+     * Configuration class for test constructor dependencies.
+     */
+    static class TestConfig {
+        final CursorApiKeyResolver apiKeyResolver;
+        final String apiKey;
+        final PropertyResolver propertyResolver;
+        final JobRepository jobRepository;
+        final ApiClient apiClient;
+        final DefaultApi defaultApi;
+        final CLIAgent cliAgent;
+        final WorkflowParser workflowParser;
+        final JobProcessor jobProcessor;
+        final WorkflowValidator workflowValidator;
+        final PmlValidator pmlValidator;
+
+        TestConfig(
+                CursorApiKeyResolver apiKeyResolver,
+                String apiKey,
+                PropertyResolver propertyResolver,
+                JobRepository jobRepository,
+                ApiClient apiClient,
+                DefaultApi defaultApi,
+                CLIAgent cliAgent,
+                WorkflowParser workflowParser,
+                JobProcessor jobProcessor,
+                WorkflowValidator workflowValidator,
+                PmlValidator pmlValidator) {
+            this.apiKeyResolver = apiKeyResolver;
+            this.apiKey = apiKey;
+            this.propertyResolver = propertyResolver;
+            this.jobRepository = jobRepository;
+            this.apiClient = apiClient;
+            this.defaultApi = defaultApi;
+            this.cliAgent = cliAgent;
+            this.workflowParser = workflowParser;
+            this.jobProcessor = jobProcessor;
+            this.workflowValidator = workflowValidator;
+            this.pmlValidator = pmlValidator;
+        }
+    }
+
+    /**
      * Constructor for testing that accepts all dependencies.
      */
-    ChurreraCLI(
-            CursorApiKeyResolver apiKeyResolver,
-            String apiKey,
-            PropertyResolver propertyResolver,
-            JobRepository jobRepository,
-            ApiClient apiClient,
-            DefaultApi defaultApi,
-            CLIAgent cliAgent,
-            WorkflowParser workflowParser,
-            JobProcessor jobProcessor,
-            WorkflowValidator workflowValidator,
-            PmlValidator pmlValidator) {
-        this.apiKeyResolver = apiKeyResolver;
-        this.apiKey = apiKey;
-        this.propertyResolver = propertyResolver;
-        this.jobRepository = jobRepository;
-        this.apiClient = apiClient;
-        this.defaultApi = defaultApi;
-        this.cliAgent = cliAgent;
-        this.workflowParser = workflowParser;
-        this.jobProcessor = jobProcessor;
-        this.workflowValidator = workflowValidator;
-        this.pmlValidator = pmlValidator;
+    ChurreraCLI(TestConfig config) {
+        this.apiKeyResolver = config.apiKeyResolver;
+        this.apiKey = config.apiKey;
+        this.propertyResolver = config.propertyResolver;
+        this.jobRepository = config.jobRepository;
+        this.apiClient = config.apiClient;
+        this.defaultApi = config.defaultApi;
+        this.cliAgent = config.cliAgent;
+        this.workflowParser = config.workflowParser;
+        this.jobProcessor = config.jobProcessor;
+        this.workflowValidator = config.workflowValidator;
+        this.pmlValidator = config.pmlValidator;
     }
 
 

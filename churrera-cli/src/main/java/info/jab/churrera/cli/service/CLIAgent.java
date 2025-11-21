@@ -77,7 +77,7 @@ public class CLIAgent {
             AgentResponse cursorAgentResult = cursorAgentManagement.launch(markdownContent, job.model(), job.repository(), pr);
             return cursorAgentResult.id();
         } catch (Exception e) {
-            logger.error("Failed to launch agent: {}", e.getMessage());
+            logger.error("Failed to launch agent: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to launch agent: " + e.getMessage(), e);
         }
     }
@@ -115,6 +115,7 @@ public class CLIAgent {
             FollowUpResponse response = cursorAgentManagement.followUp(cursorAgentId, markdownContent);
             return response.id();
         } catch (Exception e) {
+            logger.error("Failed to send follow-up for agent {}: {}", cursorAgentId, e.getMessage(), e);
             throw new RuntimeException("Failed to send follow-up: " + e.getMessage(), e);
         }
     }
@@ -173,6 +174,7 @@ public class CLIAgent {
         try {
             return cursorAgentInformation.getAgentConversation(cursorAgentId);
         } catch (Exception e) {
+            logger.error("Failed to get agent conversation for {}: {}", cursorAgentId, e.getMessage(), e);
             throw new RuntimeException("Failed to get agent conversation: " + e.getMessage(), e);
         }
     }
@@ -199,6 +201,7 @@ public class CLIAgent {
 
             return content.toString();
         } catch (Exception e) {
+            logger.error("Failed to get agent conversation content for {}: {}", cursorAgentId, e.getMessage(), e);
             throw new RuntimeException("Failed to get agent conversation content: " + e.getMessage(), e);
         }
     }
@@ -212,6 +215,7 @@ public class CLIAgent {
         try {
             cursorAgentManagement.delete(cursorAgentId);
         } catch (Exception e) {
+            logger.error("Failed to delete agent {}: {}", cursorAgentId, e.getMessage(), e);
             throw new RuntimeException("Failed to delete agent: " + e.getMessage(), e);
         }
     }
@@ -228,6 +232,7 @@ public class CLIAgent {
             Job updatedJob = job.withCursorAgentId(cursorAgentId).withStatus(status);
             jobRepository.save(updatedJob);
         } catch (Exception e) {
+            logger.error("Failed to update job {} in database: {}", job.id(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job in database: " + e.getMessage(), e);
         }
     }
@@ -243,6 +248,7 @@ public class CLIAgent {
             Job updatedJob = job.withStatus(status);
             jobRepository.save(updatedJob);
         } catch (Exception e) {
+            logger.error("Failed to update job status for job {} in database: {}", job.id(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job status in database: " + e.getMessage(), e);
         }
     }
@@ -258,6 +264,7 @@ public class CLIAgent {
             Prompt updatedPrompt = prompt.withStatus(status);
             jobRepository.savePrompt(updatedPrompt);
         } catch (Exception e) {
+            logger.error("Failed to update prompt {} in database: {}", prompt.id(), e.getMessage(), e);
             throw new RuntimeException("Failed to update prompt in database: " + e.getMessage(), e);
         }
     }
@@ -272,6 +279,7 @@ public class CLIAgent {
             Job updatedJob = job.withPath(job.path()); // This updates the lastUpdate timestamp
             jobRepository.save(updatedJob);
         } catch (Exception e) {
+            logger.error("Failed to update job {} in database: {}", job.id(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job in database: " + e.getMessage(), e);
         }
     }
@@ -287,7 +295,7 @@ public class CLIAgent {
             AgentResponse agent = cursorAgentInformation.getStatus(cursorAgentId);
             return AgentState.of(agent);
         } catch (Exception e) {
-            logger.error("Failed to get agent status for {}: {}", cursorAgentId, e.getMessage());
+            logger.error("Failed to get agent status for {}: {}", cursorAgentId, e.getMessage(), e);
             throw new RuntimeException("Failed to get agent status: " + e.getMessage(), e);
         }
     }
@@ -301,7 +309,7 @@ public class CLIAgent {
         try {
             return cursorAgentGeneralEndpoints.getModels();
         } catch (Exception e) {
-            logger.error("Failed to get models: {}", e.getMessage());
+            logger.error("Failed to get models: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get models: " + e.getMessage(), e);
         }
     }
@@ -315,7 +323,7 @@ public class CLIAgent {
         try {
             return cursorAgentGeneralEndpoints.getRepositories();
         } catch (Exception e) {
-            logger.error("Failed to get repositories: {}", e.getMessage());
+            logger.error("Failed to get repositories: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to get repositories: " + e.getMessage(), e);
         }
     }

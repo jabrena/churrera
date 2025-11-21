@@ -232,7 +232,7 @@ public class CLIAgent {
             Job updatedJob = job.withCursorAgentId(cursorAgentId).withStatus(status);
             jobRepository.save(updatedJob);
         } catch (Exception e) {
-            logger.error("Failed to update job {} in database: {}", job.id(), e.getMessage(), e);
+            logger.error("Failed to update job {} in database: {}", job.jobId(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job in database: " + e.getMessage(), e);
         }
     }
@@ -248,7 +248,7 @@ public class CLIAgent {
             Job updatedJob = job.withStatus(status);
             jobRepository.save(updatedJob);
         } catch (Exception e) {
-            logger.error("Failed to update job status for job {} in database: {}", job.id(), e.getMessage(), e);
+            logger.error("Failed to update job status for job {} in database: {}", job.jobId(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job status in database: " + e.getMessage(), e);
         }
     }
@@ -264,7 +264,7 @@ public class CLIAgent {
             Prompt updatedPrompt = prompt.withStatus(status);
             jobRepository.savePrompt(updatedPrompt);
         } catch (Exception e) {
-            logger.error("Failed to update prompt {} in database: {}", prompt.id(), e.getMessage(), e);
+            logger.error("Failed to update prompt {} in database: {}", prompt.promptId(), e.getMessage(), e);
             throw new RuntimeException("Failed to update prompt in database: " + e.getMessage(), e);
         }
     }
@@ -279,7 +279,7 @@ public class CLIAgent {
             Job updatedJob = job.withPath(job.path()); // This updates the lastUpdate timestamp
             jobRepository.save(updatedJob);
         } catch (Exception e) {
-            logger.error("Failed to update job {} in database: {}", job.id(), e.getMessage(), e);
+            logger.error("Failed to update job {} in database: {}", job.jobId(), e.getMessage(), e);
             throw new RuntimeException("Failed to update job in database: " + e.getMessage(), e);
         }
     }

@@ -984,60 +984,77 @@ class RunCommandTest {
 
     @Test
     void testValidateModel_EmptyModelList() {
-        // Given - validation is disabled
+        // Given
+        when(cliAgent.getModels()).thenReturn(List.of("default"));
+
         // When
         List<String> result = jobCreationService.validateModel("test-model");
 
-        // Then - validation is disabled, so should return empty list (validation passed)
+        // Then
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertFalse(result.isEmpty());
+        assertTrue(result.get(0).contains("Unable to validate model") || result.get(0).contains("is not available"));
     }
 
     @Test
     void testValidateModel_NullModelList() {
-        // Given - validation is disabled
+        // Given
+        when(cliAgent.getModels()).thenReturn(null);
+
         // When
         List<String> result = jobCreationService.validateModel("test-model");
 
-        // Then - validation is disabled, so should return empty list (validation passed)
+        // Then
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertFalse(result.isEmpty());
+        assertTrue(result.get(0).contains("Unable to validate model"));
     }
 
     @Test
     void testValidateModel_Exception() {
-        // Given - validation is disabled
+        // Given
+        when(cliAgent.getModels()).thenThrow(new RuntimeException("API error"));
+
         // When
         List<String> result = jobCreationService.validateModel("test-model");
 
-        // Then - validation is disabled, so should return empty list (validation passed)
+        // Then
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertFalse(result.isEmpty());
+        assertTrue(result.get(0).contains("Error validating model"));
     }
 
     @Test
     void testValidateModel_InvalidModel() {
-        // Given - validation is disabled
+        // Given
+        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "model3", "default"));
+
         // When
         List<String> result = jobCreationService.validateModel("invalid-model");
 
-        // Then - validation is disabled, so should return empty list (validation passed)
+        // Then
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertFalse(result.isEmpty());
+        assertTrue(result.get(0).contains("is not available"));
+        assertTrue(result.contains("Available models are:"));
     }
 
     @Test
     void testValidateModel_NullOrEmptyModel() {
-        // Given - validation is disabled
+        // Given
+        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "default"));
+
         // When
         List<String> resultNull = jobCreationService.validateModel(null);
         List<String> resultEmpty = jobCreationService.validateModel("");
 
-        // Then - validation is disabled, so should return empty list (validation passed)
+        // Then
         assertNotNull(resultNull);
-        assertTrue(resultNull.isEmpty());
+        assertFalse(resultNull.isEmpty());
+        assertTrue(resultNull.get(0).contains("null or empty"));
         assertNotNull(resultEmpty);
-        assertTrue(resultEmpty.isEmpty());
+        assertFalse(resultEmpty.isEmpty());
+        assertTrue(resultEmpty.get(0).contains("null or empty"));
     }
 
 }

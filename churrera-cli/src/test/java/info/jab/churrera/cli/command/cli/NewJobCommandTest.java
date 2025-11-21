@@ -192,89 +192,94 @@ class NewJobCommandTest {
 
     @Test
     void testRun_ModelValidationFails() throws BaseXException, QueryException, IOException {
-        // Given - validation is disabled, so even invalid models should pass
+        // Given
         String input = "test/path\ninvalid-model\nrepo-url\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         Scanner scannerWithInvalidModel = new Scanner(inputStream);
         NewJobCommand commandWithInvalidModel = new NewJobCommand(jobRepository, scannerWithInvalidModel, cliAgent);
 
+        when(cliAgent.getModels()).thenReturn(List.of("valid-model-1", "valid-model-2", "default"));
+
         // When
         commandWithInvalidModel.run();
 
-        // Then - validation is disabled, so job should be saved
-        verify(jobRepository).save(any(Job.class));
-        // getModels() is no longer called since validation is disabled
-        verify(cliAgent, never()).getModels();
+        // Then
+        verify(jobRepository, never()).save(any(Job.class));
+        verify(cliAgent).getModels();
     }
 
     @Test
     void testRun_ModelValidation_EmptyModelList() throws BaseXException, QueryException, IOException {
-        // Given - validation is disabled, so even with empty model list, validation should pass
+        // Given
         String input = "test/path\nsome-model\nrepo-url\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         Scanner scannerWithModel = new Scanner(inputStream);
         NewJobCommand commandWithModel = new NewJobCommand(jobRepository, scannerWithModel, cliAgent);
 
+        when(cliAgent.getModels()).thenReturn(List.of("default"));
+
         // When
         commandWithModel.run();
 
-        // Then - validation is disabled, so job should be saved
-        verify(jobRepository).save(any(Job.class));
-        // getModels() is no longer called since validation is disabled
-        verify(cliAgent, never()).getModels();
+        // Then - "default" is always added, so validation should pass if model is "default"
+        // But if model is "some-model" and only "default" is returned, validation should fail
+        verify(jobRepository, never()).save(any(Job.class));
+        verify(cliAgent).getModels();
     }
 
     @Test
     void testRun_ModelValidation_NullModelList() throws BaseXException, QueryException, IOException {
-        // Given - validation is disabled, so even with null model list, validation should pass
+        // Given
         String input = "test/path\nsome-model\nrepo-url\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         Scanner scannerWithModel = new Scanner(inputStream);
         NewJobCommand commandWithModel = new NewJobCommand(jobRepository, scannerWithModel, cliAgent);
 
+        when(cliAgent.getModels()).thenReturn(null);
+
         // When
         commandWithModel.run();
 
-        // Then - validation is disabled, so job should be saved
-        verify(jobRepository).save(any(Job.class));
-        // getModels() is no longer called since validation is disabled
-        verify(cliAgent, never()).getModels();
+        // Then - null list becomes ["default"], but "some-model" is not in it, so validation fails
+        verify(jobRepository, never()).save(any(Job.class));
+        verify(cliAgent).getModels();
     }
 
     @Test
     void testRun_ModelValidation_Exception() throws BaseXException, QueryException, IOException {
-        // Given - validation is disabled, so even if API throws exception, validation should pass
+        // Given
         String input = "test/path\nsome-model\nrepo-url\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         Scanner scannerWithModel = new Scanner(inputStream);
         NewJobCommand commandWithModel = new NewJobCommand(jobRepository, scannerWithModel, cliAgent);
 
+        when(cliAgent.getModels()).thenThrow(new RuntimeException("API error"));
+
         // When
         commandWithModel.run();
 
-        // Then - validation is disabled, so job should be saved
-        verify(jobRepository).save(any(Job.class));
-        // getModels() is no longer called since validation is disabled
-        verify(cliAgent, never()).getModels();
+        // Then
+        verify(jobRepository, never()).save(any(Job.class));
+        verify(cliAgent).getModels();
     }
 
     @Test
     void testRun_ModelValidation_WhitespaceTrimmed() throws BaseXException, QueryException, IOException {
-        // Given - validation is disabled, but whitespace should still be trimmed
+        // Given
         String input = "test/path\n  model-name  \nrepo-url\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         Scanner scannerWithWhitespace = new Scanner(inputStream);
         NewJobCommand commandWithWhitespace = new NewJobCommand(jobRepository, scannerWithWhitespace, cliAgent);
 
+        when(cliAgent.getModels()).thenReturn(List.of("model-name", "other-model", "default"));
+
         // When
         commandWithWhitespace.run();
 
-        // Then - should trim whitespace and save job (validation is disabled)
+        // Then - should trim whitespace and validate successfully
         verify(jobRepository).save(argThat(job -> {
             assertEquals("model-name", job.model());
             return true;
         }));
-        // getModels() is no longer called since validation is disabled
-        verify(cliAgent, never()).getModels();
     }
 }

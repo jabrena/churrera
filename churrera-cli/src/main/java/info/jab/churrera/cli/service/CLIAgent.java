@@ -9,6 +9,7 @@ import info.jab.cursor.client.impl.CursorAgentInformationImpl;
 import info.jab.cursor.client.model.FollowUpResponse;
 import info.jab.cursor.client.model.ConversationResponse;
 import info.jab.cursor.client.model.ConversationMessage;
+import java.util.ArrayList;
 import java.util.List;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.model.Prompt;
@@ -293,12 +294,23 @@ public class CLIAgent {
 
     /**
      * Get the list of available models from the Cursor API.
+     * Always includes "default" in the list.
      *
-     * @return list of available model names
+     * @return list of available model names (including "default")
      */
     public List<String> getModels() {
         try {
-            return cursorAgentGeneralEndpoints.getModels();
+            List<String> models = cursorAgentGeneralEndpoints.getModels();
+            if (models == null) {
+                return List.of("default");
+            }
+            // Add "default" if not already present
+            if (!models.contains("default")) {
+                List<String> modelsWithDefault = new ArrayList<>(models);
+                modelsWithDefault.add("default");
+                return modelsWithDefault;
+            }
+            return models;
         } catch (Exception e) {
             throw new RuntimeException("Failed to get models: " + e.getMessage(), e);
         }

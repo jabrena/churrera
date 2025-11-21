@@ -19,7 +19,7 @@
 
                 <![CDATA[
                 ```bash
-                jbang sonar-search.0.2.0-SNAPSHOT@jabrena --project jabrena_churrera-cli --query issues --types all  --severity critical --status open --size 5 --quiet
+                jbang sonar-search.0.2.0-SNAPSHOT@jabrena --project jabrena_churrera-cli --query issues --types all  --severity critical --status open --size 400 --quiet
                 ```
                 ]]>
 
@@ -82,6 +82,8 @@
             <step-constraints>
                 <step-constraint-list>
                     <step-constraint>Not any issue which is has the rule: java:S3776 (Cognitive Complexity of methods should not be too high)</step-constraint>
+                    <step-constraint>Not any issue which is has the rule: java:S106 (Replace this use of System.out by a logger)</step-constraint>
+                    <step-constraint>Not any issue which is has the rule: java:S112 (Replace generic exceptions with specific library exceptions or a custom exception.)</step-constraint>
                 </step-constraint-list>
             </step-constraints>
         </step>

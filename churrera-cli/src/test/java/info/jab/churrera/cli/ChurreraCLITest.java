@@ -172,19 +172,17 @@ class ChurreraCLITest {
     private ChurreraCLI createChurreraCLIWithMocks() {
         String testApiKey = "test-api-key";
         return new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
     }
 
@@ -1109,19 +1107,17 @@ class ChurreraCLITest {
         InputStream testInputStream = new ByteArrayInputStream("test".getBytes());
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1140,19 +1136,17 @@ class ChurreraCLITest {
         InputStream testInputStream = new ByteArrayInputStream("test".getBytes());
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1170,19 +1164,17 @@ class ChurreraCLITest {
         InputStream testInputStream = new ByteArrayInputStream("test".getBytes());
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1201,19 +1193,17 @@ class ChurreraCLITest {
                 .thenReturn(Optional.of("5"));
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1231,19 +1221,17 @@ class ChurreraCLITest {
                 .thenReturn(Optional.empty());
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When & Then
@@ -1261,19 +1249,17 @@ class ChurreraCLITest {
                 .thenReturn(Optional.of("5"));
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1302,19 +1288,17 @@ class ChurreraCLITest {
 
         // When
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // Then
@@ -1329,19 +1313,17 @@ class ChurreraCLITest {
                 .thenReturn(Optional.of("10"));
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When
@@ -1360,19 +1342,17 @@ class ChurreraCLITest {
                 .thenReturn(Optional.of("invalid"));
 
         ChurreraCLI cli = new ChurreraCLI(
-            new ChurreraCLI.TestConfig(
-                apiKeyResolver,
-                testApiKey,
-                propertyResolver,
-                jobRepository,
-                apiClient,
-                defaultApi,
-                cliAgent,
-                workflowParser,
-                jobProcessor,
-                workflowValidator,
-                pmlValidator
-            )
+            apiKeyResolver,
+            testApiKey,
+            propertyResolver,
+            jobRepository,
+            apiClient,
+            defaultApi,
+            cliAgent,
+            workflowParser,
+            jobProcessor,
+            workflowValidator,
+            pmlValidator
         );
 
         // When & Then

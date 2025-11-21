@@ -15,28 +15,57 @@
         <step number="1">
             <step-title>Download Sonar issues for the project</step-title>
             <step-content>
-                Download Sonar issues for the project using the following command:
+                Retrieve the list of Sonar issues for the project using the following command:
 
                 <![CDATA[
                 ```bash
-                jbang sonar-search@jabrena --project jabrena_churrera-cli --issues ALL --quiet >> all-issues.json
+                jbang sonar-search.0.2.0-SNAPSHOT@jabrena --project jabrena_churrera-cli --query issues --types all  --severity critical --status open --size 5 --quiet
                 ```
                 ]]>
+
+                The output is a JSON format with the list of issues and it has the following
+                structure:
+
+                ```json
+                {
+                "total" : 0,
+                "p" : 1,
+                "ps" : 5,
+                "paging" : {
+                "pageIndex" : 1,
+                "pageSize" : 5,
+                "total" : 0
+                },
+                "effortTotal" : 0,
+                "debtTotal" : 0,
+                "issues" : [ ],
+                "components" : [ ],
+                "organizations" : [ ],
+                "facets" : [ ]
+                }
+                ```
+
+                and understand the issues node exist an array of issues.
+                you need to put focus per issue object in the following object attributes:
+
+                <![CDATA[
+                ```json
+                component : jabrena_churrera-cli:churrera-cli/src/main/java/info/jab/churrera/cli/command/run/JobDisplayService.java
+                project : jabrena_churrera-cli
+                rule : java:S1192
+                line : 76
+                flows : [ ]
+                message : Define a constant instead of duplicating this literal \"Unknown\" 3 times.
+                ```
+                ]]>
+
+                the field message indicate what is the issue,
+                the field component indicate where is the issue located,
+                in the section "flows" offer details where the issue is located.
+                if flows has multiple objects, offer details about locations where the issue is located.
             </step-content>
         </step>
         <step number="2">
-            <step-title>Understand the Sonar issues</step-title>
-            <step-content>
-                Understand the Sonar issues for the project using the following command:
-
-                ```bash
-                cat all-issues.json
-                ```
-
-                and put focus to fix RELIABILITY issues only.
-            </step-content>
-        </step>
-        <step number="3">
             <step-title>Fix the Sonar issues</step-title>
             <step-content>
                 Using that information, fix the project in the different maven modules.
@@ -49,24 +78,26 @@
 
                 Once the changes are verified,
                 commit the changes and push the changes to the branch to create the PR.
-                Not commit any *.json file.
-            </step-content>
-        </step>
-        <step number="4">
-            <step-title>Clean up the PR</step-title>
-            <step-content>
-                Review if the PR has committed any file with extension *.json.
-                in that case, remove the files from the PR and push the changes to the branch to create the PR.
             </step-content>
         </step>
     </steps>
+
+    <output-format>
+        <output-format-list>
+            <output-format-item>Print the list of sonar issues with the following format per issue:
+                component:
+                rule:
+                message:
+                ---
+            </output-format-item>
+        </output-format-list>
+    </output-format>
 
     <acceptance-criteria>
         <acceptance-criteria-list>
             <acceptance-criteria-item>The Sonar issues are fixed</acceptance-criteria-item>
             <acceptance-criteria-item>The project is verified successfully with `./mvnw clean test verify site -Pjacoco`</acceptance-criteria-item>
             <acceptance-criteria-item>The changes are committed and pushed to the branch to create the PR</acceptance-criteria-item>
-            <acceptance-criteria-item>Not commit any *.json file.</acceptance-criteria-item>
         </acceptance-criteria-list>
     </acceptance-criteria>
 </prompt>

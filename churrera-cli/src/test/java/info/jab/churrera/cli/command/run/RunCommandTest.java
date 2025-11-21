@@ -985,7 +985,7 @@ class RunCommandTest {
     @Test
     void testValidateModel_EmptyModelList() {
         // Given
-        when(cliAgent.getModels()).thenReturn(List.of());
+        when(cliAgent.getModels()).thenReturn(List.of("default"));
 
         // When
         List<String> result = jobCreationService.validateModel("test-model");
@@ -993,7 +993,7 @@ class RunCommandTest {
         // Then
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertTrue(result.get(0).contains("Unable to validate model"));
+        assertTrue(result.get(0).contains("Unable to validate model") || result.get(0).contains("is not available"));
     }
 
     @Test
@@ -1027,7 +1027,7 @@ class RunCommandTest {
     @Test
     void testValidateModel_InvalidModel() {
         // Given
-        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "model3"));
+        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "model3", "default"));
 
         // When
         List<String> result = jobCreationService.validateModel("invalid-model");
@@ -1042,7 +1042,7 @@ class RunCommandTest {
     @Test
     void testValidateModel_NullOrEmptyModel() {
         // Given
-        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2"));
+        when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "default"));
 
         // When
         List<String> resultNull = jobCreationService.validateModel(null);

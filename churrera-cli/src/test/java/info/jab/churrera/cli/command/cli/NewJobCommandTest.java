@@ -198,7 +198,7 @@ class NewJobCommandTest {
         Scanner scannerWithInvalidModel = new Scanner(inputStream);
         NewJobCommand commandWithInvalidModel = new NewJobCommand(jobRepository, scannerWithInvalidModel, cliAgent);
 
-        when(cliAgent.getModels()).thenReturn(List.of("valid-model-1", "valid-model-2"));
+        when(cliAgent.getModels()).thenReturn(List.of("valid-model-1", "valid-model-2", "default"));
 
         // When
         commandWithInvalidModel.run();
@@ -216,12 +216,13 @@ class NewJobCommandTest {
         Scanner scannerWithModel = new Scanner(inputStream);
         NewJobCommand commandWithModel = new NewJobCommand(jobRepository, scannerWithModel, cliAgent);
 
-        when(cliAgent.getModels()).thenReturn(List.of());
+        when(cliAgent.getModels()).thenReturn(List.of("default"));
 
         // When
         commandWithModel.run();
 
-        // Then
+        // Then - "default" is always added, so validation should pass if model is "default"
+        // But if model is "some-model" and only "default" is returned, validation should fail
         verify(jobRepository, never()).save(any(Job.class));
         verify(cliAgent).getModels();
     }
@@ -239,7 +240,7 @@ class NewJobCommandTest {
         // When
         commandWithModel.run();
 
-        // Then
+        // Then - null list becomes ["default"], but "some-model" is not in it, so validation fails
         verify(jobRepository, never()).save(any(Job.class));
         verify(cliAgent).getModels();
     }
@@ -270,7 +271,7 @@ class NewJobCommandTest {
         Scanner scannerWithWhitespace = new Scanner(inputStream);
         NewJobCommand commandWithWhitespace = new NewJobCommand(jobRepository, scannerWithWhitespace, cliAgent);
 
-        when(cliAgent.getModels()).thenReturn(List.of("model-name", "other-model"));
+        when(cliAgent.getModels()).thenReturn(List.of("model-name", "other-model", "default"));
 
         // When
         commandWithWhitespace.run();

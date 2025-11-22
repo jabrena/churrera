@@ -79,7 +79,7 @@ class CursorAgentManagementIT {
             assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
             assertThat(response.name()).isEqualTo("Add installation instructions to readme");
             assertThat(response.status()).isEqualTo(AgentStatus.CREATING);
-            assertThat(response.source().repository().toString()).isEqualTo(repository);
+            assertThat(response.source().repository()).hasToString(repository);
             assertThat(response.source().ref()).isEqualTo("main");
             assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
 

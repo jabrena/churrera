@@ -103,9 +103,10 @@ class JobXmlMapperTest {
             String xml = JobXmlMapper.toXml(job, FORMATTER);
 
             // Then
-            assertThat(xml).contains("<cursorAgentId>null</cursorAgentId>");
-            assertThat(xml).contains("<parentJobId>null</parentJobId>");
-            assertThat(xml).contains("<result>null</result>");
+            assertThat(xml)
+                .contains("<cursorAgentId>null</cursorAgentId>")
+                .contains("<parentJobId>null</parentJobId>")
+                .contains("<result>null</result>");
         }
 
         @Test
@@ -117,12 +118,13 @@ class JobXmlMapperTest {
             String xml = JobXmlMapper.toXml(job, FORMATTER);
 
             // Then
-            assertThat(xml).contains("<parentJobId>parent-1</parentJobId>");
-            assertThat(xml).contains("<result>result-1</result>");
-            assertThat(xml).contains("<type>SEQUENCE</type>");
-            assertThat(xml).contains("<timeoutMillis>5000</timeoutMillis>");
-            assertThat(xml).contains("<fallbackSrc>/fallback.xml</fallbackSrc>");
-            assertThat(xml).contains("<fallbackExecuted>true</fallbackExecuted>");
+            assertThat(xml)
+                .contains("<parentJobId>parent-1</parentJobId>")
+                .contains("<result>result-1</result>")
+                .contains("<type>SEQUENCE</type>")
+                .contains("<timeoutMillis>5000</timeoutMillis>")
+                .contains("<fallbackSrc>/fallback.xml</fallbackSrc>")
+                .contains("<fallbackExecuted>true</fallbackExecuted>");
         }
 
         @Test

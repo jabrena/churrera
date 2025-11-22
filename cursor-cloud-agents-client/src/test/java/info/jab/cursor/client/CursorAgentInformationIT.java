@@ -79,7 +79,7 @@ class CursorAgentInformationIT {
             assertThat(agent.id()).isEqualTo(TEST_AGENT_ID);
             assertThat(agent.name()).isEqualTo("Add installation instructions to readme");
             assertThat(agent.status()).isEqualTo(AgentStatus.FINISHED);
-            assertThat(agent.source().repository().toString()).isEqualTo("https://github.com/jabrena/churrera");
+            assertThat(agent.source().repository()).hasToString("https://github.com/jabrena/churrera");
             assertThat(agent.source().ref()).isEqualTo("main");
 
             verify(getRequestedFor(urlEqualTo("/v0/agents"))
@@ -126,7 +126,7 @@ class CursorAgentInformationIT {
             assertThat(response).isNotNull();
             assertThat(response.id()).isEqualTo(TEST_AGENT_ID);
             assertThat(response.name()).isEqualTo("Add installation instructions to readme");
-            assertThat(response.source().repository().toString()).isEqualTo("https://github.com/jabrena/churrera");
+            assertThat(response.source().repository()).hasToString("https://github.com/jabrena/churrera");
             assertThat(response.source().ref()).isEqualTo("main");
             assertThat(response.target().branchName()).isEqualTo("cursor/add-installation-instructions-to-readme-2487");
             assertThat(response.createdAt()).isNotNull();

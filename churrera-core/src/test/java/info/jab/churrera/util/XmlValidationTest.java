@@ -48,7 +48,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should validate that prompt1.xml is well-formed")
-        void shouldValidatePrompt1XmlIsWellFormed() throws Exception {
+        void shouldValidatePrompt1XmlIsWellFormed() {
             // Given
             String xmlContent = resolver.retrieve("examples/hello-world/prompt1.xml");
 
@@ -59,7 +59,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should validate that pml-to-md.xsl is well-formed")
-        void shouldValidatePmlToMdXslIsWellFormed() throws Exception {
+        void shouldValidatePmlToMdXslIsWellFormed() {
             // Given
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
 
@@ -92,7 +92,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should validate prompt1.xml against PML XSD schema")
-        void shouldValidatePrompt1XmlAgainstPmlSchema() throws Exception {
+        void shouldValidatePrompt1XmlAgainstPmlSchema() {
             // Given
             String xmlContent = resolver.retrieve("examples/hello-world/prompt1.xml");
             String schemaUrl = "https://jabrena.github.io/pml/schemas/0.1.0/pml.xsd";
@@ -104,7 +104,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should validate XSL file against XSLT schema")
-        void shouldValidateXslAgainstXsltSchema() throws Exception {
+        void shouldValidateXslAgainstXsltSchema() {
             // Given
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
 
@@ -175,7 +175,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should verify prompt1.xml has correct namespace declarations")
-        void shouldVerifyPrompt1XmlHasCorrectNamespaceDeclarations() throws Exception {
+        void shouldVerifyPrompt1XmlHasCorrectNamespaceDeclarations() {
             // Given
             String xmlContent = resolver.retrieve("examples/hello-world/prompt1.xml");
 
@@ -187,7 +187,7 @@ class XmlValidationTest {
 
         @Test
         @DisplayName("Should verify XSL file has correct namespace declarations")
-        void shouldVerifyXslFileHasCorrectNamespaceDeclarations() throws Exception {
+        void shouldVerifyXslFileHasCorrectNamespaceDeclarations() {
             // Given
             String xmlContent = resolver.retrieve("pml/pml-to-md.xsl");
 

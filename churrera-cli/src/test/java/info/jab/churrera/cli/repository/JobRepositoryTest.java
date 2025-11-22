@@ -162,8 +162,9 @@ class JobRepositoryTest {
         List<Prompt> job1Prompts = jobRepository.findPromptsByJobId("job-1");
 
         // Then
-        assertThat(job1Prompts).hasSize(2);
-        assertThat(job1Prompts).containsExactlyInAnyOrder(prompt1, prompt2);
+        assertThat(job1Prompts)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(prompt1, prompt2);
     }
 
     @Test

@@ -98,7 +98,7 @@ class XslTransformationTest {
 
         @Test
         @DisplayName("Should verify XSL file contains required templates")
-        void shouldVerifyXslFileContainsRequiredTemplates() throws Exception {
+        void shouldVerifyXslFileContainsRequiredTemplates() {
             // Given
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
@@ -113,7 +113,7 @@ class XslTransformationTest {
 
         @Test
         @DisplayName("Should verify XSL file contains required utility templates")
-        void shouldVerifyXslFileContainsRequiredUtilityTemplates() throws Exception {
+        void shouldVerifyXslFileContainsRequiredUtilityTemplates() {
             // Given
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 
@@ -126,7 +126,7 @@ class XslTransformationTest {
 
         @Test
         @DisplayName("Should verify XSL file has correct output method")
-        void shouldVerifyXslFileHasCorrectOutputMethod() throws Exception {
+        void shouldVerifyXslFileHasCorrectOutputMethod() {
             // Given
             String xsltContent = resolver.retrieve("pml/pml-to-md.xsl");
 

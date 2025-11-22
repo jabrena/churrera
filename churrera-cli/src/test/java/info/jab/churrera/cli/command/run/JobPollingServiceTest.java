@@ -5,7 +5,6 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.JobProcessor;
 import info.jab.churrera.workflow.WorkflowType;
-import org.basex.core.BaseXException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,7 +103,7 @@ class JobPollingServiceTest {
     @Test
     void shouldPropagateRepositoryErrorsAsRuntimeException() {
         // Given
-        when(jobRepository.findById(JOB_ID)).thenThrow(new BaseXException("boom"));
+        when(jobRepository.findById(JOB_ID)).thenThrow(new RuntimeException("boom"));
         JobPollingService service = new JobPollingService(
             jobProcessor,
             jobRepository,
@@ -174,4 +173,3 @@ class JobPollingServiceTest {
     }
 
 }
-

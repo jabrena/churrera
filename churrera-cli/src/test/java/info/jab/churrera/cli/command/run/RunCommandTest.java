@@ -14,8 +14,6 @@ import info.jab.churrera.workflow.WorkflowParseException;
 import info.jab.churrera.workflow.WorkflowParser;
 import info.jab.churrera.workflow.WorkflowType;
 import info.jab.churrera.workflow.WorkflowValidator;
-import org.basex.core.BaseXException;
-import org.basex.query.QueryException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -226,7 +224,7 @@ class RunCommandTest {
 
 
     @Test
-    void testRun_RetrieveModels() throws BaseXException, QueryException, IOException {
+    void testRun_RetrieveModels() throws Exception {
         // Given
         when(cliAgent.getModels()).thenReturn(List.of("model1", "model2", "model3"));
         runCommand = new RunCommand(jobRepository, jobProcessor, workflowValidator,
@@ -244,7 +242,7 @@ class RunCommandTest {
     }
 
     @Test
-    void testRun_RetrieveRepositories() throws BaseXException, QueryException, IOException {
+    void testRun_RetrieveRepositories() throws Exception {
         // Given
         when(cliAgent.getRepositories()).thenReturn(List.of("repo1", "repo2"));
         runCommand = new RunCommand(jobRepository, jobProcessor, workflowValidator,
@@ -262,7 +260,7 @@ class RunCommandTest {
     }
 
     @Test
-    void testRun_EmptyWorkflowPath() throws BaseXException, QueryException, IOException {
+    void testRun_EmptyWorkflowPath() throws Exception {
         // Given
         runCommand = new RunCommand(jobRepository, jobProcessor, workflowValidator,
             workflowParser, pmlValidator, DEFAULT_POLLING_INTERVAL, cliAgent);
@@ -835,7 +833,7 @@ class RunCommandTest {
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(job));
         when(jobRepository.findAll()).thenReturn(List.of(job));
-        when(jobRepository.findPromptsByJobId(jobId)).thenThrow(new BaseXException("Database error"));
+        when(jobRepository.findPromptsByJobId(jobId)).thenThrow(new RuntimeException("Database error"));
 
         // When & Then - should handle exception gracefully
         assertDoesNotThrow(() -> jobDisplayService.displayFilteredJobsTable(jobId));
@@ -936,7 +934,7 @@ class RunCommandTest {
             WorkflowType.PARALLEL, null, null, null, null);
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(parentJob));
-        when(jobRepository.findJobsByParentId(jobId)).thenThrow(new BaseXException("Database error"));
+        when(jobRepository.findJobsByParentId(jobId)).thenThrow(new RuntimeException("Database error"));
 
         // When & Then - should handle exception gracefully
         assertDoesNotThrow(() -> jobDeletionService.deleteJobAndChildren(jobId, "--delete-on-completion"));
@@ -1057,4 +1055,3 @@ class RunCommandTest {
     }
 
 }
-

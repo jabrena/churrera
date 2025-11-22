@@ -5,7 +5,6 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.model.JobWithDetails;
 import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.util.PropertyResolver;
-import org.basex.core.BaseXException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -486,7 +485,7 @@ class JobRepositoryTest {
     }
 
     @Test
-    void shouldCloseRepositorySuccessfully(@TempDir Path testTempDir) throws IOException, BaseXException {
+    void shouldCloseRepositorySuccessfully(@TempDir Path testTempDir) throws IOException {
         // Given - use a separate temp directory to avoid conflicts
         PropertyResolver testPropertyResolver = mock(PropertyResolver.class);
         when(testPropertyResolver.getProperty(eq("application.properties"), eq("basex.database.path")))

@@ -5,7 +5,6 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.churrera.workflow.WorkflowType;
-import org.basex.core.BaseXException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -199,4 +198,3 @@ class JobDeletionServiceTest {
         );
     }
 }
-

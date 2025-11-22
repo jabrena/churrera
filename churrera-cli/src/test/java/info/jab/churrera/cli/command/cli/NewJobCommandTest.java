@@ -4,8 +4,6 @@ import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.CLIAgent;
-import org.basex.core.BaseXException;
-import org.basex.query.QueryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -123,21 +122,23 @@ class NewJobCommandTest {
     @Test
     void testRun_RepositoryException() throws IOException {
         // Given
-        doThrow(new BaseXException("Database error")).when(jobRepository).save(any(Job.class));
+        doThrow(new RuntimeException("Database error")).when(jobRepository).save(any(Job.class));
 
         // When & Then
-        assertDoesNotThrow(() -> newJobCommand.run());
-        verify(jobRepository).save(any(Job.class));
+        assertThatThrownBy(() -> newJobCommand.run())
+            .isInstanceOf(RuntimeException.class)
+            .hasMessage("Database error");
     }
 
     @Test
     void testRun_QueryException() throws IOException {
         // Given
-        doThrow(new QueryException("Query error")).when(jobRepository).save(any(Job.class));
+        doThrow(new RuntimeException("Query error")).when(jobRepository).save(any(Job.class));
 
         // When & Then
-        assertDoesNotThrow(() -> newJobCommand.run());
-        verify(jobRepository).save(any(Job.class));
+        assertThatThrownBy(() -> newJobCommand.run())
+            .isInstanceOf(RuntimeException.class)
+            .hasMessage("Query error");
     }
 
     @Test

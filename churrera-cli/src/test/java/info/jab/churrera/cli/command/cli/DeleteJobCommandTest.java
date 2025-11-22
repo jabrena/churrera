@@ -4,8 +4,6 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.churrera.cli.model.AgentState;
-import org.basex.core.BaseXException;
-import org.basex.query.QueryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,7 +141,7 @@ class DeleteJobCommandTest {
         String jobId = "test-job-id";
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, jobId);
 
-        when(jobRepository.findById(jobId)).thenThrow(new BaseXException("Database error"));
+        when(jobRepository.findById(jobId)).thenThrow(new RuntimeException("Database error"));
 
         // When & Then
         assertDoesNotThrow(() -> deleteJobCommand.run());
@@ -157,7 +155,7 @@ class DeleteJobCommandTest {
         String jobId = "test-job-id";
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, jobId);
 
-        when(jobRepository.findById(jobId)).thenThrow(new QueryException("Query error"));
+        when(jobRepository.findById(jobId)).thenThrow(new RuntimeException("Query error"));
 
         // When & Then
         assertDoesNotThrow(() -> deleteJobCommand.run());
@@ -591,7 +589,7 @@ class DeleteJobCommandTest {
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
         when(jobRepository.findById(prefix)).thenReturn(Optional.empty());
-        when(jobRepository.findAll()).thenThrow(new BaseXException("Database error"));
+        when(jobRepository.findAll()).thenThrow(new RuntimeException("Database error"));
 
         // When & Then
         assertDoesNotThrow(() -> deleteJobCommand.run());
@@ -607,7 +605,7 @@ class DeleteJobCommandTest {
         deleteJobCommand = new DeleteJobCommand(jobRepository, cliAgent, prefix);
 
         when(jobRepository.findById(prefix)).thenReturn(Optional.empty());
-        when(jobRepository.findAll()).thenThrow(new QueryException("Query error"));
+        when(jobRepository.findAll()).thenThrow(new RuntimeException("Query error"));
 
         // When & Then
         assertDoesNotThrow(() -> deleteJobCommand.run());

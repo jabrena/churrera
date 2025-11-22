@@ -3,7 +3,6 @@ package info.jab.churrera.cli.service;
 import info.jab.churrera.cli.model.AgentState;
 import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
-import org.basex.core.BaseXException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +69,7 @@ class TimeoutManagerTest {
         // Given
         Job job = new Job("job-id", "/path", null, "model", "repo", AgentState.CREATING(),
             LocalDateTime.now(), LocalDateTime.now(), null, null, null, 1000L, null, null, null);
-        doThrow(new BaseXException("DB error")).when(jobRepository).save(any(Job.class));
+        doThrow(new RuntimeException("DB error")).when(jobRepository).save(any(Job.class));
 
         // When
         Job result = timeoutManager.resetWorkflowStartTimeIfNeeded(job);
@@ -162,7 +161,7 @@ class TimeoutManagerTest {
         // Given
         Job job = new Job("job-id", "/path", null, "model", "repo", AgentState.CREATING(),
             LocalDateTime.now(), LocalDateTime.now(), null, null, null, 1000L, null, null, null);
-        doThrow(new BaseXException("DB error")).when(jobRepository).save(any(Job.class));
+        doThrow(new RuntimeException("DB error")).when(jobRepository).save(any(Job.class));
 
         // When
         Job result = timeoutManager.resetStaleWorkflowStartTime(job);
@@ -222,7 +221,7 @@ class TimeoutManagerTest {
         // Given
         Job job = new Job("job-id", "/path", null, "model", "repo", AgentState.CREATING(),
             LocalDateTime.now(), LocalDateTime.now(), null, null, null, 1000L, null, null, null);
-        doThrow(new BaseXException("DB error")).when(jobRepository).save(any(Job.class));
+        doThrow(new RuntimeException("DB error")).when(jobRepository).save(any(Job.class));
 
         // When
         Job result = timeoutManager.ensureWorkflowStartTimeSet(job);
@@ -384,4 +383,3 @@ class TimeoutManagerTest {
         assertEquals(1000L, result.getTimeoutMillis());
     }
 }
-

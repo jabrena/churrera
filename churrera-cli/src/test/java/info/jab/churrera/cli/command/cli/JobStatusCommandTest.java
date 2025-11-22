@@ -7,8 +7,6 @@ import info.jab.churrera.cli.model.Prompt;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.churrera.workflow.WorkflowType;
-import org.basex.core.BaseXException;
-import org.basex.query.QueryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -153,7 +151,7 @@ class JobStatusCommandTest {
         jobStatusCommand = new JobStatusCommand(jobRepository, cliAgent, jobId);
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(testJob));
-        when(jobRepository.findJobWithDetails(jobId)).thenThrow(new BaseXException("Database error"));
+        when(jobRepository.findJobWithDetails(jobId)).thenThrow(new RuntimeException("Database error"));
 
         // When & Then
         assertDoesNotThrow(() -> jobStatusCommand.run());
@@ -168,7 +166,7 @@ class JobStatusCommandTest {
         jobStatusCommand = new JobStatusCommand(jobRepository, cliAgent, jobId);
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(testJob));
-        when(jobRepository.findJobWithDetails(jobId)).thenThrow(new QueryException("Query error"));
+        when(jobRepository.findJobWithDetails(jobId)).thenThrow(new RuntimeException("Query error"));
 
         // When & Then
         assertDoesNotThrow(() -> jobStatusCommand.run());

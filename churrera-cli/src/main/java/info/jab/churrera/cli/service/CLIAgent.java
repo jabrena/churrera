@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public class CLIAgent {
 
     private static final Logger logger = LoggerFactory.getLogger(CLIAgent.class);
+    private static final String DEFAULT_MODEL = "default";
 
     private final CursorAgentManagement cursorAgentManagement;
     private final CursorAgentInformation cursorAgentInformation;
@@ -296,12 +297,12 @@ public class CLIAgent {
         try {
             List<String> models = cursorAgentGeneralEndpoints.getModels();
             if (models == null) {
-                return List.of("default");
+                return List.of(DEFAULT_MODEL);
             }
             // Add "default" if not already present
-            if (!models.contains("default")) {
+            if (!models.contains(DEFAULT_MODEL)) {
                 List<String> modelsWithDefault = new ArrayList<>(models);
-                modelsWithDefault.add("default");
+                modelsWithDefault.add(DEFAULT_MODEL);
                 return modelsWithDefault;
             }
             return models;

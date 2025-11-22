@@ -36,9 +36,9 @@ public record Target(
         return new Target(
             generated.getBranchName() != null ? generated.getBranchName() : "",
             URI.create(generated.getUrl()), //Required field
-            generated.getAutoCreatePr() != null ? generated.getAutoCreatePr() : false,
-            generated.getOpenAsCursorGithubApp() != null ? generated.getOpenAsCursorGithubApp() : false,
-            generated.getSkipReviewerRequest() != null ? generated.getSkipReviewerRequest() : false
+            Boolean.TRUE.equals(generated.getAutoCreatePr()),
+            Boolean.TRUE.equals(generated.getOpenAsCursorGithubApp()),
+            Boolean.TRUE.equals(generated.getSkipReviewerRequest())
         );
     }
 
@@ -56,9 +56,9 @@ public record Target(
         return new Target(
             generated.getBranchName() != null ? generated.getBranchName() : "",
             URI.create(generated.getUrl()), //Required field
-            generated.getAutoCreatePr() != null ? generated.getAutoCreatePr() : false,
-            generated.getOpenAsCursorGithubApp() != null ? generated.getOpenAsCursorGithubApp() : false,
-            generated.getSkipReviewerRequest() != null ? generated.getSkipReviewerRequest() : false
+            Boolean.TRUE.equals(generated.getAutoCreatePr()),
+            Boolean.TRUE.equals(generated.getOpenAsCursorGithubApp()),
+            Boolean.TRUE.equals(generated.getSkipReviewerRequest())
         );
     }
 }

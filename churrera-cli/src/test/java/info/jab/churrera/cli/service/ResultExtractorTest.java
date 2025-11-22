@@ -44,7 +44,7 @@ class ResultExtractorTest {
     }
 
     @Test
-    void testExtractResults_NoBindResultType() throws Exception {
+    void testExtractResults_NoBindResultType() {
         // Given
         when(testParallelData.hasBindResultType()).thenReturn(false);
         when(cliAgent.getConversationContent("agent-id")).thenReturn("conversation content");
@@ -60,7 +60,7 @@ class ResultExtractorTest {
     }
 
     @Test
-    void testExtractResults_NotListType() throws Exception {
+    void testExtractResults_NotListType() {
         // Given
         when(testParallelData.hasBindResultType()).thenReturn(true);
         when(testParallelData.getBindResultType()).thenReturn("String");
@@ -75,7 +75,7 @@ class ResultExtractorTest {
     }
 
     @Test
-    void testExtractResults_Success() throws Exception {
+    void testExtractResults_Success() {
         // Given
         String jsonContent = "[{\"value\":\"item1\"},{\"value\":\"item2\"}]";
         when(testParallelData.hasBindResultType()).thenReturn(true);
@@ -95,7 +95,7 @@ class ResultExtractorTest {
     }
 
     @Test
-    void testExtractResults_DeserializationFails() throws Exception {
+    void testExtractResults_DeserializationFails() {
         // Given
         when(testParallelData.hasBindResultType()).thenReturn(true);
         when(testParallelData.getBindResultType()).thenReturn("List<String>");
@@ -111,7 +111,7 @@ class ResultExtractorTest {
     }
 
     @Test
-    void testExtractResults_Exception() throws Exception {
+    void testExtractResults_Exception() {
         // Given
         lenient().when(testParallelData.hasBindResultType()).thenReturn(true);
         when(cliAgent.getConversationContent("agent-id")).thenThrow(new RuntimeException("API error"));

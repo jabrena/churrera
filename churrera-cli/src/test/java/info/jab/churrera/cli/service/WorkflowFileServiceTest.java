@@ -118,7 +118,7 @@ class WorkflowFileServiceTest {
             Files.createFile(promptPath);
             // Make file unreadable by deleting it after creating
             Files.delete(promptPath);
-        } catch (java.io.IOException e) {
+        } catch (java.io.IOException _) {
             // Ignore setup errors
         }
 

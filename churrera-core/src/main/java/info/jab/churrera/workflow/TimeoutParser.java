@@ -37,7 +37,7 @@ public class TimeoutParser {
         long number;
         try {
             number = Long.parseLong(numberStr);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             throw new IllegalArgumentException("Invalid timeout format: '" + timeoutStr + "'. Number part '" + numberStr + "' is not a valid number");
         }
 

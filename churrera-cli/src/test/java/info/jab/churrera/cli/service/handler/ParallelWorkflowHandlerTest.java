@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +71,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_LaunchParentJob() throws Exception {
+    void testProcessWorkflow_LaunchParentJob() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(jobRepository.findById("job-id")).thenReturn(Optional.of(jobWithAgent));
@@ -84,7 +85,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_ExecuteFallback() throws Exception {
+    void testProcessWorkflow_TimeoutReached_ExecuteFallback() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2));
         when(testParallelData.getTimeoutMillis()).thenReturn(1000L);
@@ -98,7 +99,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() throws Exception {
+    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() {
         // Given
         Job jobWithFallback = testJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2))
             .withFallbackExecuted(true);
@@ -113,7 +114,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusActive() throws Exception {
+    void testProcessWorkflow_StatusActive() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -128,7 +129,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusSuccessful_ExtractResults() throws Exception {
+    void testProcessWorkflow_StatusSuccessful_ExtractResults() throws IOException {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -146,7 +147,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusSuccessful_ExtractionFails() throws Exception {
+    void testProcessWorkflow_StatusSuccessful_ExtractionFails() throws IOException {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -163,7 +164,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusTerminal() throws Exception {
+    void testProcessWorkflow_StatusTerminal() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id").withStatus(AgentState.error());
         lenient().when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -177,7 +178,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TerminalStatus_SkipPolling() throws Exception {
+    void testProcessWorkflow_TerminalStatus_SkipPolling() {
         // Given
         Job terminalJob = testJob.withCursorAgentId("agent-id").withStatus(AgentState.finished());
         when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -190,7 +191,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusCheckException() throws Exception {
+    void testProcessWorkflow_StatusCheckException() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(testParallelData.getTimeoutMillis()).thenReturn(null);
@@ -215,7 +216,7 @@ class ParallelWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutCheckBeforePolling() throws Exception {
+    void testProcessWorkflow_TimeoutCheckBeforePolling() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2));
         when(testParallelData.getTimeoutMillis()).thenReturn(1000L);

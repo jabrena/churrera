@@ -306,8 +306,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).hasSize(1);
+        assertThat(errors)
+            .isNotEmpty()
+            .hasSize(1);
         assertThat(errors.get(0)).contains("fallback-src is specified but timeout is not");
     }
 

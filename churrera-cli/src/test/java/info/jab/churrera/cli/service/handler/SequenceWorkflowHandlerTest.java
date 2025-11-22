@@ -70,7 +70,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_LaunchNewJob() throws Exception {
+    void testProcessWorkflow_LaunchNewJob() {
         // Given
         when(timeoutManager.resetWorkflowStartTimeIfNeeded(any(Job.class))).thenReturn(testJob);
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
@@ -85,7 +85,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_ExistingJob_ResetStaleTime() throws Exception {
+    void testProcessWorkflow_ExistingJob_ResetStaleTime() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -102,7 +102,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_ExecuteFallback() throws Exception {
+    void testProcessWorkflow_TimeoutReached_ExecuteFallback() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id").withTimeoutMillis(1000L);
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -115,11 +115,11 @@ class SequenceWorkflowHandlerTest {
         handler.processWorkflow(jobWithAgent, testPrompts, testWorkflowData);
 
         // Then
-        verify(fallbackExecutor).executeFallback(eq(jobWithAgent), eq(testWorkflowData), eq(1500L), eq(1000L));
+        verify(fallbackExecutor).executeFallback(jobWithAgent, testWorkflowData, 1500L, 1000L);
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_TerminalStatus() throws Exception {
+    void testProcessWorkflow_TimeoutReached_TerminalStatus() {
         // Given
         Job terminalJob = testJob.withCursorAgentId("agent-id").withTimeoutMillis(1000L).withStatus(AgentState.finished());
         when(timeoutManager.resetStaleWorkflowStartTime(terminalJob)).thenReturn(terminalJob);
@@ -134,7 +134,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() throws Exception {
+    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() {
         // Given
         Job jobWithFallback = testJob.withCursorAgentId("agent-id").withTimeoutMillis(1000L).withFallbackExecuted(true);
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithFallback)).thenReturn(jobWithFallback);
@@ -149,7 +149,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusActive() throws Exception {
+    void testProcessWorkflow_StatusActive() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -166,7 +166,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusSuccessful() throws Exception {
+    void testProcessWorkflow_StatusSuccessful() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -183,7 +183,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusTerminal() throws Exception {
+    void testProcessWorkflow_StatusTerminal() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -200,7 +200,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusCheckException() throws Exception {
+    void testProcessWorkflow_StatusCheckException() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);
@@ -216,7 +216,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_JustLaunched() throws Exception {
+    void testProcessWorkflow_JustLaunched() {
         // Given
         when(timeoutManager.resetWorkflowStartTimeIfNeeded(any(Job.class))).thenReturn(testJob);
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
@@ -230,7 +230,7 @@ class SequenceWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_NoTimeout() throws Exception {
+    void testProcessWorkflow_NoTimeout() {
         // Given
         Job jobWithAgent = testJob.withCursorAgentId("agent-id");
         when(timeoutManager.resetStaleWorkflowStartTime(jobWithAgent)).thenReturn(jobWithAgent);

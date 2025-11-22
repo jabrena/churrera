@@ -612,7 +612,7 @@
                                 </goals>
                                 <configuration>
                                     <files>
-                                        <file>sonar-project.properties</file>
+                                        <file>${project.basedir}/sonar-project.properties</file>
                                     </files>
                                 </configuration>
                             </execution>

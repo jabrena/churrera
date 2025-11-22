@@ -389,11 +389,9 @@ class CLIAgentTest {
             doThrow(new RuntimeException("Save failed")).when(jobRepository).save(any(Job.class));
 
             // When & Then
+            AgentState state = AgentState.creating();
             RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> {
-                    AgentState state = AgentState.creating();
-                    cliAgent.updateJobCursorIdInDatabase(testJob, "new-agent-id", state);
-                });
+                () -> cliAgent.updateJobCursorIdInDatabase(testJob, "new-agent-id", state));
             assertTrue(exception.getMessage().contains("Failed to update job in database"));    }
 
     @Test
@@ -675,11 +673,9 @@ class CLIAgentTest {
             doThrow(new RuntimeException("Save failed")).when(jobRepository).save(any(Job.class));
 
             // When & Then
+            AgentState state = AgentState.finished();
             RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> {
-                    AgentState state = AgentState.finished();
-                    cliAgent.updateJobStatusInDatabase(testJob, state);
-                });
+                () -> cliAgent.updateJobStatusInDatabase(testJob, state));
             assertTrue(exception.getMessage().contains("Failed to update job status in database"));    }
 
     @Test

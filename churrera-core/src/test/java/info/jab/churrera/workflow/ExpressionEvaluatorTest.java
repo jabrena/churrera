@@ -478,8 +478,8 @@ class ExpressionEvaluatorTest {
             // Verify all results are unique
             assertThat(result1)
                 .isNotEqualTo(result2)
-                .isNotEqualTo(result3);
-            assertThat(result1).isNotEqualTo(result4);
+                .isNotEqualTo(result3)
+                .isNotEqualTo(result4);
             assertThat(result2).isNotEqualTo(result3);
         }
     }

@@ -82,12 +82,13 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("Job ID");
-        assertThat(output).contains("Prompts");
-        assertThat(output).contains("Status");
-        assertThat(output).contains("Last update");
-        assertThat(output).contains("job-1");
-        assertThat(output).contains("job-2");
+        assertThat(output)
+            .contains("Job ID")
+            .contains("Prompts")
+            .contains("Status")
+            .contains("Last update")
+            .contains("job-1")
+            .contains("job-2");
     }
 
     @Test
@@ -139,10 +140,11 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("job-fini");
-        assertThat(output).contains("FINISHED");
-        assertThat(output).contains("min");
-        assertThat(output).contains("2/2");
+        assertThat(output)
+            .contains("job-fini")
+            .contains("FINISHED")
+            .contains("min")
+            .contains("2/2");
     }
 
     @Test
@@ -165,8 +167,9 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("child-jo");
-        assertThat(output).contains("parent-j");
+        assertThat(output)
+            .contains("child-jo")
+            .contains("parent-j");
     }
 
     @Test
@@ -199,9 +202,10 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("job-1h");
-        assertThat(output).contains("job-2m");
-        assertThat(output).contains("job-30s");
+        assertThat(output)
+            .contains("job-1h")
+            .contains("job-2m")
+            .contains("job-30s");
     }
 
     @Test
@@ -222,8 +226,9 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("parallel");
-        assertThat(output).contains("PARALLEL");
+        assertThat(output)
+            .contains("parallel")
+            .contains("PARALLEL");
     }
 
     @Test
@@ -243,8 +248,9 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("error-jo");
-        assertThat(output).contains("ERROR");
+        assertThat(output)
+            .contains("error-jo")
+            .contains("ERROR");
     }
 
     @Test
@@ -269,8 +275,9 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("job-mixe");
-        assertThat(output).contains("2/3"); // 2 completed or sent out of 3 total
+        assertThat(output)
+            .contains("job-mixe")
+            .contains("2/3"); // 2 completed or sent out of 3 total
     }
 
     @Test
@@ -313,7 +320,8 @@ class JobsCommandTest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("failed-j");
-        assertThat(output).contains("ERROR");
+        assertThat(output)
+            .contains("failed-j")
+            .contains("ERROR");
     }
 }

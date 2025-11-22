@@ -43,14 +43,15 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Name");
-        assertThat(result).contains("Age");
-        assertThat(result).contains("City");
-        assertThat(result).contains("John");
-        assertThat(result).contains("Jane");
-        assertThat(result).contains("Bob");
-        assertThat(result).contains("|"); // Table separators
-        assertThat(result).contains("+"); // Header separators
+        assertThat(result)
+            .contains("Name")
+            .contains("Age")
+            .contains("City")
+            .contains("John")
+            .contains("Jane")
+            .contains("Bob")
+            .contains("|") // Table separators
+            .contains("+"); // Header separators
     }
 
     @Test
@@ -63,9 +64,10 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Name");
-        assertThat(result).contains("Age");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Name")
+            .contains("Age")
+            .contains("|");
     }
 
     @Test
@@ -98,9 +100,10 @@ class TableFormatterTest {
         String result = TableFormatter.truncateText(longText, 20);
 
         // Then
-        assertThat(result).hasSize(20);
-        assertThat(result).endsWith("...");
-        assertThat(result).isEqualTo("This is a very lo...");
+        assertThat(result)
+            .hasSize(20)
+            .endsWith("...")
+            .isEqualTo("This is a very lo...");
     }
 
     @Test
@@ -161,10 +164,11 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, null);
 
         // Then
-        assertThat(result).contains("Name");
-        assertThat(result).contains("Age");
-        assertThat(result).contains("City");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Name")
+            .contains("Age")
+            .contains("City")
+            .contains("|");
     }
 
     @Test
@@ -181,10 +185,11 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("John");
-        assertThat(result).contains("Jane");
-        assertThat(result).contains("Bob");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("John")
+            .contains("Jane")
+            .contains("Bob")
+            .contains("|");
     }
 
     @Test
@@ -200,10 +205,11 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("John");
-        assertThat(result).contains("30");
-        assertThat(result).contains("New York");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("John")
+            .contains("30")
+            .contains("New York")
+            .contains("|");
     }
 
     @Test
@@ -218,10 +224,11 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("John");
-        assertThat(result).contains("25");
-        assertThat(result).contains("New York");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("John")
+            .contains("25")
+            .contains("New York")
+            .contains("|");
     }
 
     @Test
@@ -236,9 +243,10 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("John");
-        assertThat(result).contains("New York");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("John")
+            .contains("New York")
+            .contains("|");
     }
 
     @Test
@@ -250,8 +258,9 @@ class TableFormatterTest {
         String result = TableFormatter.truncateText(text, 3);
 
         // Then
-        assertThat(result).hasSize(3);
-        assertThat(result).isEqualTo("Hel");
+        assertThat(result)
+            .hasSize(3)
+            .isEqualTo("Hel");
     }
 
     @Test
@@ -263,8 +272,9 @@ class TableFormatterTest {
         String result = TableFormatter.truncateText(text, 1);
 
         // Then
-        assertThat(result).hasSize(1);
-        assertThat(result).isEqualTo("H");
+        assertThat(result)
+            .hasSize(1)
+            .isEqualTo("H");
     }
 
     @Test
@@ -276,8 +286,9 @@ class TableFormatterTest {
         String result = TableFormatter.truncateText(text, 0);
 
         // Then
-        assertThat(result).hasSize(0);
-        assertThat(result).isEmpty();
+        assertThat(result)
+            .hasSize(0)
+            .isEmpty();
     }
 
     @Test
@@ -289,8 +300,9 @@ class TableFormatterTest {
         String result = TableFormatter.truncateText(text, 5);
 
         // Then
-        assertThat(result).hasSize(5);
-        assertThat(result).isEqualTo("Hello");
+        assertThat(result)
+            .hasSize(5)
+            .isEqualTo("Hello");
     }
 
     @Test
@@ -337,11 +349,12 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("John & Jane");
-        assertThat(result).contains("Special: <>&\"'");
-        assertThat(result).contains("Bob's");
-        assertThat(result).contains("Test & More");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("John & Jane")
+            .contains("Special: <>&\"'")
+            .contains("Bob's")
+            .contains("Test & More")
+            .contains("|");
     }
 
     @Test
@@ -357,10 +370,11 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Jane");
-        assertThat(result).contains("25");
-        assertThat(result).contains("London");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Jane")
+            .contains("25")
+            .contains("London")
+            .contains("|");
     }
 
     @Test
@@ -377,11 +391,12 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Name");
-        assertThat(result).contains("John");
-        assertThat(result).contains("Jane");
-        assertThat(result).contains("Bob");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Name")
+            .contains("John")
+            .contains("Jane")
+            .contains("Bob")
+            .contains("|");
     }
 
     @Test
@@ -396,11 +411,12 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Col1");
-        assertThat(result).contains("Col10");
-        assertThat(result).contains("1");
-        assertThat(result).contains("10");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Col1")
+            .contains("Col10")
+            .contains("1")
+            .contains("10")
+            .contains("|");
     }
 
     @Test
@@ -416,13 +432,14 @@ class TableFormatterTest {
         String result = TableFormatter.formatTable(headers, rows);
 
         // Then
-        assertThat(result).contains("Name");
-        assertThat(result).contains("Age");
-        assertThat(result).contains("Person1");
-        assertThat(result).contains("Person100");
-        assertThat(result).contains("21");
-        assertThat(result).contains("120");
-        assertThat(result).contains("|");
+        assertThat(result)
+            .contains("Name")
+            .contains("Age")
+            .contains("Person1")
+            .contains("Person100")
+            .contains("21")
+            .contains("120")
+            .contains("|");
     }
 }
 

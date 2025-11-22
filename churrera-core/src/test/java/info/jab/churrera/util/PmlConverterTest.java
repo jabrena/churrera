@@ -49,14 +49,15 @@ class PmlConverterTest {
             String result = converter.toMarkdownFromContent(pmlContent);
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).contains("## Role");
-            assertThat(result).contains("You are a helpful assistant");
-            assertThat(result).contains("## Goal");
-            assertThat(result).contains("Help the user with their task");
-            assertThat(result).contains("## Instructions");
-            assertThat(result).contains("### Step Step 1");
-            assertThat(result).contains("Do something useful");
+            assertThat(result)
+                .isNotNull()
+                .contains("## Role")
+                .contains("You are a helpful assistant")
+                .contains("## Goal")
+                .contains("Help the user with their task")
+                .contains("## Instructions")
+                .contains("### Step Step 1")
+                .contains("Do something useful");
         }
 
         @Test
@@ -176,11 +177,12 @@ class PmlConverterTest {
             String result = converter.toMarkdownFromContent(pmlContent, "pml/pml-to-md.xsl");
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).contains("## Role");
-            assertThat(result).contains("Test role");
-            assertThat(result).contains("## Goal");
-            assertThat(result).contains("Test goal");
+            assertThat(result)
+                .isNotNull()
+                .contains("## Role")
+                .contains("Test role")
+                .contains("## Goal")
+                .contains("Test goal");
         }
     }
 
@@ -246,11 +248,12 @@ class PmlConverterTest {
             String result = converter.toMarkdown(pmlFile, xsltFile);
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).contains("## Role");
-            assertThat(result).contains("## Goal");
-            assertThat(result).contains("## Output Format");
-            assertThat(result).contains("## Safeguards");
+            assertThat(result)
+                .isNotNull()
+                .contains("## Role")
+                .contains("## Goal")
+                .contains("## Output Format")
+                .contains("## Safeguards");
         }
 
         @Test

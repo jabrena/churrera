@@ -94,7 +94,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testStart_Stop() throws Exception {
+    void testStart_Stop() {
         // Given
         when(jobRepository.findUnfinishedJobs()).thenReturn(List.of());
 
@@ -107,7 +107,7 @@ class JobProcessorTest {
 
 
     @Test
-    void testProcessJobs_NoUnfinishedJobs() throws Exception {
+    void testProcessJobs_NoUnfinishedJobs() {
         // Given
         when(jobRepository.findUnfinishedJobs()).thenReturn(List.of());
 
@@ -121,7 +121,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJobs_WithUnfinishedJob() throws Exception {
+    void testProcessJobs_WithUnfinishedJob() {
         // Given
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(testJob))
@@ -138,7 +138,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJob_JobDetailsNotFound() throws Exception {
+    void testProcessJob_JobDetailsNotFound() {
         // Given
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(testJob))
@@ -154,7 +154,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJob_NoPrompts() throws Exception {
+    void testProcessJob_NoPrompts() {
         // Given
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(testJob))
@@ -171,7 +171,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJob_ExceptionInFindingJobs() throws Exception {
+    void testProcessJob_ExceptionInFindingJobs() {
         // Given
         when(jobRepository.findUnfinishedJobs())
             .thenThrow(new RuntimeException("Database error"));
@@ -184,7 +184,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJob_ExceptionInJobDetails() throws Exception {
+    void testProcessJob_ExceptionInJobDetails() {
         // Given
         when(jobRepository.findUnfinishedJobs())
             .thenReturn(List.of(testJob));
@@ -216,7 +216,7 @@ class JobProcessorTest {
         // Then
         verify(jobRepository).findJobWithDetails("test-job-id");
         verify(cliAgent).getAgentStatus("cursor-agent-123");
-        verify(cliAgent).updateJobStatusInDatabase(eq(testJobWithAgent), eq(AgentState.finished()));
+        verify(cliAgent).updateJobStatusInDatabase(testJobWithAgent, AgentState.finished());
     }
 
     @Test
@@ -236,7 +236,7 @@ class JobProcessorTest {
         // Then
         verify(jobRepository).findJobWithDetails("test-job-id");
         verify(cliAgent).getAgentStatus("cursor-agent-123");
-        verify(cliAgent).updateJobStatusInDatabase(eq(testJobWithAgent), eq(AgentState.error()));
+        verify(cliAgent).updateJobStatusInDatabase(testJobWithAgent, AgentState.error());
     }
 
     @Test
@@ -257,7 +257,7 @@ class JobProcessorTest {
         // Then
         verify(jobRepository).findJobWithDetails("test-job-id");
         verify(cliAgent).getAgentStatus("cursor-agent-123");
-        verify(cliAgent).updateJobStatusInDatabase(eq(testJobWithAgent), eq(AgentState.error()));
+        verify(cliAgent).updateJobStatusInDatabase(testJobWithAgent, AgentState.error());
     }
 
     @Test
@@ -305,7 +305,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testMultipleJobs_ProcessedSequentially() throws Exception {
+    void testMultipleJobs_ProcessedSequentially() {
         // Given
         Job job2 = new Job("test-job-id-2",
             "/test/path2/workflow.xml",
@@ -340,7 +340,7 @@ class JobProcessorTest {
     }
 
     @Test
-    void testProcessJobs_CanBeCalledMultipleTimes() throws Exception {
+    void testProcessJobs_CanBeCalledMultipleTimes() {
         // Given
         when(jobRepository.findUnfinishedJobs()).thenReturn(List.of());
 
@@ -785,7 +785,7 @@ class JobProcessorTest {
 
         // Then
         verify(cliAgent, never()).launchAgentForJob(any(), anyString(), anyString(), any(), anyBoolean());
-        verify(cliAgent).getAgentStatus(eq("parallel-agent-123"));
+        verify(cliAgent).getAgentStatus("parallel-agent-123");
         verify(cliAgent).updateJobStatusInDatabase(eq(parallelJob), eq(AgentState.finished()));
 
         // Cleanup
@@ -837,7 +837,7 @@ class JobProcessorTest {
         jobProcessor.processJobs();
 
         // Then
-        verify(cliAgent).getAgentStatus(eq("parallel-agent-123"));
+        verify(cliAgent).getAgentStatus("parallel-agent-123");
         verify(cliAgent).updateJobStatusInDatabase(any(Job.class), eq(AgentState.error()));
         verify(jobRepository, never()).save(argThat(job -> job.parentJobId() != null));
 
@@ -1088,7 +1088,7 @@ class JobProcessorTest {
         when(workflowParser.parse(any(Path.class))).thenReturn(parallelWorkflowData);
         when(jobRepository.findById("child-job-id")).thenReturn(Optional.of(childJob));
         CountDownLatch childStatusUpdatedLatch = new CountDownLatch(1);
-        when(cliAgent.getAgentStatus(eq("child-agent-123"))).thenReturn(AgentState.finished());
+        when(cliAgent.getAgentStatus("child-agent-123")).thenReturn(AgentState.finished());
         doAnswer(invocation -> {
             childStatusUpdatedLatch.countDown();
             return null;
@@ -1101,7 +1101,7 @@ class JobProcessorTest {
         // Then
         verify(cliAgent, never()).launchAgentForJob(any(), anyString(), anyString(), any(), anyBoolean());
         verify(cliAgent).getAgentStatus(eq("child-agent-123"));
-        verify(cliAgent).updateJobStatusInDatabase(eq(childJob), eq(AgentState.finished()));
+        verify(cliAgent).updateJobStatusInDatabase(childJob, AgentState.finished());
 
         // Cleanup
         Files.deleteIfExists(prompt1File);
@@ -1150,9 +1150,9 @@ class JobProcessorTest {
         when(jobRepository.findById("parallel-job-id"))
             .thenReturn(Optional.of(parallelJob))
             .thenReturn(Optional.of(parallelJob));
-        when(cliAgent.getAgentStatus(eq("parallel-agent-123"))).thenReturn(AgentState.finished());
+        when(cliAgent.getAgentStatus("parallel-agent-123")).thenReturn(AgentState.finished());
         CountDownLatch conversationReadLatch = new CountDownLatch(1);
-        when(cliAgent.getConversationContent(eq("parallel-agent-123")))
+        when(cliAgent.getConversationContent("parallel-agent-123"))
             .thenAnswer(invocation -> {
                 conversationReadLatch.countDown();
                 return "```json\n[\"value1\",\"value2\",\"value3\"]\n```";
@@ -1163,8 +1163,8 @@ class JobProcessorTest {
         jobProcessor.processJobs();
 
         // Then - Verify the parallel workflow processing was executed
-        verify(cliAgent).getAgentStatus(eq("parallel-agent-123"));
-        verify(cliAgent).getConversationContent(eq("parallel-agent-123"));
+        verify(cliAgent).getAgentStatus("parallel-agent-123");
+        verify(cliAgent).getConversationContent("parallel-agent-123");
         verify(cliAgent).updateJobStatusInDatabase(eq(parallelJob), eq(AgentState.finished()));
 
         // Cleanup
@@ -1207,9 +1207,9 @@ class JobProcessorTest {
         when(jobRepository.findById("parallel-job-id"))
             .thenReturn(Optional.of(parallelJob))
             .thenReturn(Optional.of(parallelJob));
-        when(cliAgent.getAgentStatus(eq("parallel-agent-123"))).thenReturn(AgentState.finished());
+        when(cliAgent.getAgentStatus("parallel-agent-123")).thenReturn(AgentState.finished());
         CountDownLatch conversationReadLatch2 = new CountDownLatch(1);
-        when(cliAgent.getConversationContent(eq("parallel-agent-123")))
+        when(cliAgent.getConversationContent("parallel-agent-123"))
             .thenAnswer(invocation -> {
                 conversationReadLatch2.countDown();
                 return "[\"value1\",\"value2\"]";
@@ -1220,8 +1220,8 @@ class JobProcessorTest {
         jobProcessor.processJobs();
 
         // Then - No child jobs should be created (because sequences list is empty)
-        verify(cliAgent).getAgentStatus(eq("parallel-agent-123"));
-        verify(cliAgent).getConversationContent(eq("parallel-agent-123"));
+        verify(cliAgent).getAgentStatus("parallel-agent-123");
+        verify(cliAgent).getConversationContent("parallel-agent-123");
         verify(jobRepository, never()).save(argThat(job ->
             job.parentJobId() != null && job.parentJobId().equals("parallel-job-id")
         ));
@@ -1275,8 +1275,8 @@ class JobProcessorTest {
         jobProcessor.processJobs();
 
         // Then - No child jobs should be created for failed jobs
-        verify(cliAgent).getAgentStatus(eq("parallel-agent-123"));
-        verify(cliAgent).updateJobStatusInDatabase(eq(parallelJob), eq(AgentState.error()));
+        verify(cliAgent).getAgentStatus("parallel-agent-123");
+        verify(cliAgent).updateJobStatusInDatabase(parallelJob, AgentState.error());
         verify(jobRepository, never()).save(argThat(job ->
             job.parentJobId() != null && job.parentJobId().equals("parallel-job-id")
         ));
@@ -1534,7 +1534,7 @@ class JobProcessorTest {
 
         // Then - Error should be caught and logged
         verify(cliAgent).getAgentStatus(eq("child-agent-123"));
-        verify(cliAgent).updateJobStatusInDatabase(eq(childJob), eq(AgentState.error()));
+        verify(cliAgent).updateJobStatusInDatabase(childJob, AgentState.error());
 
         // Cleanup
         Files.deleteIfExists(prompt1File);

@@ -343,8 +343,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
+        assertThat(errors)
+            .isNotEmpty()
+            .anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -359,8 +360,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.contains("must have extension .xml, .md, or .txt"));
+        assertThat(errors)
+            .isNotEmpty()
+            .anyMatch(e -> e.contains("must have extension .xml, .md, or .txt"));
     }
 
     @Test
@@ -452,7 +454,7 @@ class WorkflowValidatorTest {
 
     @Test
     @DisplayName("Should return error when parallel workflow sequence has fallback without timeout")
-    void testValidateTimeoutAndFallback_ParallelWorkflow_SequenceFallbackWithoutTimeout() throws IOException {
+    void testValidateTimeoutAndFallback_ParallelWorkflow_SequenceFallbackWithoutTimeout() {
         // Given
         PromptInfo parallelPrompt = new PromptInfo("parallel.xml", "xml");
         PromptInfo seqPrompt = new PromptInfo("seq.xml", "xml");
@@ -464,8 +466,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.contains("Sequence fallback-src is specified but timeout is not"));
+        assertThat(errors)
+            .isNotEmpty()
+            .anyMatch(e -> e.contains("Sequence fallback-src is specified but timeout is not"));
     }
 
     @Test
@@ -505,8 +508,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
+        assertThat(errors)
+            .isNotEmpty()
+            .anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -533,8 +537,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateTimeoutAndFallback(testWorkflowFile, workflowData);
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.contains("Fallback file not found"));
+        assertThat(errors)
+            .isNotEmpty()
+            .anyMatch(e -> e.contains("Fallback file not found"));
     }
 
     @Test
@@ -634,8 +639,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "fallback.exe");
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).hasSize(1);
+        assertThat(errors)
+            .isNotEmpty()
+            .hasSize(1);
         assertThat(errors.get(0)).contains("must have extension .xml, .md, or .txt");
     }
 
@@ -646,8 +652,9 @@ class WorkflowValidatorTest {
         List<String> errors = workflowValidator.validateFallbackFile(testWorkflowFile, "nonexistent.xml");
 
         // Then
-        assertThat(errors).isNotEmpty();
-        assertThat(errors).hasSize(1);
+        assertThat(errors)
+            .isNotEmpty()
+            .hasSize(1);
         assertThat(errors.get(0)).contains("Fallback file not found");
     }
 

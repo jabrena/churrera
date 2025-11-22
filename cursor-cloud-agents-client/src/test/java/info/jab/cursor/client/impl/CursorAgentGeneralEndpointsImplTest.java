@@ -94,9 +94,10 @@ class CursorAgentGeneralEndpointsImplTest {
             List<String> result = impl.getModels();
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(3);
-            assertThat(result).containsExactly("model1", "model2", "model3");
+            assertThat(result)
+                .isNotNull()
+                .hasSize(3)
+                .containsExactly("model1", "model2", "model3");
         }
 
         @Test
@@ -146,8 +147,9 @@ class CursorAgentGeneralEndpointsImplTest {
             List<String> result = impl.getRepositories();
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).isEmpty();
+            assertThat(result)
+                .isNotNull()
+                .isEmpty();
         }
 
 
@@ -179,12 +181,13 @@ class CursorAgentGeneralEndpointsImplTest {
             List<String> result = impl.getRepositories();
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(2);
-            assertThat(result).containsExactly(
-                "https://github.com/user/repo1",
-                "https://github.com/user/repo3"
-            );
+            assertThat(result)
+                .isNotNull()
+                .hasSize(2)
+                .containsExactly(
+                    "https://github.com/user/repo1",
+                    "https://github.com/user/repo3"
+                );
         }
 
         @Test

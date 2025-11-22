@@ -69,7 +69,7 @@ class TargetTest {
 
             // Then
             assertThat(target).isNotNull();
-            assertThat(target.branchName()).isEqualTo("");
+            assertThat(target.branchName()).isEmpty();
             assertThat(target.url()).isEqualTo(URI.create("https://github.com/user/repo"));
             assertThat(target.autoCreatePr()).isFalse();
             assertThat(target.openAsCursorGithubApp()).isFalse();
@@ -92,7 +92,7 @@ class TargetTest {
 
             // Then
             assertThat(target).isNotNull();
-            assertThat(target.branchName()).isEqualTo("");
+            assertThat(target.branchName()).isEmpty();
         }
 
         @Test
@@ -205,7 +205,7 @@ class TargetTest {
 
             // Then
             assertThat(target).isNotNull();
-            assertThat(target.branchName()).isEqualTo("");
+            assertThat(target.branchName()).isEmpty();
         }
 
         @Test

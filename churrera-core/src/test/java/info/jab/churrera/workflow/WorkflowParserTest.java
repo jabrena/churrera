@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
@@ -161,98 +163,60 @@ class WorkflowParserTest {
     @DisplayName("Parse Error Tests")
     class ParseErrorTests {
 
-        @Test
-        @DisplayName("Should throw exception for invalid root element")
-        void shouldThrowExceptionForInvalidRootElement() throws Exception {
+        @ParameterizedTest
+        @MethodSource("invalidWorkflowContents")
+        @DisplayName("Should throw exception for invalid workflow content")
+        void shouldThrowExceptionForInvalidWorkflowContent(String workflowContent) throws Exception {
             // Given
-            String workflowContent = """
+            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
+
+            // When & Then
+            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
+                .isInstanceOf(WorkflowParseException.class);
+        }
+
+        static java.util.stream.Stream<String> invalidWorkflowContents() {
+            return java.util.stream.Stream.of(
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <invalid-root>
                     <sequence model="test-model" repository="test-repo">
                         <prompt pml="prompt1.xml"/>
                     </sequence>
                 </invalid-root>
-                """;
-            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
-
-            // When & Then
-            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
-                .isInstanceOf(WorkflowParseException.class);
-        }
-
-        @Test
-        @DisplayName("Should throw exception when no sequence element")
-        void shouldThrowExceptionWhenNoSequenceElement() throws Exception {
-            // Given
-            String workflowContent = """
+                """,
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <pml-workflow>
                     <invalid-element>
                         <prompt pml="prompt1.xml"/>
                     </invalid-element>
                 </pml-workflow>
-                """;
-            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
-
-            // When & Then
-            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
-                .isInstanceOf(WorkflowParseException.class);
-        }
-
-        @Test
-        @DisplayName("Should throw exception when no prompt elements")
-        void shouldThrowExceptionWhenNoPromptElements() throws Exception {
-            // Given
-            String workflowContent = """
+                """,
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <pml-workflow>
                     <sequence model="test-model" repository="test-repo">
                     </sequence>
                 </pml-workflow>
-                """;
-            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
-
-            // When & Then
-            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
-                .isInstanceOf(WorkflowParseException.class);
-        }
-
-        @Test
-        @DisplayName("Should throw exception when prompt missing src attribute")
-        void shouldThrowExceptionWhenPromptMissingSrcAttribute() throws Exception {
-            // Given
-            String workflowContent = """
+                """,
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <pml-workflow>
                     <sequence model="test-model" repository="test-repo">
                         <prompt/>
                     </sequence>
                 </pml-workflow>
-                """;
-            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
-
-            // When & Then
-            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
-                .isInstanceOf(WorkflowParseException.class);
-        }
-
-        @Test
-        @DisplayName("Should throw exception when prompt has empty src attribute")
-        void shouldThrowExceptionWhenPromptHasEmptySrcAttribute() throws Exception {
-            // Given
-            String workflowContent = """
+                """,
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <pml-workflow>
                     <sequence model="test-model" repository="test-repo">
                         <prompt pml=""/>
                     </sequence>
                 </pml-workflow>
-                """;
-            Files.write(testWorkflowFile.toPath(), workflowContent.getBytes());
-
-            // When & Then
-            assertThatThrownBy(() -> workflowParser.parse(testWorkflowFile))
-                .isInstanceOf(WorkflowParseException.class);
+                """
+            );
         }
 
         @Test

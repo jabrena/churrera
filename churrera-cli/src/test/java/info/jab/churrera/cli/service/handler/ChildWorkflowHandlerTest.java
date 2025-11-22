@@ -129,7 +129,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_LaunchChildJob() throws Exception {
+    void testProcessWorkflow_LaunchChildJob() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         when(jobRepository.findById("child-job-id")).thenReturn(Optional.of(jobWithAgent));
@@ -143,7 +143,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_ExecuteFallback() throws Exception {
+    void testProcessWorkflow_TimeoutReached_ExecuteFallback() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2));
         when(timeoutManager.getElapsedMillis(jobWithAgent)).thenReturn(2000L);
@@ -159,7 +159,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_TerminalStatus() throws Exception {
+    void testProcessWorkflow_TimeoutReached_TerminalStatus() {
         // Given
         Job terminalJob = testChildJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2))
             .withStatus(AgentState.finished());
@@ -175,7 +175,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() throws Exception {
+    void testProcessWorkflow_TimeoutReached_FallbackAlreadyExecuted() {
         // Given
         Job jobWithFallback = testChildJob.withCursorAgentId("agent-id").withWorkflowStartTime(LocalDateTime.now().minusSeconds(2))
             .withFallbackExecuted(true);
@@ -191,7 +191,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusActive() throws Exception {
+    void testProcessWorkflow_StatusActive() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         lenient().when(timeoutManager.getElapsedMillis(jobWithAgent)).thenReturn(100L);
@@ -207,7 +207,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusSuccessful() throws Exception {
+    void testProcessWorkflow_StatusSuccessful() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         lenient().when(timeoutManager.getElapsedMillis(jobWithAgent)).thenReturn(100L);
@@ -223,7 +223,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusTerminal() throws Exception {
+    void testProcessWorkflow_StatusTerminal() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         lenient().when(timeoutManager.getElapsedMillis(jobWithAgent)).thenReturn(100L);
@@ -239,7 +239,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_StatusCheckException() throws Exception {
+    void testProcessWorkflow_StatusCheckException() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         lenient().when(timeoutManager.getElapsedMillis(jobWithAgent)).thenReturn(100L);
@@ -253,7 +253,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_InheritTimeoutFromParent() throws Exception {
+    void testProcessWorkflow_InheritTimeoutFromParent() {
         // Given
         Job jobNoTimeout = testChildJob.withTimeoutMillis(null).withWorkflowStartTime(LocalDateTime.now());
         Job jobWithAgent = jobNoTimeout.withCursorAgentId("agent-id");
@@ -269,7 +269,7 @@ class ChildWorkflowHandlerTest {
     }
 
     @Test
-    void testProcessWorkflow_JustLaunched() throws Exception {
+    void testProcessWorkflow_JustLaunched() {
         // Given
         Job jobWithAgent = testChildJob.withCursorAgentId("agent-id");
         when(jobRepository.findById("child-job-id")).thenReturn(Optional.of(jobWithAgent));

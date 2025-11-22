@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JobProcessorChildWorkflowTest {
 
     @Test
-    void testChildWorkflowGeneration_IncludesBindResultExp() throws Exception {
+    void testChildWorkflowGeneration_IncludesBindResultExp() {
         // Given: A SequenceInfo with a prompt that has bindResultExp
         PromptInfo promptWithBind = new PromptInfo(
             "prompt2.xml",
@@ -52,7 +52,7 @@ class JobProcessorChildWorkflowTest {
     }
 
     @Test
-    void testChildWorkflowGeneration_OmitsBindResultExpWhenNotPresent(@TempDir Path tempDir) throws Exception {
+    void testChildWorkflowGeneration_OmitsBindResultExpWhenNotPresent() {
         // Given: A SequenceInfo with a prompt that does NOT have bindResultExp
         PromptInfo promptWithoutBind = new PromptInfo(
             "prompt1.xml",
@@ -82,7 +82,7 @@ class JobProcessorChildWorkflowTest {
     }
 
     @Test
-    void testChildWorkflowGeneration_MultiplePromptsMixedBindResultExp(@TempDir Path tempDir) throws Exception {
+    void testChildWorkflowGeneration_MultiplePromptsMixedBindResultExp() {
         // Given: Multiple prompts with mixed bindResultExp presence
         PromptInfo prompt1 = new PromptInfo(
             "prompt1.xml",
@@ -131,7 +131,7 @@ class JobProcessorChildWorkflowTest {
     }
 
     @Test
-    void testChildWorkflowGeneration_CompleteXmlStructure(@TempDir Path tempDir) throws Exception {
+    void testChildWorkflowGeneration_CompleteXmlStructure() {
         // Given: A complete SequenceInfo
         PromptInfo prompt = new PromptInfo(
             "prompt2.xml",

@@ -829,8 +829,9 @@ class ChurreraCLITest {
 
         // Then
         String output = outputStream.toString();
-        assertThat(output).contains("Error retrieving job PR info: PR error");
-        assertThat(output).contains("Goodbye!");
+        assertThat(output)
+            .contains("Error retrieving job PR info: PR error")
+            .contains("Goodbye!");
         assertThat(errorStream.toString()).isEmpty();
     }
 
@@ -1086,7 +1087,7 @@ class ChurreraCLITest {
     }
 
     @Test
-    void testCreateCLICommand_WithMocks() throws IOException {
+    void testCreateCLICommand_WithMocks() {
         // Given
         String testApiKey = "test-api-key";
         InputStream testInputStream = new ByteArrayInputStream("test".getBytes());
@@ -1143,7 +1144,7 @@ class ChurreraCLITest {
     }
 
     @Test
-    void testCreateRunCommand_WithMocks() throws IOException {
+    void testCreateRunCommand_WithMocks() {
         // Given
         String testApiKey = "test-api-key";
         when(propertyResolver.getProperty(anyString(), anyString()))
@@ -1171,7 +1172,7 @@ class ChurreraCLITest {
     }
 
     @Test
-    void testCreateRunCommand_ThrowsExceptionWhenPropertyMissing() throws IOException {
+    void testCreateRunCommand_ThrowsExceptionWhenPropertyMissing() {
         // Given
         String testApiKey = "test-api-key";
         when(propertyResolver.getProperty(anyString(), anyString()))

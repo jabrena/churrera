@@ -71,10 +71,9 @@ class JobRepositoryTest {
         Optional<Job> found = jobRepository.findById("test-job-1");
 
         // Then
-        assertThat(found).isPresent();
         // After XML round-trip, null fallbackExecuted becomes false
         Job expectedJob = new Job("test-job-1", "/path/to/job", null, "default-model", "default-repo", AgentState.creating(), now, now, null, null, null, null, null, null, false);
-        assertThat(found.get()).isEqualTo(expectedJob);
+        assertThat(found).contains(expectedJob);
     }
 
     @Test
@@ -144,8 +143,7 @@ class JobRepositoryTest {
         Optional<Prompt> found = jobRepository.findPromptById("prompt-1");
 
         // Then
-        assertThat(found).isPresent();
-        assertThat(found.get()).isEqualTo(prompt);
+        assertThat(found).contains(prompt);
     }
 
     @Test
@@ -511,10 +509,9 @@ class JobRepositoryTest {
 
         // Then - should open existing database and find the job
         Optional<Job> found = newRepo.findById("test-job");
-        assertThat(found).isPresent();
         // After XML round-trip, null fallbackExecuted becomes false
         Job expectedJob = new Job("test-job", "/path/to/job", null, "model", "repo", AgentState.creating(), now, now, null, null, null, null, null, null, false);
-        assertThat(found.get()).isEqualTo(expectedJob);
+        assertThat(found).contains(expectedJob);
 
         newRepo.close();
     }

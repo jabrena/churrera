@@ -337,11 +337,13 @@ class ExpressionEvaluatorTest {
                 .doesNotContain("<input>INPUT</input>");
 
             // Verify all results are different
-            assertThat(result1).isNotEqualTo(result2);
-            assertThat(result1).isNotEqualTo(result3);
-            assertThat(result1).isNotEqualTo(result4);
-            assertThat(result2).isNotEqualTo(result3);
-            assertThat(result2).isNotEqualTo(result4);
+            assertThat(result1)
+                .isNotEqualTo(result2)
+                .isNotEqualTo(result3)
+                .isNotEqualTo(result4);
+            assertThat(result2)
+                .isNotEqualTo(result3)
+                .isNotEqualTo(result4);
             assertThat(result3).isNotEqualTo(result4);
         }
 
@@ -474,8 +476,9 @@ class ExpressionEvaluatorTest {
             assertThat(result4).contains("<input>4</input>").doesNotContain("<input>INPUT</input>");
 
             // Verify all results are unique
-            assertThat(result1).isNotEqualTo(result2);
-            assertThat(result1).isNotEqualTo(result3);
+            assertThat(result1)
+                .isNotEqualTo(result2)
+                .isNotEqualTo(result3);
             assertThat(result1).isNotEqualTo(result4);
             assertThat(result2).isNotEqualTo(result3);
         }

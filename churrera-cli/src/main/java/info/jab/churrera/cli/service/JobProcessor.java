@@ -10,6 +10,8 @@ import info.jab.churrera.workflow.WorkflowParser;
 import info.jab.churrera.workflow.WorkflowData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ import java.util.List;
  * This class orchestrates job processing by delegating to specialized handlers
  * for different workflow types (sequence, parallel, child).
  */
+@ApplicationScoped
 public class JobProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(JobProcessor.class);
@@ -31,6 +34,7 @@ public class JobProcessor {
     private final ChildWorkflowHandler childWorkflowHandler;
 
     // Public constructor for dependency injection
+    @Inject
     public JobProcessor(JobRepository jobRepository, CLIAgent cliAgent, WorkflowParser workflowParser) {
         this.jobRepository = jobRepository;
 

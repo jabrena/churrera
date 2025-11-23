@@ -13,19 +13,23 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Service for validating workflow XML files against the XSD schema.
  * Only supports v2 (pml-workflow.xsd) schema.
  */
+@ApplicationScoped
 public class WorkflowValidator {
 
     private static final String SCHEMA_URL_PROPERTY = "workflow.schema.url";
     private static final String AT_LINE_SUFFIX = " at line ";
     private final PropertyResolver propertyResolver;
 
-    public WorkflowValidator() {
-        this.propertyResolver = new PropertyResolver();
+    @Inject
+    public WorkflowValidator(PropertyResolver propertyResolver) {
+        this.propertyResolver = propertyResolver;
     }
 
     /**

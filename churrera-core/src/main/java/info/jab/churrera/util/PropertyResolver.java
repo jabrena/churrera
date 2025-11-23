@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Optional;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Utility class for resolving properties from classpath resources.
  * Provides methods to read property values as strings.
  */
+@ApplicationScoped
 public class PropertyResolver {
 
     /**

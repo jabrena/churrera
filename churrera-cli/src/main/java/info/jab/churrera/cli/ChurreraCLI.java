@@ -7,17 +7,14 @@ import info.jab.churrera.cli.service.JobProcessor;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.churrera.util.CursorApiKeyResolver;
 import info.jab.churrera.util.PropertyResolver;
-import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.workflow.WorkflowValidator;
 import info.jab.churrera.workflow.PmlValidator;
-import info.jab.cursor.client.impl.CursorAgentManagementImpl;
-import info.jab.cursor.client.impl.CursorAgentInformationImpl;
-import info.jab.cursor.client.impl.CursorAgentGeneralEndpointsImpl;
-import info.jab.cursor.generated.client.ApiClient;
-import info.jab.cursor.generated.client.api.DefaultApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import info.jab.churrera.cli.util.GitInfo;
 
@@ -33,80 +30,52 @@ import java.util.function.Supplier;
     mixinStandardHelpOptions = true,
     usageHelpAutoWidth = true
 )
+@ApplicationScoped
 public class ChurreraCLI implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(ChurreraCLI.class);
 
-    // Dependencies
-    private final CursorApiKeyResolver apiKeyResolver;
-    final PropertyResolver propertyResolver;
-    final JobRepository jobRepository;
-    private final ApiClient apiClient;
-    private final DefaultApi defaultApi;
-    final CLIAgent cliAgent;
-    private final WorkflowParser workflowParser;
-    final JobProcessor jobProcessor;
-    final WorkflowValidator workflowValidator;
-    final PmlValidator pmlValidator;
-    private final String apiKey;
+    // Dependencies injected via CDI
+    @Inject
+    PropertyResolver propertyResolver;
+    
+    @Inject
+    JobRepository jobRepository;
+    
+    @Inject
+    CLIAgent cliAgent;
+    
+    @Inject
+    WorkflowParser workflowParser;
+    
+    @Inject
+    JobProcessor jobProcessor;
+    
+    @Inject
+    WorkflowValidator workflowValidator;
+    
+    @Inject
+    PmlValidator pmlValidator;
 
     /**
-     * Default constructor that initializes all dependencies.
+     * Default constructor for CDI.
      */
-    public ChurreraCLI() throws IOException {
-        // Validate API key at startup
-        this.apiKeyResolver = new CursorApiKeyResolver();
-        this.apiKey = apiKeyResolver.resolveApiKey();
-        logger.debug("CURSOR_API_KEY validated");
-
-        this.propertyResolver = new PropertyResolver();
-        this.jobRepository = new JobRepository(propertyResolver);
-        logger.debug("JobRepository initialized");
-
-        // Create CLIAgent with dependencies
-        String apiBaseUrl = "https://api.cursor.com";
-        this.apiClient = new ApiClient();
-        this.apiClient.updateBaseUri(apiBaseUrl);
-        this.defaultApi = new DefaultApi(apiClient);
-        this.cliAgent = new CLIAgent(
-            jobRepository,
-            new CursorAgentManagementImpl(apiKey, defaultApi),
-            new CursorAgentInformationImpl(apiKey, defaultApi),
-            new CursorAgentGeneralEndpointsImpl(apiKey, defaultApi),
-            new PmlConverter()
-        );
-
-        // Create WorkflowParser
-        this.workflowParser = new WorkflowParser();
-
-        this.jobProcessor = new JobProcessor(jobRepository, cliAgent, workflowParser);
-
-        // Create validators
-        this.workflowValidator = new WorkflowValidator();
-        this.pmlValidator = new PmlValidator();
+    public ChurreraCLI() {
     }
 
     /**
      * Constructor for testing that accepts all dependencies.
      */
     ChurreraCLI(
-            CursorApiKeyResolver apiKeyResolver,
-            String apiKey,
             PropertyResolver propertyResolver,
             JobRepository jobRepository,
-            ApiClient apiClient,
-            DefaultApi defaultApi,
             CLIAgent cliAgent,
             WorkflowParser workflowParser,
             JobProcessor jobProcessor,
             WorkflowValidator workflowValidator,
             PmlValidator pmlValidator) {
-        this.apiKeyResolver = apiKeyResolver;
-        this.apiKey = apiKey;
         this.propertyResolver = propertyResolver;
         this.jobRepository = jobRepository;
-        this.apiClient = apiClient;
-        this.defaultApi = defaultApi;
         this.cliAgent = cliAgent;
         this.workflowParser = workflowParser;
         this.jobProcessor = jobProcessor;
@@ -118,15 +87,12 @@ public class ChurreraCLI implements Runnable {
     /**
      * Creates and initializes the Run command with all required dependencies.
      */
+    @Inject
+    Instance<RunCommand> runCommandInstance;
+    
     RunCommand createRunCmd() {
         logger.debug("JobRepository initialized");
-
-        // Read polling interval from properties
-        int pollingIntervalSeconds = propertyResolver.getProperty("application.properties", "cli.polling.interval.seconds")
-                .map(Integer::parseInt)
-                .orElseThrow(() -> new RuntimeException("Required property 'cli.polling.interval.seconds' not found in application.properties"));
-
-        return new RunCommand(jobRepository, jobProcessor, workflowValidator, workflowParser, pmlValidator, pollingIntervalSeconds, cliAgent);
+        return runCommandInstance.get();
     }
 
     @Override
@@ -145,29 +111,40 @@ public class ChurreraCLI implements Runnable {
         printBanner(GitInfo::new);
 
         try {
-            // Create ChurreraCLI instance with dependencies initialized
-            final ChurreraCLI cli = new ChurreraCLI();
+            // Initialize Quarkus Arc container
+            io.quarkus.arc.ArcContainer container = io.quarkus.arc.Arc.initialize();
+            
+            try {
+                // Get ChurreraCLI instance from CDI container
+                Instance<ChurreraCLI> cliInstance = container.instance(ChurreraCLI.class);
+                final ChurreraCLI cli = cliInstance.get();
 
-            // Create CommandLine with root command
-            CommandLine commandLine = new CommandLine(cli);
+                // Create CommandLine with root command
+                CommandLine commandLine = new CommandLine(cli);
 
-            // Create and register subcommands manually
-            final RunCommand runCommand = cli.createRunCmd();
+                // Create and register subcommands manually
+                final RunCommand runCommand = cli.createRunCmd();
 
-            commandLine.addSubcommand("run", runCommand);
+                commandLine.addSubcommand("run", runCommand);
 
-            // Add shutdown hook to ensure proper cleanup
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                logger.trace("Shutdown hook triggered");
-                // Cleanup for RunCommand
-                if (runCommand != null && runCommand.getJobRepository() != null) {
-                    runCommand.getJobRepository().close();
-                }
-            }));
+                // Add shutdown hook to ensure proper cleanup
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    logger.trace("Shutdown hook triggered");
+                    // Cleanup for RunCommand
+                    if (runCommand != null && runCommand.getJobRepository() != null) {
+                        runCommand.getJobRepository().close();
+                    }
+                    // Shutdown Arc container
+                    container.shutdown();
+                }));
 
-            int exitCode = commandLine.execute(args);
+                int exitCode = commandLine.execute(args);
 
-            System.exit(exitCode);
+                System.exit(exitCode);
+            } finally {
+                // Shutdown Arc container
+                container.shutdown();
+            }
 
         } catch (Exception e) {
             logger.error("Failed to start Churrera CLI: {}", e.getMessage(), e);

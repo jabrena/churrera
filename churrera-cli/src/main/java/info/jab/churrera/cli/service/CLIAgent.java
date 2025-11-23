@@ -17,11 +17,14 @@ import info.jab.churrera.util.PmlConverter;
 import info.jab.churrera.workflow.ExpressionEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * CLI-specific agent service that provides methods for launching, monitoring,
  * and managing Cursor agents with database integration.
  */
+@ApplicationScoped
 public class CLIAgent {
 
     private static final Logger logger = LoggerFactory.getLogger(CLIAgent.class);
@@ -33,7 +36,13 @@ public class CLIAgent {
     private final JobRepository jobRepository;
     private final PmlConverter pmlConverter;
 
-    public CLIAgent(JobRepository jobRepository, CursorAgentManagement cursorAgentManagement, CursorAgentInformation cursorAgentInformation, CursorAgentGeneralEndpoints cursorAgentGeneralEndpoints, PmlConverter pmlConverter) {
+    @Inject
+    public CLIAgent(
+            JobRepository jobRepository,
+            CursorAgentManagement cursorAgentManagement,
+            CursorAgentInformation cursorAgentInformation,
+            CursorAgentGeneralEndpoints cursorAgentGeneralEndpoints,
+            PmlConverter pmlConverter) {
         this.cursorAgentManagement = cursorAgentManagement;
         this.cursorAgentInformation = cursorAgentInformation;
         this.cursorAgentGeneralEndpoints = cursorAgentGeneralEndpoints;

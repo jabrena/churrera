@@ -24,10 +24,13 @@ import java.time.format.DateTimeFormatter;
 import info.jab.churrera.util.PropertyResolver;
 import java.util.ArrayList;
 import java.util.Optional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Repository for managing jobs in BaseX XML database.
  */
+@ApplicationScoped
 public class JobRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(JobRepository.class);
@@ -42,6 +45,7 @@ public class JobRepository {
     private final Context context;
     private final String databasePath;
 
+    @Inject
     public JobRepository(PropertyResolver propertyResolver) throws IOException {
         this.databasePath = propertyResolver.getProperty(APPLICATION_PROPERTIES, "basex.database.path")
                 .orElse("/tmp/churrera-data");

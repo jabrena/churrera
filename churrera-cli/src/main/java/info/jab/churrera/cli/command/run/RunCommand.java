@@ -5,12 +5,15 @@ import info.jab.churrera.cli.model.Job;
 import info.jab.churrera.cli.repository.JobRepository;
 import info.jab.churrera.cli.service.CLIAgent;
 import info.jab.churrera.cli.service.JobProcessor;
+import info.jab.churrera.util.PropertyResolver;
 import info.jab.churrera.workflow.PmlValidator;
 import info.jab.churrera.workflow.WorkflowParser;
 import info.jab.churrera.workflow.WorkflowValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -24,6 +27,7 @@ import java.util.concurrent.Callable;
     mixinStandardHelpOptions = true,
     usageHelpAutoWidth = true
 )
+@ApplicationScoped
 public class RunCommand implements Callable<Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(RunCommand.class);
@@ -72,7 +76,7 @@ public class RunCommand implements Callable<Integer> {
 
     private final JobRepository jobRepository;
     private final JobProcessor jobProcessor;
-    private final int pollingIntervalSeconds;
+    private final PropertyResolver propertyResolver;
     private final CLIAgent cliAgent;
 
     // Services
@@ -85,12 +89,13 @@ public class RunCommand implements Callable<Integer> {
     /**
      * Constructor with dependency injection.
      */
+    @Inject
     public RunCommand(JobRepository jobRepository, JobProcessor jobProcessor,
                      WorkflowValidator workflowValidator, WorkflowParser workflowParser,
-                     PmlValidator pmlValidator, int pollingIntervalSeconds, CLIAgent cliAgent) {
+                     PmlValidator pmlValidator, PropertyResolver propertyResolver, CLIAgent cliAgent) {
         this.jobRepository = jobRepository;
         this.jobProcessor = jobProcessor;
-        this.pollingIntervalSeconds = pollingIntervalSeconds;
+        this.propertyResolver = propertyResolver;
         this.cliAgent = cliAgent;
 
         // Initialize services
@@ -109,7 +114,13 @@ public class RunCommand implements Callable<Integer> {
      * @return the polling interval in seconds
      */
     private int getEffectivePollingIntervalSeconds() {
-        return pollingIntervalOverride != null ? pollingIntervalOverride : pollingIntervalSeconds;
+        if (pollingIntervalOverride != null) {
+            return pollingIntervalOverride;
+        }
+        int pollingIntervalSeconds = propertyResolver.getProperty("application.properties", "cli.polling.interval.seconds")
+                .map(Integer::parseInt)
+                .orElseThrow(() -> new RuntimeException("Required property 'cli.polling.interval.seconds' not found in application.properties"));
+        return pollingIntervalSeconds;
     }
 
     @Override
@@ -218,11 +229,15 @@ public class RunCommand implements Callable<Integer> {
      * Logs the polling interval being used.
      */
     private void logPollingInterval() {
+        int effectiveInterval = getEffectivePollingIntervalSeconds();
         if (pollingIntervalOverride != null) {
+            int defaultInterval = propertyResolver.getProperty("application.properties", "cli.polling.interval.seconds")
+                    .map(Integer::parseInt)
+                    .orElse(0);
             logger.info("Using polling interval from command-line option: {} seconds (overriding application.properties value: {} seconds)",
-                pollingIntervalOverride, pollingIntervalSeconds);
+                pollingIntervalOverride, defaultInterval);
         } else {
-            logger.info("Using polling interval from application.properties: {} seconds", pollingIntervalSeconds);
+            logger.info("Using polling interval from application.properties: {} seconds", effectiveInterval);
         }
     }
 

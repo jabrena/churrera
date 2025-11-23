@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Class for resolving API keys from various sources.
  * Uses functional approach with Optional and flatMap.
  */
+@ApplicationScoped
 public class CursorApiKeyResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(CursorApiKeyResolver.class);

@@ -15,10 +15,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Service for parsing workflow XML files and extracting agent and prompt information.
  */
+@ApplicationScoped
 public class WorkflowParser {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkflowParser.class);

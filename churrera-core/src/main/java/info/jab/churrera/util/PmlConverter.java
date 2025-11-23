@@ -10,17 +10,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Class for converting PML (Prompt Markup Language) XML files to Markdown format
  * using XSLT transformations.
  */
-public final class PmlConverter {
+@ApplicationScoped
+public class PmlConverter {
 
     private final ClasspathResolver resolver;
 
     /**
-     * Constructor that creates a default ClasspathResolver.
+     * Default constructor for CDI.
      */
     public PmlConverter() {
         this.resolver = new ClasspathResolver();
@@ -32,6 +35,7 @@ public final class PmlConverter {
      * @param resolver the ClasspathResolver to use for loading resources
      * @throws IllegalArgumentException if resolver is null
      */
+    @Inject
     public PmlConverter(ClasspathResolver resolver) {
         if (resolver == null) {
             throw new IllegalArgumentException("ClasspathResolver cannot be null");

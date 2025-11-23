@@ -13,18 +13,22 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Service for validating PML XML files against the XSD schema.
  */
+@ApplicationScoped
 public class PmlValidator {
 
     private static final String SCHEMA_URL_PROPERTY = "pml.schema.url";
     private static final String AT_LINE_SUFFIX = " at line ";
     private final PropertyResolver propertyResolver;
 
-    public PmlValidator() {
-        this.propertyResolver = new PropertyResolver();
+    @Inject
+    public PmlValidator(PropertyResolver propertyResolver) {
+        this.propertyResolver = propertyResolver;
     }
 
     /**

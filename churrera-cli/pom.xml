@@ -46,6 +46,11 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
+        <!-- Quarkus CDI for dependency injection -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>

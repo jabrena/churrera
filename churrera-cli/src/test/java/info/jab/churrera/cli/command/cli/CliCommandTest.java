@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
 
 /**
  * Unit tests for CliCommand.
@@ -55,7 +56,7 @@ class CliCommandTest {
     }
 
     @Test
-    void testRun_ExitCommand() {
+    void testRun_ExitCommand() throws InterruptedException {
         // Given
         String input = "quit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -65,8 +66,8 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
         ScheduledExecutorService executor = cliCommand.getScheduledExecutor();
         assertNotNull(executor);
         assertTrue(executor.isShutdown());
@@ -103,7 +104,7 @@ class CliCommandTest {
     }
 
     @Test
-    void testRun_ClearCommand() {
+    void testRun_ClearCommand() throws InterruptedException {
         // Given
         String input = "clear\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -113,12 +114,12 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_EmptyInput() {
+    void testRun_EmptyInput() throws InterruptedException {
         // Given
         String input = "\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -128,8 +129,8 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
@@ -148,7 +149,7 @@ class CliCommandTest {
     }
 
     @Test
-    void testRun_JobsNewCommand() {
+    void testRun_JobsNewCommand() throws InterruptedException {
         // Given
         String input = "jobs new /path/to/workflow.xml\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -158,12 +159,12 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_JobsStatusCommand() {
+    void testRun_JobsStatusCommand() throws InterruptedException {
         // Given
         String input = "jobs status job-id-123\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -173,12 +174,12 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_JobsLogsCommand() {
+    void testRun_JobsLogsCommand() throws InterruptedException {
         // Given
         String input = "jobs logs job-id-123\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -188,12 +189,12 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_JobsDeleteCommand() {
+    void testRun_JobsDeleteCommand() throws InterruptedException {
         // Given
         String input = "jobs delete job-id-123\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -203,12 +204,12 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_JobsPrCommand() {
+    void testRun_JobsPrCommand() throws InterruptedException {
         // Given
         String input = "jobs pr job-id-123\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -218,8 +219,8 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
     }
 
     @Test
@@ -264,7 +265,7 @@ class CliCommandTest {
     }
 
     @Test
-    void testRun_QuitCaseInsensitive() {
+    void testRun_QuitCaseInsensitive() throws InterruptedException {
         // Given
         String input = "QUIT\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -274,8 +275,8 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
-        verify(jobProcessor, atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
+        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
         ScheduledExecutorService executor = cliCommand.getScheduledExecutor();
         assertNotNull(executor);
         assertTrue(executor.isShutdown());

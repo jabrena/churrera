@@ -16,134 +16,114 @@ package "info.jab.churrera.cli" {
     - WorkflowValidator workflowValidator
     - PmlValidator pmlValidator
     - String apiKey
-    + main(String[] args)
+    + ChurreraCLI()
     + createRunCmd() : RunCommand
     + run()
-    - printBanner(Supplier<GitInfo>)
-  }
-}
-
-package "info.jab.churrera.cli.command.cli" {
-  class CliCommand {
-    - JobRepository jobRepository
-    - JobProcessor jobProcessor
-    - PropertyResolver propertyResolver
-    - Scanner scanner
-    - CLIAgent cliAgent
-    + run()
-  }
-  
-  class JobsCommand {
-    - JobRepository jobRepository
-    + run()
-  }
-  
-  class NewJobCommand {
-    - JobRepository jobRepository
-    - JobProcessor jobProcessor
-    + run()
-  }
-  
-  class NewJobRunCommand {
-    - JobRepository jobRepository
-    - JobProcessor jobProcessor
-    + run()
-  }
-  
-  class JobStatusCommand {
-    - JobRepository jobRepository
-    + run()
-  }
-  
-  class JobLogsCommand {
-    - JobRepository jobRepository
-    + run()
-  }
-  
-  class DeleteJobCommand {
-    - JobRepository jobRepository
-    + run()
-  }
-  
-  class JobsPrCommand {
-    - JobRepository jobRepository
-    + run()
-  }
-  
-  class TableFormatter {
-    + formatJobs(List<Job>)
+    + main(String[] args)
+    + printBanner(Supplier<GitInfo>)
   }
 }
 
 package "info.jab.churrera.cli.command.run" {
-  interface CompletionChecker {
-    + checkCompletion(Job) : CompletionCheckResult
-  }
-  
-  class SimpleWorkflowCompletionChecker {
-    + checkCompletion(Job) : CompletionCheckResult
-  }
-  
-  class ParallelWorkflowCompletionChecker {
-    + checkCompletion(Job) : CompletionCheckResult
-  }
-  
-  class CompletionCheckerFactory {
-    + create(WorkflowType) : CompletionChecker
-  }
-  
   class RunCommand {
+    - String workflowPath
+    - boolean deleteOnCompletion
+    - boolean deleteOnSuccessCompletion
+    - boolean retrieveModels
+    - boolean retrieveRepositories
+    - boolean showLogs
+    - Integer pollingIntervalOverride
     - JobRepository jobRepository
     - JobProcessor jobProcessor
-    - WorkflowValidator workflowValidator
-    - WorkflowParser workflowParser
-    - PmlValidator pmlValidator
     - int pollingIntervalSeconds
     - CLIAgent cliAgent
+    - JobCreationService jobCreationService
+    - JobDisplayService jobDisplayService
+    - JobDeletionService jobDeletionService
+    - JobLogDisplayService jobLogDisplayService
+    - CompletionCheckerFactory completionCheckerFactory
     + call() : Integer
+    + getJobRepository() : JobRepository
   }
   
   class JobCreationService {
     - JobRepository jobRepository
+    - WorkflowValidator workflowValidator
     - WorkflowParser workflowParser
-    + createJob(String, String, String) : JobCreationResult
-  }
-  
-  class JobDeletionService {
-    - JobRepository jobRepository
-    + deleteJob(String)
+    - PmlValidator pmlValidator
+    - CLIAgent cliAgent
+    + createJob(String workflowPath) : JobCreationResult
   }
   
   class JobDisplayService {
     - JobRepository jobRepository
-    + displayJob(String)
-    + displayJobs()
+    + displayJob(String jobId)
+  }
+  
+  class JobDeletionService {
+    - JobRepository jobRepository
+    - CLIAgent cliAgent
+    + handleDeletion(String jobId, Job job, List<Job> childJobs, boolean deleteOnCompletion, boolean deleteOnSuccessCompletion)
+  }
+  
+  class JobLogDisplayService {
+    - JobRepository jobRepository
+    - CLIAgent cliAgent
+    + displayLogsForJob(Job job)
   }
   
   class JobPollingService {
-    - JobRepository jobRepository
     - JobProcessor jobProcessor
-    + pollJobs()
+    - JobRepository jobRepository
+    - JobDisplayService jobDisplayService
+    - CompletionCheckerFactory completionCheckerFactory
+    - int pollingIntervalSeconds
+    + executePollingLoop(String jobId) : ExecutionResult
   }
   
-  class ExecutionResult {
-    + int exitCode
-    + String message
+  class CompletionCheckerFactory {
+    - JobRepository jobRepository
+    + createCompletionChecker(WorkflowType type) : CompletionChecker
+  }
+  
+  interface CompletionChecker {
+    + checkCompletion(Job job) : CompletionCheckResult
+  }
+  
+  class SimpleWorkflowCompletionChecker {
+    + checkCompletion(Job job) : CompletionCheckResult
+  }
+  
+  class ParallelWorkflowCompletionChecker {
+    - JobRepository jobRepository
+    + checkCompletion(Job job) : CompletionCheckResult
   }
   
   class JobCreationResult {
-    + String jobId
-    + boolean success
+    + boolean isSuccess()
+    + String getJobId()
+    + List<String> getErrors()
+  }
+  
+  class ExecutionResult {
+    - boolean interrupted
+    - AgentState finalStatus
+    - List<Job> childJobs
   }
   
   class CompletionCheckResult {
-    + boolean isComplete
-    + AgentState finalState
+    - boolean isComplete
+    - AgentState finalStatus
+    - List<Job> childJobs
+  }
+  
+  class TableFormatter {
+    + formatTable(List<String> headers, List<List<String>> rows) : String
   }
 }
 
 package "info.jab.churrera.cli.model" {
-  class Job {
+  record Job {
     + String jobId
     + String path
     + String cursorAgentId
@@ -164,19 +144,14 @@ package "info.jab.churrera.cli.model" {
     + withStatus(AgentState) : Job
   }
   
-  class JobWithDetails {
-    - Job job
-    - List<Prompt> prompts
-    + getJob() : Job
-    + getPrompts() : List<Prompt>
-  }
-  
-  class Prompt {
+  record Prompt {
     + String promptId
     + String jobId
-    + String content
+    + String src
+    + String type
     + String status
     + LocalDateTime createdAt
+    + String bindResultExp
     + withStatus(String) : Prompt
   }
   
@@ -186,7 +161,16 @@ package "info.jab.churrera.cli.model" {
     COMPLETED
     FAILED
     + isTerminal() : boolean
+    + isSuccessful() : boolean
+    + isFailed() : boolean
     + of(AgentResponse) : AgentState
+  }
+  
+  class JobWithDetails {
+    - Job job
+    - List<Prompt> prompts
+    + getJob() : Job
+    + getPrompts() : List<Prompt>
   }
 }
 
@@ -194,6 +178,7 @@ package "info.jab.churrera.cli.repository" {
   class JobRepository {
     - Context context
     - String databasePath
+    + JobRepository(PropertyResolver)
     + findAll() : List<Job>
     + findById(String) : Optional<Job>
     + save(Job)
@@ -203,6 +188,7 @@ package "info.jab.churrera.cli.repository" {
     + findPromptsByJobId(String) : List<Prompt>
     + findJobWithDetails(String) : Optional<JobWithDetails>
     + findUnfinishedJobs() : List<Job>
+    + deletePromptsByJobId(String)
     + findJobsByParentId(String) : List<Job>
     + close()
   }
@@ -224,6 +210,7 @@ package "info.jab.churrera.cli.service" {
     + updateJobCursorIdInDatabase(Job, String, AgentState)
     + updateJobStatusInDatabase(Job, AgentState)
     + updatePromptInDatabase(Prompt, String)
+    + updateJobInDatabase(Job)
     + getAgentStatus(String) : AgentState
     + getModels() : List<String>
     + getRepositories() : List<String>
@@ -236,15 +223,18 @@ package "info.jab.churrera.cli.service" {
     - ParallelWorkflowHandler parallelWorkflowHandler
     - ChildWorkflowHandler childWorkflowHandler
     + processJobs()
-    - processJob(Job)
-    - processJobWorkflow(Job, List<Prompt>)
+  }
+  
+  class WorkflowFileService {
+    - WorkflowParser workflowParser
+    + parseWorkflow(String) : WorkflowData
   }
   
   class AgentLauncher {
     - CLIAgent cliAgent
     - JobRepository jobRepository
     - WorkflowFileService workflowFileService
-    + launchAgent(Job, String, String, String, boolean) : String
+    + launchAgent(Job, PromptInfo) : String
   }
   
   class PromptProcessor {
@@ -253,29 +243,23 @@ package "info.jab.churrera.cli.service" {
     + processPrompt(Job, Prompt, String) : String
   }
   
-  class ResultExtractor {
-    - CLIAgent cliAgent
-    - JobRepository jobRepository
-    + extractResult(String) : String
-  }
-  
   class TimeoutManager {
     - JobRepository jobRepository
     + checkTimeout(Job) : boolean
-    + handleTimeout(Job)
+    + markTimeout(Job)
   }
   
   class FallbackExecutor {
     - CLIAgent cliAgent
     - JobRepository jobRepository
     - WorkflowFileService workflowFileService
-    + executeFallback(Job)
+    + executeFallback(Job, WorkflowData)
   }
   
-  class WorkflowFileService {
-    - WorkflowParser workflowParser
-    + parseWorkflow(String) : WorkflowData
-    + readPromptFile(String) : String
+  class ResultExtractor {
+    - CLIAgent cliAgent
+    - JobRepository jobRepository
+    + extractResult(Job, ParallelWorkflowData) : String
   }
 }
 
@@ -317,21 +301,22 @@ package "info.jab.churrera.cli.util" {
   }
   
   class JobXmlMapper {
-    + fromDocument(String, DateTimeFormatter) : List<Job>
     + toXml(Job, DateTimeFormatter) : String
+    + fromDocument(String, DateTimeFormatter) : List<Job>
   }
   
   class PromptXmlMapper {
-    + fromDocument(String, DateTimeFormatter) : List<Prompt>
     + toXml(Prompt, DateTimeFormatter) : String
+    + fromDocument(String, DateTimeFormatter) : List<Prompt>
   }
   
   class XmlUtils {
-    + formatXml(String) : String
+    + {static} methods
   }
 }
 
 ' Relationships
+ChurreraCLI --> RunCommand : creates
 ChurreraCLI --> JobRepository
 ChurreraCLI --> CLIAgent
 ChurreraCLI --> JobProcessor
@@ -339,22 +324,36 @@ ChurreraCLI --> WorkflowParser
 ChurreraCLI --> WorkflowValidator
 ChurreraCLI --> PmlValidator
 
-CliCommand --> JobRepository
-CliCommand --> JobProcessor
-CliCommand --> CLIAgent
-
 RunCommand --> JobRepository
 RunCommand --> JobProcessor
 RunCommand --> CLIAgent
-RunCommand --> WorkflowParser
-RunCommand --> WorkflowValidator
+RunCommand --> JobCreationService
+RunCommand --> JobDisplayService
+RunCommand --> JobDeletionService
+RunCommand --> JobLogDisplayService
+RunCommand --> CompletionCheckerFactory
 
-JobProcessor --> JobRepository
-JobProcessor --> CLIAgent
-JobProcessor --> SequenceWorkflowHandler
-JobProcessor --> ParallelWorkflowHandler
-JobProcessor --> ChildWorkflowHandler
-JobProcessor --> WorkflowFileService
+JobCreationService --> JobRepository
+JobCreationService --> WorkflowValidator
+JobCreationService --> WorkflowParser
+JobCreationService --> PmlValidator
+JobCreationService --> CLIAgent
+
+JobDisplayService --> JobRepository
+JobDeletionService --> JobRepository
+JobDeletionService --> CLIAgent
+JobLogDisplayService --> JobRepository
+JobLogDisplayService --> CLIAgent
+
+JobPollingService --> JobProcessor
+JobPollingService --> JobRepository
+JobPollingService --> JobDisplayService
+JobPollingService --> CompletionCheckerFactory
+
+CompletionCheckerFactory ..> CompletionChecker : creates
+SimpleWorkflowCompletionChecker ..|> CompletionChecker
+ParallelWorkflowCompletionChecker ..|> CompletionChecker
+ParallelWorkflowCompletionChecker --> JobRepository
 
 CLIAgent --> JobRepository
 CLIAgent --> CursorAgentManagement
@@ -362,27 +361,55 @@ CLIAgent --> CursorAgentInformation
 CLIAgent --> CursorAgentGeneralEndpoints
 CLIAgent --> PmlConverter
 
+JobProcessor --> JobRepository
+JobProcessor --> WorkflowFileService
+JobProcessor --> SequenceWorkflowHandler
+JobProcessor --> ParallelWorkflowHandler
+JobProcessor --> ChildWorkflowHandler
+
+WorkflowFileService --> WorkflowParser
+
 SequenceWorkflowHandler --> JobRepository
 SequenceWorkflowHandler --> CLIAgent
 SequenceWorkflowHandler --> AgentLauncher
 SequenceWorkflowHandler --> PromptProcessor
+SequenceWorkflowHandler --> TimeoutManager
+SequenceWorkflowHandler --> FallbackExecutor
 
 ParallelWorkflowHandler --> JobRepository
 ParallelWorkflowHandler --> CLIAgent
 ParallelWorkflowHandler --> AgentLauncher
+ParallelWorkflowHandler --> TimeoutManager
+ParallelWorkflowHandler --> FallbackExecutor
 ParallelWorkflowHandler --> ResultExtractor
 
 ChildWorkflowHandler --> JobRepository
 ChildWorkflowHandler --> CLIAgent
 ChildWorkflowHandler --> AgentLauncher
+ChildWorkflowHandler --> PromptProcessor
+ChildWorkflowHandler --> TimeoutManager
+ChildWorkflowHandler --> FallbackExecutor
+
+AgentLauncher --> CLIAgent
+AgentLauncher --> JobRepository
+AgentLauncher --> WorkflowFileService
+
+PromptProcessor --> CLIAgent
+PromptProcessor --> WorkflowFileService
+
+TimeoutManager --> JobRepository
+FallbackExecutor --> CLIAgent
+FallbackExecutor --> JobRepository
+FallbackExecutor --> WorkflowFileService
+
+ResultExtractor --> CLIAgent
+ResultExtractor --> JobRepository
 
 JobRepository --> Job
 JobRepository --> Prompt
 JobRepository --> JobWithDetails
-
-SimpleWorkflowCompletionChecker ..|> CompletionChecker
-ParallelWorkflowCompletionChecker ..|> CompletionChecker
-CompletionCheckerFactory --> CompletionChecker
+JobRepository --> JobXmlMapper
+JobRepository --> PromptXmlMapper
 
 Job --> AgentState
 Job --> WorkflowType

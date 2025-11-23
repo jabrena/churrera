@@ -1,18 +1,14 @@
 @startuml
 !theme plain
 scale 0.6
-title Complete Project Overview - All Modules Class Diagram
+title Complete Project Overview - Class Diagram
 
 package "churrera-cli" {
   class ChurreraCLI
+  class RunCommand
   class JobProcessor
   class CLIAgent
   class JobRepository
-  class RunCommand
-  class CliCommand
-  class SequenceWorkflowHandler
-  class ParallelWorkflowHandler
-  class ChildWorkflowHandler
   class Job
   class Prompt
   class AgentState
@@ -20,17 +16,16 @@ package "churrera-cli" {
 
 package "churrera-core" {
   class WorkflowParser
-  class WorkflowData
   class WorkflowValidator
   class PmlValidator
-  class PromptInfo
-  class SequenceInfo
+  class WorkflowData
   class ParallelWorkflowData
+  class SequenceInfo
+  class PromptInfo
+  class WorkflowType
   class PropertyResolver
   class CursorApiKeyResolver
   class PmlConverter
-  class ExpressionEvaluator
-  class WorkflowType
 }
 
 package "cursor-cloud-agents-client" {
@@ -43,14 +38,11 @@ package "cursor-cloud-agents-client" {
   class AgentResponse
   class FollowUpResponse
   class ConversationResponse
-  class AgentsList
   class AgentStatus
 }
 
 package "cursor-cloud-agents-openapi" {
   class OpenAPISpecification
-  class DefaultApi
-  class ApiClient
 }
 
 ' Cross-module relationships
@@ -60,73 +52,69 @@ ChurreraCLI --> JobProcessor : uses
 ChurreraCLI --> WorkflowParser : uses
 ChurreraCLI --> WorkflowValidator : uses
 ChurreraCLI --> PmlValidator : uses
-ChurreraCLI --> CursorApiKeyResolver : uses
-ChurreraCLI --> PropertyResolver : uses
+ChurreraCLI --> CursorAgentManagementImpl : creates
+ChurreraCLI --> CursorAgentInformationImpl : creates
+ChurreraCLI --> CursorAgentGeneralEndpointsImpl : creates
+
+RunCommand --> JobRepository : uses
+RunCommand --> JobProcessor : uses
+RunCommand --> CLIAgent : uses
+RunCommand --> WorkflowParser : uses
+RunCommand --> WorkflowValidator : uses
+RunCommand --> PmlValidator : uses
 
 JobProcessor --> JobRepository : uses
 JobProcessor --> CLIAgent : uses
 JobProcessor --> WorkflowParser : uses
-JobProcessor --> SequenceWorkflowHandler : uses
-JobProcessor --> ParallelWorkflowHandler : uses
-JobProcessor --> ChildWorkflowHandler : uses
+JobProcessor --> WorkflowData : uses
 
 CLIAgent --> JobRepository : uses
 CLIAgent --> CursorAgentManagement : uses
 CLIAgent --> CursorAgentInformation : uses
 CLIAgent --> CursorAgentGeneralEndpoints : uses
 CLIAgent --> PmlConverter : uses
-CLIAgent --> ExpressionEvaluator : uses
-
-SequenceWorkflowHandler --> CLIAgent : uses
-SequenceWorkflowHandler --> JobRepository : uses
-
-ParallelWorkflowHandler --> CLIAgent : uses
-ParallelWorkflowHandler --> JobRepository : uses
-
-ChildWorkflowHandler --> CLIAgent : uses
-ChildWorkflowHandler --> JobRepository : uses
+CLIAgent --> WorkflowData : uses
 
 JobRepository --> Job : manages
 JobRepository --> Prompt : manages
+JobRepository --> PropertyResolver : uses
 
 Job --> AgentState : has
 Job --> WorkflowType : has
 
 WorkflowParser --> WorkflowData : creates
-WorkflowParser --> PromptInfo : creates
-WorkflowParser --> SequenceInfo : creates
 WorkflowParser --> ParallelWorkflowData : creates
-WorkflowParser --> WorkflowType : uses
+WorkflowParser --> SequenceInfo : creates
+WorkflowParser --> PromptInfo : creates
+
+WorkflowValidator --> PropertyResolver : uses
+WorkflowValidator --> WorkflowData : validates
+
+PmlValidator --> PropertyResolver : uses
 
 WorkflowData --> PromptInfo : contains
 WorkflowData --> ParallelWorkflowData : contains
 WorkflowData --> SequenceInfo : contains
 
+ParallelWorkflowData --> PromptInfo : contains
 ParallelWorkflowData --> SequenceInfo : contains
+
 SequenceInfo --> PromptInfo : contains
 
-WorkflowValidator --> WorkflowData : validates
-WorkflowValidator --> SequenceInfo : validates
-WorkflowValidator --> ParallelWorkflowData : validates
+CursorAgentManagementImpl ..|> CursorAgentManagement
+CursorAgentInformationImpl ..|> CursorAgentInformation
+CursorAgentGeneralEndpointsImpl ..|> CursorAgentGeneralEndpoints
 
-CursorAgentManagementImpl ..|> CursorAgentManagement : implements
-CursorAgentInformationImpl ..|> CursorAgentInformation : implements
-CursorAgentGeneralEndpointsImpl ..|> CursorAgentGeneralEndpoints : implements
+CursorAgentManagementImpl --> AgentResponse : returns
+CursorAgentManagementImpl --> FollowUpResponse : returns
 
-CursorAgentManagementImpl --> DefaultApi : uses
-CursorAgentInformationImpl --> DefaultApi : uses
-CursorAgentGeneralEndpointsImpl --> DefaultApi : uses
-
-CursorAgentManagement --> AgentResponse : returns
-CursorAgentManagement --> FollowUpResponse : returns
-CursorAgentInformation --> AgentResponse : returns
-CursorAgentInformation --> ConversationResponse : returns
-CursorAgentInformation --> AgentsList : returns
+CursorAgentInformationImpl --> AgentResponse : returns
+CursorAgentInformationImpl --> ConversationResponse : returns
 
 AgentResponse --> AgentStatus : has
-FollowUpResponse --> AgentStatus : has
 
-DefaultApi --> ApiClient : uses
-OpenAPISpecification --> DefaultApi : generates
+OpenAPISpecification ..> CursorAgentManagement : generates
+OpenAPISpecification ..> CursorAgentInformation : generates
+OpenAPISpecification ..> CursorAgentGeneralEndpoints : generates
 
 @enduml

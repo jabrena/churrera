@@ -1,0 +1,44 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true  # Fetches all submodules
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'graalvm' # See 'Supported distributions' for available options
+          java-version: '25'
+      - name: Maven build
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw --batch-mode --no-transfer-progress clean test verify site properties:read-project-properties sonar:sonar -Pjacoco -Psonar --file pom.xml
+
+      - name: Get Maven project version
+        id: get_version
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: E2E Test - Sequence Workflow
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          java -jar churrera-cli/target/churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar run \
+          --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml \
+          --show-logs --delete-on-success-completion --polling-interval 10
+
+      - name: E2E Test - Parallel Workflow
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          java -jar churrera-cli/target/churrera-cli-${{ steps.get_version.outputs.VERSION }}.jar run \
+          --workflow churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml \
+          --show-logs --delete-on-success-completion --polling-interval 10

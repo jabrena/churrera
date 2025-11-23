@@ -21,7 +21,7 @@ public class AgentLauncher {
     private final JobRepository jobRepository;
     private final WorkflowFileService workflowFileService;
 
-    public AgentLauncher(CLIAgent cliAgent, JobRepository jobRepository, 
+    public AgentLauncher(CLIAgent cliAgent, JobRepository jobRepository,
                         WorkflowFileService workflowFileService) {
         this.cliAgent = cliAgent;
         this.jobRepository = jobRepository;
@@ -53,7 +53,7 @@ public class AgentLauncher {
             // Determine PR flag: parallel workflow parent jobs should not create PR (only generate list),
             // sequence workflows (standard and child jobs) should create PR)
             boolean createPr = !workflowData.isParallelWorkflow();
-            logger.info("Launching agent with PR flag: {} (workflow type: {})", createPr,
+            logger.debug("Launching agent with PR flag: {} (workflow type: {})", createPr,
                 workflowData.isParallelWorkflow() ? "parallel" : "sequence");
 
             // Launch the agent with type information, optional bind value, and PR flag
@@ -71,7 +71,7 @@ public class AgentLauncher {
                     job.jobId(), job.timeoutMillis());
             }
 
-            logger.info("Launched job {} with Cursor ID: {} (type: {})", job.jobId(), cursorAgentId, launchPrompt.getType());
+            logger.debug("Launched job {} with Cursor ID: {} (type: {})", job.jobId(), cursorAgentId, launchPrompt.getType());
 
         } catch (Exception e) {
             logger.error("Error launching job {}: {}", job.jobId(), e.getMessage());

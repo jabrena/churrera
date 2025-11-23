@@ -69,9 +69,6 @@ public class JobDisplayService {
             rows.add(row);
         }
 
-        // Display table to console
-        String tableOutput = TableFormatter.formatTable(headers, rows);
-        logger.info("Filtered jobs table:\n{}", tableOutput);
     }
 
     /**

@@ -48,7 +48,7 @@ public class ParallelWorkflowHandler {
      */
     public void processWorkflow(Job job, WorkflowData workflowData) {
         try {
-            logger.info("Processing parallel workflow for job: {}", job.jobId());
+            logger.debug("Processing parallel workflow for job: {}", job.jobId());
 
             ParallelWorkflowData parallelData = workflowData.getParallelWorkflowData();
 
@@ -219,7 +219,7 @@ public class ParallelWorkflowHandler {
     private JobStatusCheckResult checkParentJobStatus(Job job) {
         try {
             AgentState currentStatus = cliAgent.getAgentStatus(job.cursorAgentId());
-            logger.info("Parent parallel job {} status polled: {} -> updating database", job.jobId(), currentStatus);
+            logger.debug("Parent parallel job {} status polled: {} -> updating database", job.jobId(), currentStatus);
             cliAgent.updateJobStatusInDatabase(job, currentStatus);
 
             // Refresh job from database to get the updated status

@@ -36,9 +36,8 @@ public class GitInfo {
             prop.load(input);
 
             //Print info
-            logger.info("A CLI tool designed to orchestrate Cursor Cloud Agents REST API.");
-            logger.info("Version: {}", prop.getProperty("git.build.version"));
-            logger.info("Commit: {}", prop.getProperty("git.commit.id.abbrev"));
+            logger.debug("Version: {}", prop.getProperty("git.build.version"));
+            logger.debug("Commit: {}", prop.getProperty("git.commit.id.abbrev"));
         } catch (IOException ex) {
             logger.error("Error printing git info: {}", ex.getMessage(), ex);
         }

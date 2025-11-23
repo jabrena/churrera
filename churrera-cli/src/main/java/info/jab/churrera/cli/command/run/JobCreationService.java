@@ -54,7 +54,7 @@ public class JobCreationService {
      * @return job creation result
      */
     public JobCreationResult createJob(String jobPath) {
-        logger.info("Creating new job from workflow file: {}", jobPath);
+        logger.debug("Creating new job from workflow file: {}", jobPath);
         try {
             // Resolve the workflow file path
             Path workflowPath = Paths.get(jobPath);
@@ -160,7 +160,7 @@ public class JobCreationService {
                 fallbackSrc, // fallback source file path (null if not specified)
                 null // fallbackExecuted is null initially (false when not executed)
             );
-            logger.info("Saving job with jobId: {}", jobId);
+            logger.trace("Saving job with jobId: {}", jobId);
             jobRepository.save(job);
             logger.debug("Job saved successfully");
 
@@ -184,7 +184,7 @@ public class JobCreationService {
                 jobRepository.savePrompt(prompt);
             }
 
-            logger.info("Job created successfully with jobId: {}, {} prompts created", jobId, allPrompts.size());
+            logger.debug("Job created successfully with jobId: {}, {} prompts created", jobId, allPrompts.size());
             return JobCreationResult.success(jobId);
 
         } catch (WorkflowParseException e) {

@@ -53,21 +53,21 @@ public class CLIAgent {
      */
     public String launchAgentForJob(Job job, String promptContent, String type, String bindValue, boolean pr) {
         try {
-            logger.info("🚀 launchAgentForJob - type: {}, bindValue: {}, pr: {}", type, bindValue, pr);
+            logger.trace("🚀 launchAgentForJob - type: {}, bindValue: {}, pr: {}", type, bindValue, pr);
 
             // Convert to Markdown if needed
             String markdownContent = convertToMarkdown(promptContent, type);
-            logger.info("📄 After XML->Markdown conversion (length: {})", markdownContent.length());
+            logger.trace("📄 After XML->Markdown conversion (length: {})", markdownContent.length());
 
             // Apply bind value replacement if provided
             if (bindValue != null && !bindValue.isEmpty()) {
-                logger.info("🔄 Applying bind value replacement with value: '{}'", bindValue);
+                logger.trace("🔄 Applying bind value replacement with value: '{}'", bindValue);
                 String before = markdownContent;
                 markdownContent = ExpressionEvaluator.replaceInputPlaceholder(markdownContent, bindValue);
                 boolean changed = !before.equals(markdownContent);
-                logger.info("🔄 Replacement result: content changed = {}", changed);
+                logger.trace("🔄 Replacement result: content changed = {}", changed);
             } else {
-                logger.info("⏭️ Skipping bind value replacement (bindValue is {})",
+                logger.trace("⏭️ Skipping bind value replacement (bindValue is {})",
                     bindValue == null ? "null" : "empty");
             }
 

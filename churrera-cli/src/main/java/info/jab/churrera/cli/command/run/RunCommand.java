@@ -138,7 +138,7 @@ public class RunCommand implements Callable<Integer> {
             }
 
             String jobId = creationResult.getJobId();
-            logger.info("Job created with ID: {}, starting blocking execution", jobId);
+            logger.debug("Job created with ID: {}, starting blocking execution", jobId);
             logger.info("Job registered");
 
             // Create polling service with effective polling interval

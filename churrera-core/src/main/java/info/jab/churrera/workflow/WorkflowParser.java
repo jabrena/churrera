@@ -36,12 +36,11 @@ public class WorkflowParser {
      */
     public WorkflowData parse(File workflowFile) throws WorkflowParseException {
         try {
-            logger.info("Starting to parse workflow file: {}", workflowFile.getAbsolutePath());
+            logger.debug("Starting to parse workflow file: {}", workflowFile.getAbsolutePath());
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             // Disable namespace awareness for simpler element access
             factory.setNamespaceAware(false);
-            logger.info("Created document builder factory");
 
             DocumentBuilder builder = factory.newDocumentBuilder();
             // Set entity resolver to prevent external entity resolution (e.g., XSD schema)
@@ -50,15 +49,13 @@ public class WorkflowParser {
                 // Return empty input source to prevent network lookups
                 return new org.xml.sax.InputSource(new java.io.StringReader(""));
             });
-            logger.info("Created document builder with entity resolver");
 
             Document document = builder.parse(workflowFile);
-            logger.info("Parsed XML document");
 
             // Get the root element
             Element root = document.getDocumentElement();
             String rootName = root.getNodeName();
-            logger.info("Root element: {}", rootName);
+            logger.trace("Root element: {}", rootName);
 
             if (!"pml-workflow".equals(rootName)) {
                 throw new WorkflowParseException("Root element must be 'pml-workflow'");
@@ -75,14 +72,14 @@ public class WorkflowParser {
 
             // Check for v2 schema (sequence element)
             NodeList sequenceList = root.getElementsByTagName(SEQUENCE_TAG);
-            logger.info("Found {} sequence elements", sequenceList.getLength());
+            logger.trace("Found {} sequence elements", sequenceList.getLength());
 
             if (sequenceList.getLength() == 0) {
                 throw new WorkflowParseException("No 'sequence' or 'parallel' element found in workflow.");
             }
 
             WorkflowData result = parseV2Workflow(sequenceList.item(0));
-            logger.info("Successfully parsed workflow: launch={}, model={}, repository={}, updates={}",
+            logger.trace("Successfully parsed workflow: launch={}, model={}, repository={}, updates={}",
                 result.getLaunchPrompt().getSrcFile(), result.getModel(), result.getRepository(), result.getUpdatePrompts().size());
 
             return result;
@@ -306,7 +303,7 @@ public class WorkflowParser {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(false);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            builder.setEntityResolver((publicId, systemId) -> 
+            builder.setEntityResolver((publicId, systemId) ->
                 new org.xml.sax.InputSource(new java.io.StringReader(""))
             );
 

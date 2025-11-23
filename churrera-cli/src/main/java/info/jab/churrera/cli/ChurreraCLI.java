@@ -57,7 +57,7 @@ public class ChurreraCLI implements Runnable {
         // Validate API key at startup
         this.apiKeyResolver = new CursorApiKeyResolver();
         this.apiKey = apiKeyResolver.resolveApiKey();
-        logger.info("✓ CURSOR_API_KEY validated");
+        logger.debug("CURSOR_API_KEY validated");
 
         this.propertyResolver = new PropertyResolver();
         this.jobRepository = new JobRepository(propertyResolver);
@@ -119,7 +119,6 @@ public class ChurreraCLI implements Runnable {
      * Creates and initializes the Run command with all required dependencies.
      */
     RunCommand createRunCmd() {
-        logger.info("Initializing Churrera Run command");
         logger.debug("JobRepository initialized");
 
         // Read polling interval from properties
@@ -127,7 +126,6 @@ public class ChurreraCLI implements Runnable {
                 .map(Integer::parseInt)
                 .orElseThrow(() -> new RuntimeException("Required property 'cli.polling.interval.seconds' not found in application.properties"));
 
-        logger.info("Churrera Run command initialized successfully");
         return new RunCommand(jobRepository, jobProcessor, workflowValidator, workflowParser, pmlValidator, pollingIntervalSeconds, cliAgent);
     }
 
@@ -154,24 +152,21 @@ public class ChurreraCLI implements Runnable {
             CommandLine commandLine = new CommandLine(cli);
 
             // Create and register subcommands manually
-            logger.info("Initializing Churrera Run command");
             final RunCommand runCommand = cli.createRunCmd();
 
             commandLine.addSubcommand("run", runCommand);
 
             // Add shutdown hook to ensure proper cleanup
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                logger.info("Shutdown hook triggered");
+                logger.trace("Shutdown hook triggered");
                 // Cleanup for RunCommand
                 if (runCommand != null && runCommand.getJobRepository() != null) {
                     runCommand.getJobRepository().close();
                 }
             }));
 
-            logger.info("Starting Churrera CLI application");
             int exitCode = commandLine.execute(args);
 
-            logger.info("Churrera CLI application terminated normally");
             System.exit(exitCode);
 
         } catch (Exception e) {
@@ -188,7 +183,7 @@ public class ChurreraCLI implements Runnable {
      */
     static void printBanner(Supplier<GitInfo> gitInfoSupplier) {
         try {
-            logger.debug("Printing application banner");
+            logger.info("Running Churrera");
             gitInfoSupplier.get().print();
         } catch (RuntimeException e) {
             logger.error("Error printing banner: {}", e.getMessage(), e);

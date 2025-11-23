@@ -72,7 +72,7 @@ public class JobRepository {
         try {
             // First try to open existing database
             new Open(DATABASE_NAME).execute(context);
-            logger.info("Opened existing database: {} at {}", DATABASE_NAME, databasePath);
+            logger.trace("Opened existing database: {} at {}", DATABASE_NAME, databasePath);
         } catch (BaseXException _) {
             // Database doesn't exist, create it
             logger.info("Creating new database: {} at {}", DATABASE_NAME, databasePath);
@@ -165,13 +165,13 @@ public class JobRepository {
                     + "'] " +
                     "with " + JobXmlMapper.toXml(job, DATE_TIME_FORMATTER);
             new XQuery(updateQuery).execute(context);
-            logger.info("Updated job: {}", job.jobId());
+            logger.trace("Updated job: {}", job.jobId());
         } else {
             // Add new job
             logger.debug("Adding new job: {}", job.jobId());
             String insertQuery = "insert node " + JobXmlMapper.toXml(job, DATE_TIME_FORMATTER) + " into doc('" + DATABASE_NAME + "/" + JOBS_XML + "')/jobs";
             new XQuery(insertQuery).execute(context);
-            logger.info("Saved new job: {}", job.jobId());
+            logger.trace("Saved new job: {}", job.jobId());
         }
     }
 
@@ -214,7 +214,7 @@ public class JobRepository {
             String insertQuery = "insert node " + PromptXmlMapper.toXml(prompt, DATE_TIME_FORMATTER) + " into doc('" + DATABASE_NAME
                     + "/" + PROMPTS_XML + "')/prompts";
             new XQuery(insertQuery).execute(context);
-            logger.info("Saved new prompt: {}", prompt.promptId());
+            logger.trace("Saved new prompt: {}", prompt.promptId());
         }
     }
 
@@ -363,7 +363,7 @@ public class JobRepository {
         if (context != null) {
             logger.debug("Closing repository");
             context.close();
-            logger.info("Repository closed");
+            logger.trace("Repository closed");
         }
     }
 

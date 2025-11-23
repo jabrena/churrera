@@ -122,8 +122,8 @@ public final class ConversationJsonDeserializer {
         }
 
         if (lastMatch != null && !lastMatch.isEmpty()) {
-            logger.info("Found {} result tag(s), using last match with length: {}", matchCount, lastMatch.length());
-            logger.info("Extracted JSON content: {}", lastMatch);
+            logger.debug("Found {} result tag(s), using last match with length: {}", matchCount, lastMatch.length());
+            logger.debug("Extracted JSON content: {}", lastMatch);
             return Optional.of(lastMatch);
         }
 
@@ -169,20 +169,20 @@ public final class ConversationJsonDeserializer {
      */
     private static <T> Optional<List<T>> deserializeJsonList(String jsonContent, Class<T> targetType, String preferredKey) {
         try {
-            logger.info("Attempting to parse JSON content for list deserialization (length: {})", jsonContent.length());
-            logger.info("JSON content to deserialize: {}", jsonContent);
+            logger.debug("Attempting to parse JSON content for list deserialization (length: {})", jsonContent.length());
+            logger.debug("JSON content to deserialize: {}", jsonContent);
             if (preferredKey != null) {
-                logger.info("Preferred key for deserialization: {}", preferredKey);
+                logger.debug("Preferred key for deserialization: {}", preferredKey);
             }
             // First, try to determine if it's a direct array or an object
             JsonNode rootNode = OBJECT_MAPPER.readTree(jsonContent);
 
             if (rootNode.isArray()) {
                 // Direct array case: [1, 2, 3]
-                logger.info("Detected direct array format");
+                logger.debug("Detected direct array format");
                 return deserializeDirectArray(rootNode, targetType);
             } else if (rootNode.isObject()) {
-                logger.info("Detected object wrapper format, searching for array");
+                logger.debug("Detected object wrapper format, searching for array");
                 return deserializeObjectWithArray(rootNode, targetType, preferredKey);
             }
 
@@ -242,20 +242,20 @@ public final class ConversationJsonDeserializer {
                 JsonNode keyNode = objectNode.get(preferredKey);
                 if (keyNode != null && keyNode.isArray()) {
                     arrayNode = keyNode;
-                    logger.info("Found array with preferred key '{}' containing {} elements", preferredKey, arrayNode.size());
+                    logger.debug("Found array with preferred key '{}' containing {} elements", preferredKey, arrayNode.size());
                 }
             }
 
             // If preferred key not found or not specified, fall back to finding first array
             if (arrayNode == null) {
                 if (preferredKey != null) {
-                    logger.info("Preferred key '{}' not found, falling back to finding first array", preferredKey);
+                    logger.debug("Preferred key '{}' not found, falling back to finding first array", preferredKey);
                 }
                 arrayNode = findFirstArray(objectNode);
             }
 
             if (arrayNode != null && arrayNode.isArray()) {
-                logger.info("Found array in object wrapper with {} elements", arrayNode.size());
+                logger.debug("Found array in object wrapper with {} elements", arrayNode.size());
                 return deserializeDirectArray(arrayNode, targetType);
             }
 

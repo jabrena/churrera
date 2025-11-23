@@ -61,7 +61,7 @@ public class JobProcessor {
                 return; // No jobs to process
             }
 
-            logger.info("Found {} unfinished job(s): {}", unfinishedJobs.size(),
+            logger.debug("Found {} unfinished job(s): {}", unfinishedJobs.size(),
                 unfinishedJobs.stream().map(Job::jobId).toList());
 
             for (Job job : unfinishedJobs) {
@@ -77,7 +77,7 @@ public class JobProcessor {
      */
     private void processJob(Job job) {
         try {
-            logger.info("Starting to process job: {} (current status: {})", job.jobId(), job.status());
+            logger.debug("Starting to process job: {} (current status: {})", job.jobId(), job.status());
 
             // Get job details with prompts
             var jobDetailsOpt = jobRepository.findJobWithDetails(job.jobId());
@@ -94,12 +94,12 @@ public class JobProcessor {
                 return;
             }
 
-            logger.info("Found {} prompts for job: {} (status before workflow: {})", prompts.size(), job.jobId(), job.status());
+            logger.debug("Found {} prompts for job: {} (status before workflow: {})", prompts.size(), job.jobId(), job.status());
 
             // Process the job workflow
             processJobWorkflow(job, prompts);
 
-            logger.info("Finished processing job: {}", job.jobId());
+            logger.trace("Finished processing job: {}", job.jobId());
 
         } catch (Exception e) {
             logger.error("Error processing job {}: {}", job.jobId(), e.getMessage(), e);
@@ -112,11 +112,11 @@ public class JobProcessor {
      */
     private void processJobWorkflow(Job job, List<Prompt> prompts) {
         try {
-            logger.info("Starting to parse workflow for job: {} (status: {})", job.jobId(), job.status());
+            logger.trace("Starting to parse workflow for job: {} (status: {})", job.jobId(), job.status());
 
             // Parse workflow to get PML files
             WorkflowData workflowData = workflowFileService.parseWorkflow(job.path());
-            logger.info("Workflow parsed successfully for job: {}", job.jobId());
+            logger.trace("Workflow parsed successfully for job: {}", job.jobId());
 
             // Check if this is a child job (from parallel workflow)
             if (job.parentJobId() != null) {
@@ -129,7 +129,7 @@ public class JobProcessor {
 
             // Check if this is a parallel workflow
             if (workflowData.isParallelWorkflow()) {
-                logger.info("Detected parallel workflow for job: {} (status: {})", job.jobId(), job.status());
+                logger.debug("Detected parallel workflow for job: {} (status: {})", job.jobId(), job.status());
                 parallelWorkflowHandler.processWorkflow(job, workflowData);
                 return;
             }

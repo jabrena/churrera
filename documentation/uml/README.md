@@ -23,11 +23,12 @@ The CLI module contains the command-line interface components, including command
 ![Churrera CLI Class Diagram](uml-class-diagram-churrera-cli.png)
 
 **Key Components:**
-- **Commands**: `CliCommand`, `RunCommand`, `JobsCommand`, and other CLI commands
+- **Commands**: `ChurreraCLI`, `RunCommand` for CLI operations
 - **Services**: `CLIAgent` for agent management, `JobProcessor` for job processing
 - **Repository**: `JobRepository` for data persistence
-- **Models**: `Job`, `JobWithDetails`, `Prompt` for data representation
+- **Models**: `Job`, `JobWithDetails`, `Prompt`, `AgentState` for data representation
 - **Workflow Handlers**: `SequenceWorkflowHandler`, `ParallelWorkflowHandler`, `ChildWorkflowHandler` for different workflow types
+- **Supporting Services**: `AgentLauncher`, `PromptProcessor`, `TimeoutManager`, `FallbackExecutor`, `ResultExtractor`
 
 ### Churrera Core Module
 
@@ -36,10 +37,11 @@ The core module provides workflow parsing, validation, and utility functions use
 ![Churrera Core Class Diagram](uml-class-diagram-churrera-core.png)
 
 **Key Components:**
-- **Workflow**: `WorkflowParser`, `WorkflowData`, `WorkflowValidator` for workflow management
-- **Types**: `WorkflowType` enum, `AgentState` enum
-- **Utilities**: `PmlConverter`, `PropertyResolver`, `CursorApiKeyResolver`
+- **Workflow**: `WorkflowParser`, `WorkflowData`, `WorkflowValidator`, `PmlValidator` for workflow management
+- **Types**: `WorkflowType` enum for workflow classification
+- **Utilities**: `PmlConverter`, `PropertyResolver`, `CursorApiKeyResolver` for utility operations
 - **Data Models**: `PromptInfo`, `SequenceInfo`, `ParallelWorkflowData` for workflow representation
+- **Supporting Classes**: `TimeoutParser`, `ExpressionEvaluator`, `BindResultTypeMapper` for workflow processing
 
 ### Cursor Cloud Agents Client Module
 
@@ -50,8 +52,9 @@ The client module provides interfaces and implementations for interacting with t
 **Key Components:**
 - **Interfaces**: `CursorAgentManagement`, `CursorAgentInformation`, `CursorAgentGeneralEndpoints`
 - **Implementations**: `CursorAgentManagementImpl`, `CursorAgentInformationImpl`, `CursorAgentGeneralEndpointsImpl`
-- **Models**: `AgentResponse`, `FollowUpResponse`, `ConversationResponse` for API responses
+- **Models**: `AgentResponse`, `FollowUpResponse`, `ConversationResponse`, `AgentsList`, `ApiKeyInfo` for API responses
 - **Enums**: `AgentStatus` for agent state management
+- **Supporting Models**: `Source`, `Target`, `ConversationMessage` for API data structures
 
 ### Cursor Cloud Agents OpenAPI Module
 

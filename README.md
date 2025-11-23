@@ -1,6 +1,6 @@
 # Churrera
 
-[![CI Builds](https://github.com/jabrena/churrera-cli/actions/workflows/maven.yaml/badge.svg)](https://github.com/jabrena/churrera-cli/actions/workflows/maven.yaml)
+[![CI Builds](https://github.com/jabrena/churrera-cli/actions/workflows/ci.yaml/badge.svg)](https://github.com/jabrena/churrera-cli/actions/workflows/ci.yaml)
 
 [![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-light.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_churrera-cli)
 
@@ -28,10 +28,14 @@ Cursor Cloud Agents REST API (Beta) allows you to programmatically create and ma
 <?xml version="1.0" encoding="UTF-8"?>
 <pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
-    <sequence model="default" repository="https://github.com/jabrena/wjax25-demos"
-     timeout="3m" fallback="fallback.xml">
-        <prompt src="pml-java25-installation-v5.xml" />
-        <prompt src="pml-hello-world-java-v2.xml" />
+
+    <sequence
+        model="default" repository="https://github.com/jabrena/churrera-cli"
+        timeout="30m" fallback-src="999-fallback.xml">
+
+        <prompt src="1-pml-java25-installation.xml" />
+        <prompt src="2-pml-jbang-sonar-search-cli-installation.xml" />
+        <prompt src="3-pml-fix-sonar-issues.xml" />
     </sequence>
 </pml-workflow>
 ```
@@ -50,7 +54,21 @@ Cursor Cloud Agents REST API (Beta) allows you to programmatically create and ma
 </pml-workflow>
 ```
 
-**Note:** [Review examples to get inspiration](./churrera-cli/src/test/resources/examples/).
+## Churrera recipes
+
+Examples using Churrera with PML-Workflow:
+
+- [Continous documentation](./churrera-recipes/continous-diagrams/)
+- [Fix Sonar issues](./churrera-recipes/fix-sonar-issues/)
+
+## Limitations
+
+Currently, the solution has the following limitations
+
+- Limited Java types to be desearialized data from prompts.
+- No capacity to pass parameters from Pipelines to prompts.
+- No Directed graph support for complex workflow
+- Not released in Maven Central
 
 ## Getting started
 
@@ -91,8 +109,6 @@ export CURSOR_API_KEY=key_xxx
 Configure Github to allow Cursor to interact with the repository that you want Cursor Cloud Agents to interact with, so visit [Integrations](https://cursor.com/dashboard?tab=integrations) and click the button `Manage` in the Github area.
 
 ![](./documentation/getting-started/github-configuration-1.png)
-
-**Note:** In the future, Cursor Cloud Agents may support `Gitlab` as well.
 
 Once you are in Github, you will have to select which `Github User` you are going to give permissions to and click the `Configure` link:
 
@@ -152,46 +168,6 @@ jbang churrera@jabrena run --retrieve-models
 jbang churrera@jabrena run --retrieve-repositories
 ```
 
-Follow the output from the tool:
-
-```bash
-
-   ____ _                                      ____ _     ___
-  / ___| |__  _   _ _ __ _ __ ___ _ __ __ _   / ___| |   |_ _|
- | |   | '_ \| | | | '__| '__/ _ \ '__/ _` | | |   | |    | |
- | |___| | | | |_| | |  | | |  __/ | | (_| | | |___| |___ | |
-  \____|_| |_|\__,_|_|  |_|  \___|_|  \__,_|  \____|_____|___|
-
-
-A CLI tool designed to orchestrate Cursor Cloud Agents REST API.
-
-Version: 0.2.0-SNAPSHOT
-Commit: 1ccefe4
-
-✓ CURSOR_API_KEY validated
-
-Job registered
-
-| Job ID   | Parent Job | Type     | Prompts | Status   | Last update    | Completed      |
-+----------+------------+----------+---------+----------+----------------+----------------+
-| 492f5d67 | NA         | SEQUENCE | 0/1     | CREATING | 11/18/25 19:20 | Started 4s ago |
-
-| Job ID   | Parent Job | Type     | Prompts | Status  | Last update    | Completed       |
-+----------+------------+----------+---------+---------+----------------+-----------------+
-| 492f5d67 | NA         | SEQUENCE | 0/1     | RUNNING | 11/18/25 19:20 | Started 10s ago |
-
-| Job ID   | Parent Job | Type     | Prompts | Status   | Last update    | Completed |
-+----------+------------+----------+---------+----------+----------------+-----------+
-| 492f5d67 | NA         | SEQUENCE | 1/1     | FINISHED | 11/18/25 19:20 | 15 secs   |
-
-
-Job completed with status: FINISHED
-Deleting job and all child jobs...
-Job and all child jobs deleted successfully
-
-Thanks for using Churrera! ✨
-```
-
 ## Using the tool
 
 ```bash
@@ -228,14 +204,14 @@ jobs pr     <job-id>    # Show PR link
 
 ```bash
 ./mvnw clean package -DskipTests
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --help
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-success-completion --polling-interval 10
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-completion
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml --delete-on-success-completion --show-logs
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml --delete-on-success-completion --polling-interval 5 --show-logs
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --retrieve-models
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --retrieve-repositories
-java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow churrera-cli/src/test/resources/examples/failed-job/workflow.xml --delete-on-completion --show-logs
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --help
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-success-completion --polling-interval 10
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli/src/test/resources/examples/hello-world-bash/workflow-hello-world.xml --delete-on-completion
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli/src/test/resources/examples/hello-world/workflow-hello-world.xml --delete-on-success-completion --show-logs
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli/src/test/resources/examples/euler-problems/workflow-euler.xml --delete-on-success-completion --polling-interval 5 --show-logs
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --retrieve-models
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --retrieve-repositories
+java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli/src/test/resources/examples/failed-job/workflow.xml --delete-on-completion --show-logs
 ```
 
 ## Changelog
@@ -257,6 +233,7 @@ java -jar churrera-cli/target/churrera-cli-0.2.0-SNAPSHOT.jar run --workflow chu
 - https://github.com/jabrena/cursor-rules-agile
 - https://github.com/jabrena/cursor-rules-java
 - https://github.com/jabrena/cursor-rules-spring-boot
+- https://github.com/jabrena/sonar-search-cli
 - https://github.com/jabrena/puml-to-png-cli
 - https://github.com/jabrena/setup-cli
 - https://github.com/jabrena/jbang-catalog

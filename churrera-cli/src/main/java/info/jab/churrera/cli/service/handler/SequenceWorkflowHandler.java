@@ -45,7 +45,7 @@ public class SequenceWorkflowHandler {
      */
     public void processWorkflow(Job job, List<Prompt> prompts, WorkflowData workflowData) {
         try {
-            logger.info("Starting to parse workflow for job: {} (status: {})", job.jobId(), job.status());
+            logger.trace("Starting to parse workflow for job: {} (status: {})", job.jobId(), job.status());
 
             // If job has no cursorAgentId, launch it with the first prompt
             boolean justLaunched = false;
@@ -53,7 +53,7 @@ public class SequenceWorkflowHandler {
                 // Reset workflowStartTime before launching to ensure we start fresh
                 job = timeoutManager.resetWorkflowStartTimeIfNeeded(job);
 
-                logger.info("Launching agent for job: {} (previous status: {})", job.jobId(), job.status());
+                logger.debug("Launching agent for job: {} (previous status: {})", job.jobId(), job.status());
                 agentLauncher.launchJobAgent(job, workflowData);
 
                 // Fetch the updated job from database after launching
@@ -96,7 +96,7 @@ public class SequenceWorkflowHandler {
             if (job.cursorAgentId() != null && !justLaunched) {
                 checkAndUpdateJobStatus(job, prompts, workflowData);
             } else if (justLaunched) {
-                logger.info("Job {} just launched, will check status on next polling cycle", job.jobId());
+                logger.trace("Job {} just launched, will check status on next polling cycle", job.jobId());
             }
 
         } catch (Exception e) {
@@ -117,15 +117,15 @@ public class SequenceWorkflowHandler {
             AgentState currentStatus = cliAgent.getAgentStatus(job.cursorAgentId());
 
             // Update job status in database
-            logger.info("Job {} status polled: {} -> updating database", job.jobId(), currentStatus);
+            logger.trace("Job {} status polled: {} -> updating database", job.jobId(), currentStatus);
             cliAgent.updateJobStatusInDatabase(job, currentStatus);
 
-            logger.info("Job {} status updated to: {}", job.jobId(), currentStatus);
+            logger.trace("Job {} status updated to: {}", job.jobId(), currentStatus);
 
             // Don't block on monitoring - just check status and process if completed
             // This allows multiple jobs to be processed in parallel
             if (currentStatus.isActive()) {
-                logger.info("Job {} is still active, will check again on next polling cycle", job.jobId());
+                logger.trace("Job {} is still active, will check again on next polling cycle", job.jobId());
             } else if (currentStatus.isSuccessful()) {
                 // Agent completed successfully, process remaining prompts
                 logger.info("Job {} completed successfully, processing remaining prompts", job.jobId());

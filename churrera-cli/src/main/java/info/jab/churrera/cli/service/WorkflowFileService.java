@@ -31,12 +31,12 @@ public class WorkflowFileService {
      */
     public WorkflowData parseWorkflow(String workflowPath) {
         try {
-            logger.info("Parsing workflow file: {}", workflowPath);
+            logger.trace("Parsing workflow file: {}", workflowPath);
             Path path = Paths.get(workflowPath);
-            logger.info("Workflow file path resolved to: {}", path.toAbsolutePath());
-            logger.info("Workflow file exists: {}", Files.exists(path));
+            logger.trace("Workflow file path resolved to: {}", path.toAbsolutePath());
+            logger.trace("Workflow file exists: {}", Files.exists(path));
             WorkflowData result = workflowParser.parse(path);
-            logger.info("Workflow parsed successfully: {}", result);
+            logger.trace("Workflow parsed successfully: {}", result);
             return result;
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse workflow file " + workflowPath + ": " + e.getMessage(), e);

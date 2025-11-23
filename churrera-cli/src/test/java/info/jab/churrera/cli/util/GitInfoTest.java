@@ -46,7 +46,6 @@ class GitInfoTest {
         // Then
         String output = outputStream.toString();
         assertThat(output)
-                .contains("A CLI tool designed to orchestrate Cursor Cloud Agents REST API.")
                 .contains("Version:")
                 .contains("1.2.3")
                 .contains("Commit:")

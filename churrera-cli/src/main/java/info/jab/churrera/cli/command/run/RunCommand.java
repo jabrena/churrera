@@ -138,9 +138,8 @@ public class RunCommand implements Callable<Integer> {
             }
 
             String jobId = creationResult.getJobId();
-            logger.info("Job created with ID: {}, starting blocking execution", jobId);
-            System.out.println("Job registered");
-            System.out.println();
+            logger.debug("Job created with ID: {}, starting blocking execution", jobId);
+            logger.info("Job registered");
 
             // Create polling service with effective polling interval
             int effectivePollingInterval = getEffectivePollingIntervalSeconds();
@@ -172,12 +171,11 @@ public class RunCommand implements Callable<Integer> {
                     deleteOnCompletion, deleteOnSuccessCompletion);
             }
 
-            System.out.println("\nThanks for using Churrera! ✨");
+            logger.info("Thanks for using Churrera! ✨");
             return determineExitCode(execResult);
 
         } catch (Exception e) {
             logger.error("Error running workflow: {}", e.getMessage(), e);
-            System.err.println("Error running workflow: " + e.getMessage());
             return 1;
         } finally {
             // Cleanup is handled by shutdown hook in ChurreraCLI
@@ -210,8 +208,7 @@ public class RunCommand implements Callable<Integer> {
      */
     private boolean validateWorkflowPath() {
         if (workflowPath != null && workflowPath.trim().isEmpty()) {
-            logger.error("--workflow option was used but no value provided");
-            System.err.println("Error: --workflow option requires a value (path to workflow XML file)");
+            logger.error("--workflow option requires a value (path to workflow XML file)");
             return false;
         }
         return true;
@@ -260,11 +257,11 @@ public class RunCommand implements Callable<Integer> {
     }
 
     /**
-     * Prints error messages to stderr.
+     * Prints error messages to logger.
      */
     private void printErrors(List<String> errors) {
         for (String error : errors) {
-            System.err.println(error);
+            logger.error(error);
         }
     }
 
@@ -283,29 +280,23 @@ public class RunCommand implements Callable<Integer> {
     private void retrieveAndDisplayModels() {
         try {
             logger.info("Retrieving available models from Cursor API");
-            System.out.println("Retrieving available models...");
-            System.out.println();
 
             List<String> models = cliAgent.getModels();
 
             if (models == null || models.isEmpty()) {
-                System.out.println("No models available.");
                 logger.warn("No models returned from API");
                 return;
             }
 
-            System.out.println("Available models:");
-            System.out.println();
+            StringBuilder modelsList = new StringBuilder("Available models:\n");
             for (int i = 0; i < models.size(); i++) {
-                System.out.println("  " + (i + 1) + ". " + models.get(i));
+                modelsList.append("  ").append(i + 1).append(". ").append(models.get(i)).append("\n");
             }
-            System.out.println();
-            System.out.println("Total: " + models.size() + " model(s)");
-            logger.info("Retrieved {} models successfully", models.size());
+            modelsList.append("Total: ").append(models.size()).append(" model(s)");
+            logger.info("Retrieved {} models successfully:\n{}", models.size(), modelsList);
 
         } catch (Exception e) {
             logger.error("Error retrieving models: {}", e.getMessage(), e);
-            System.err.println("Error retrieving models: " + e.getMessage());
         }
     }
 
@@ -315,29 +306,23 @@ public class RunCommand implements Callable<Integer> {
     private void retrieveAndDisplayRepositories() {
         try {
             logger.info("Retrieving available repositories from Cursor API");
-            System.out.println("Retrieving available repositories...");
-            System.out.println();
 
             List<String> repositories = cliAgent.getRepositories();
 
             if (repositories == null || repositories.isEmpty()) {
-                System.out.println("No repositories available.");
                 logger.warn("No repositories returned from API");
                 return;
             }
 
-            System.out.println("Available repositories:");
-            System.out.println();
+            StringBuilder reposList = new StringBuilder("Available repositories:\n");
             for (int i = 0; i < repositories.size(); i++) {
-                System.out.println("  " + (i + 1) + ". " + repositories.get(i));
+                reposList.append("  ").append(i + 1).append(". ").append(repositories.get(i)).append("\n");
             }
-            System.out.println();
-            System.out.println("Total: " + repositories.size() + " repository(ies)");
-            logger.info("Retrieved {} repositories successfully", repositories.size());
+            reposList.append("Total: ").append(repositories.size()).append(" repository(ies)");
+            logger.info("Retrieved {} repositories successfully:\n{}", repositories.size(), reposList);
 
         } catch (Exception e) {
             logger.error("Error retrieving repositories: {}", e.getMessage(), e);
-            System.err.println("Error retrieving repositories: " + e.getMessage());
         }
     }
 }

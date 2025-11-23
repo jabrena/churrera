@@ -1,6 +1,9 @@
 package info.jab.churrera.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 
 /**
@@ -8,6 +11,8 @@ import java.util.Optional;
  * Uses functional approach with Optional and flatMap.
  */
 public class CursorApiKeyResolver {
+
+    private static final Logger logger = LoggerFactory.getLogger(CursorApiKeyResolver.class);
 
     /**
      * The name of the environment variable for the Cursor API key.
@@ -39,7 +44,7 @@ public class CursorApiKeyResolver {
         try {
             return loadDotenvAndGetApiKey();
         } catch (Exception e) {
-            System.err.println("⚠️  Could not read .env file: " + e.getMessage());
+            logger.warn("Could not read .env file: {}", e.getMessage());
             return Optional.empty();
         }
     }
@@ -62,7 +67,7 @@ public class CursorApiKeyResolver {
             }
             return Optional.empty();
         } catch (Exception e) {
-            System.out.println("⚠️  Error loading .env : " + e.getMessage());
+            logger.warn("Error loading .env: {}", e.getMessage());
             // Continue to next path
             return Optional.empty();
         }

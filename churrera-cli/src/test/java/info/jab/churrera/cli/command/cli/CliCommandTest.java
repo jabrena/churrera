@@ -15,10 +15,11 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.timeout;
 
 /**
  * Unit tests for CliCommand.
@@ -63,11 +64,16 @@ class CliCommandTest {
         Scanner testScanner = new Scanner(inputStream);
         cliCommand = new CliCommand(jobRepository, jobProcessor, propertyResolver, testScanner, cliAgent);
 
-        // When
-        cliCommand.run();
+        // When - run in a separate thread to allow async executor to run
+        Thread runThread = new Thread(() -> cliCommand.run());
+        runThread.start();
 
-        // Then - verify scheduled executor ran at least once (with timeout to account for async execution)
-        verify(jobProcessor, timeout(1000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+
+        // Wait for run to complete after verification
+        runThread.join(5000);
+
         ScheduledExecutorService executor = cliCommand.getScheduledExecutor();
         assertNotNull(executor);
         assertTrue(executor.isShutdown());
@@ -85,12 +91,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -108,12 +110,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -131,12 +129,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -154,12 +148,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -177,12 +167,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -200,12 +186,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -223,12 +205,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -246,12 +224,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -269,12 +243,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -292,12 +262,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -356,12 +322,8 @@ class CliCommandTest {
         Thread runThread = new Thread(() -> cliCommand.run());
         runThread.start();
 
-        // Give the executor time to start and schedule the task
-        Thread.sleep(50);
-
-        // Then - verify scheduled executor ran at least once BEFORE the thread completes
-        // Use a longer timeout to ensure the scheduled task executes
-        verify(jobProcessor, timeout(5000).atLeastOnce()).processJobs();
+        // Then - verify scheduled executor ran at least once using Awaitility
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);

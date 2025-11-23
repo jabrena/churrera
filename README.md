@@ -110,8 +110,6 @@ Configure Github to allow Cursor to interact with the repository that you want C
 
 ![](./documentation/getting-started/github-configuration-1.png)
 
-**Note:** In the future, Cursor Cloud Agents may support `Gitlab` as well.
-
 Once you are in Github, you will have to select which `Github User` you are going to give permissions to and click the `Configure` link:
 
 ![](./documentation/getting-started/github-configuration-2.png)

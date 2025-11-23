@@ -69,7 +69,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -92,7 +97,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -111,7 +121,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -130,7 +145,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -149,7 +169,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -168,7 +193,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -187,7 +217,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -206,7 +241,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -225,7 +265,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -244,7 +289,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -263,7 +313,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);
@@ -323,7 +378,12 @@ class CliCommandTest {
         runThread.start();
 
         // Then - verify scheduled executor ran at least once using Awaitility
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
+        // Add pollDelay to give the executor time to start and execute the first task
+        await()
+            .pollDelay(100, TimeUnit.MILLISECONDS)  // Give executor time to start
+            .pollInterval(50, TimeUnit.MILLISECONDS)  // Check frequently
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(jobProcessor, atLeastOnce()).processJobs());
 
         // Wait for run to complete after verification
         runThread.join(5000);

@@ -1,6 +1,6 @@
 # Churrera
 
-[![CI Builds](https://github.com/jabrena/churrera-cli/actions/workflows/maven.yaml/badge.svg)](https://github.com/jabrena/churrera-cli/actions/workflows/maven.yaml)
+[![CI Builds](https://github.com/jabrena/churrera-cli/actions/workflows/ci.yaml/badge.svg)](https://github.com/jabrena/churrera-cli/actions/workflows/ci.yaml)
 
 [![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-light.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_churrera-cli)
 

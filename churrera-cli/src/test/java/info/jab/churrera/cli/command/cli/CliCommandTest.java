@@ -73,7 +73,7 @@ class CliCommandTest {
     }
 
     @Test
-    void testRun_HelpCommand() {
+    void testRun_HelpCommand() throws InterruptedException {
         // Given
         String input = "help\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -83,12 +83,13 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
+        // Then - wait a bit for scheduled executor to run at least once
+        Thread.sleep(100);
         verify(jobProcessor, atLeastOnce()).processJobs();
     }
 
     @Test
-    void testRun_JobsCommand() {
+    void testRun_JobsCommand() throws InterruptedException {
         // Given
         String input = "jobs\nquit\n";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
@@ -98,7 +99,8 @@ class CliCommandTest {
         // When
         cliCommand.run();
 
-        // Then
+        // Then - wait a bit for scheduled executor to run at least once
+        Thread.sleep(100);
         verify(jobProcessor, atLeastOnce()).processJobs();
     }
 

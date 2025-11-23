@@ -257,6 +257,7 @@ java -jar churrera-cli/target/churrera-cli-0.2.0.jar run --workflow churrera-cli
 - https://github.com/jabrena/cursor-rules-agile
 - https://github.com/jabrena/cursor-rules-java
 - https://github.com/jabrena/cursor-rules-spring-boot
+- https://github.com/jabrena/sonar-search-cli
 - https://github.com/jabrena/puml-to-png-cli
 - https://github.com/jabrena/setup-cli
 - https://github.com/jabrena/jbang-catalog

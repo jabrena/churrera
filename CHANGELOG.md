@@ -10,12 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - PML validator to validate workflow files before execution (#40)
-- New `run` command option for executing workflows (#51)
+- New `run` command option for executing workflows with flags: `--workflow`, `--delete-on-completion`, `--delete-on-success-completion`, `--retrieve-models`, `--retrieve-repositories`, `--show-logs`, `--polling-interval` (#51)
 - Timeout support for workflows with configurable timeout values (#53)
 - Fallback support for workflows to handle timeout scenarios (#53)
 - New churrera recipe for continuous diagrams workflow (#103)
 - Sonar configuration iteration 2 (#148)
-- `--show-logs` option for better log visibility (#160)
 
 ### Changed
 

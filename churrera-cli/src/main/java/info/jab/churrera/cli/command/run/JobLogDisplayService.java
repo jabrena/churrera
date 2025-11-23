@@ -44,21 +44,21 @@ public class JobLogDisplayService {
      */
     private void fetchAndDisplayConversation(String jobId, String cursorAgentId) {
         try {
-            System.out.println("\n=== Cursor Agent Conversation (Job: " + jobId + ") ===");
+            logger.info("=== Cursor Agent Conversation (Job: {}) ===", jobId);
             var conversation = cliAgent.getConversation(cursorAgentId);
             if (conversation != null && conversation.messages() != null) {
                 logger.debug("Retrieved {} conversation messages for job {}", conversation.messages().size(), jobId);
+                StringBuilder conversationText = new StringBuilder();
                 for (ConversationMessage message : conversation.messages()) {
-                    System.out.println("[conversation] " + message.text());
+                    conversationText.append("[conversation] ").append(message.text()).append("\n");
                 }
+                logger.info("Conversation messages:\n{}", conversationText);
             } else {
-                logger.debug("No conversation messages available for job {}", jobId);
-                System.out.println("No conversation messages available");
+                logger.info("No conversation messages available for job {}", jobId);
             }
         } catch (Exception e) {
             logger.error("Failed to fetch conversation for cursorAgentId {} (job {}): {}",
                 cursorAgentId, jobId, e.getMessage(), e);
-            System.out.println("Failed to fetch conversation: " + e.getMessage());
         }
     }
 }

@@ -45,20 +45,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
 
-        <!-- JColor for colored output -->
-        <dependency>
-            <groupId>com.diogonunes</groupId>
-            <artifactId>JColor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.lalyos</groupId>
-            <artifactId>jfiglet</artifactId>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>

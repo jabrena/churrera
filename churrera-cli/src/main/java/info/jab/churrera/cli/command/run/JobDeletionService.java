@@ -91,7 +91,6 @@ public class JobDeletionService {
     void deleteJobAndChildren(String jobId, String reason) {
         try {
             logger.info("Deleting job {} and all child jobs ({} enabled)", jobId, reason);
-            System.out.println("Deleting job and all child jobs...");
 
             // Delete child jobs recursively first
             deleteChildJobsRecursively(jobId);
@@ -100,11 +99,10 @@ public class JobDeletionService {
             var jobOpt = jobRepository.findById(jobId);
             if (jobOpt.isPresent()) {
                 deleteJob(jobOpt.get());
-                System.out.println("Job and all child jobs deleted successfully");
+                logger.info("Job and all child jobs deleted successfully");
             }
         } catch (Exception e) {
             logger.error("Error deleting job {}: {}", jobId, e.getMessage(), e);
-            System.err.println("Error deleting job: " + e.getMessage());
         }
     }
 
@@ -138,7 +136,6 @@ public class JobDeletionService {
             } catch (Exception e) {
                 logger.error("Failed to delete Cursor agent {} for job {}: {}",
                         job.cursorAgentId(), job.jobId(), e.getMessage());
-                System.err.println("  ⚠️  Failed to delete Cursor agent for job " + job.jobId() + ": " + e.getMessage());
                 // Continue with database deletion even if Cursor API fails
             }
         }

@@ -42,8 +42,7 @@ public class FallbackExecutor {
         try {
             // Check if job is already in a terminal state - don't execute fallback if already finished
             if (job.status().isTerminal()) {
-                logger.info("Job {} is already in terminal state ({}), skipping fallback execution.", job.jobId(), job.status());
-                System.out.println("ℹ️  Fallback skipped for job: " + job.jobId() + " (status: " + job.status() + " - already terminal)");
+                logger.info("Fallback skipped for job: {} (status: {} - already terminal)", job.jobId(), job.status());
                 return;
             }
 
@@ -61,7 +60,7 @@ public class FallbackExecutor {
             }
 
             // Print message when executing fallback due to timeout
-            System.out.println("⚠️  FALLBACK ACTION TRIGGERED for job: " + job.jobId());
+            logger.warn("FALLBACK ACTION TRIGGERED for job: {}", job.jobId());
             logger.info("Executing fallback prompt '{}' for job {} (timeout: {}ms elapsed >= {}ms limit)",
                 fallbackSrc, job.jobId(), elapsedMillis, timeoutMillis);
 
@@ -98,9 +97,8 @@ public class FallbackExecutor {
             // Mark fallback as executed
             Job updatedJob = job.withFallbackExecuted(true);
             jobRepository.save(updatedJob);
-            logger.info("Marked fallback as executed for job {}", job.jobId());
-            System.out.println("✅ Fallback prompt sent successfully for job: " + job.jobId());
-            System.out.println("   Continuing to monitor the fallback agent status...\n");
+            logger.info("Fallback prompt sent successfully for job: {}", job.jobId());
+            logger.info("Continuing to monitor the fallback agent status...");
 
         } catch (Exception e) {
             logger.error("Error executing fallback for job {}: {}", job.jobId(), e.getMessage(), e);
@@ -142,7 +140,7 @@ public class FallbackExecutor {
                 }
             }
 
-            System.out.println("⚠️  FALLBACK ACTION TRIGGERED (Parallel Workflow) for job: " + parentJob.jobId());
+            logger.warn("FALLBACK ACTION TRIGGERED (Parallel Workflow) for job: {}", parentJob.jobId());
             logger.info("Executing fallback '{}' for {} unfinished child jobs of parallel workflow {}",
                 fallbackSrc, unfinishedChildren.size(), parentJob.jobId());
 

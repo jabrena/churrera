@@ -16,7 +16,7 @@ public class SimpleWorkflowCompletionChecker implements CompletionChecker {
     public CompletionCheckResult checkCompletion(Job job, String jobId) {
         if (job.status().isTerminal()) {
             logger.info("Job {} reached terminal state: {}", jobId, job.status());
-            System.out.println("\nJob completed with status: " + job.status());
+            logger.info("Job completed with status: {}", job.status());
             return new CompletionCheckResult(true, job.status(), new ArrayList<>());
         }
         return new CompletionCheckResult(false, null, new ArrayList<>());

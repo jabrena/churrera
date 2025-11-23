@@ -1,15 +1,17 @@
 package info.jab.churrera.cli.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Supplier;
 
-import com.diogonunes.jcolor.Attribute;
-import static com.diogonunes.jcolor.Ansi.colorize;
-
 public class GitInfo {
+
+    private static final Logger logger = LoggerFactory.getLogger(GitInfo.class);
 
     private final Supplier<InputStream> gitPropertiesStreamSupplier;
 
@@ -25,7 +27,7 @@ public class GitInfo {
         try (InputStream input = gitPropertiesStreamSupplier.get()) {
             //Preconditions
             if (Objects.isNull(input)) {
-                System.out.println("git.properties not found");
+                logger.warn("git.properties not found");
                 return;
             }
 
@@ -34,16 +36,11 @@ public class GitInfo {
             prop.load(input);
 
             //Print info
-            System.out.print(colorize("A CLI tool designed to orchestrate Cursor Cloud Agents REST API.", Attribute.GREEN_TEXT()));
-            System.out.println();
-            System.out.println();
-            System.out.print(colorize("Version: ", Attribute.GREEN_TEXT()));
-            System.out.println(prop.getProperty("git.build.version"));
-            System.out.print(colorize("Commit: ", Attribute.GREEN_TEXT()));
-            System.out.println(prop.getProperty("git.commit.id.abbrev"));
-            System.out.println();
+            logger.info("A CLI tool designed to orchestrate Cursor Cloud Agents REST API.");
+            logger.info("Version: {}", prop.getProperty("git.build.version"));
+            logger.info("Commit: {}", prop.getProperty("git.commit.id.abbrev"));
         } catch (IOException ex) {
-            System.out.println("Error printing git info: " + ex.getMessage());
+            logger.error("Error printing git info: {}", ex.getMessage(), ex);
         }
     }
 }

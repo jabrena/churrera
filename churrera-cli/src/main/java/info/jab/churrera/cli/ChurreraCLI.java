@@ -20,9 +20,6 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import info.jab.churrera.cli.util.GitInfo;
-import com.diogonunes.jcolor.Attribute;
-import static com.diogonunes.jcolor.Ansi.colorize;
-import com.github.lalyos.jfiglet.FigletFont;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -60,9 +57,7 @@ public class ChurreraCLI implements Runnable {
         // Validate API key at startup
         this.apiKeyResolver = new CursorApiKeyResolver();
         this.apiKey = apiKeyResolver.resolveApiKey();
-        logger.info("CURSOR_API_KEY validated");
-        System.out.println("✓ CURSOR_API_KEY validated");
-        System.out.println();
+        logger.info("✓ CURSOR_API_KEY validated");
 
         this.propertyResolver = new PropertyResolver();
         this.jobRepository = new JobRepository(propertyResolver);
@@ -139,7 +134,7 @@ public class ChurreraCLI implements Runnable {
     @Override
     public void run() {
         // Root command without subcommand - show custom message
-        System.out.println("Please specify a command. Use 'churrera --help' for available commands.");
+        logger.info("Please specify a command. Use 'churrera --help' for available commands.");
     }
 
     /**
@@ -181,7 +176,6 @@ public class ChurreraCLI implements Runnable {
 
         } catch (Exception e) {
             logger.error("Failed to start Churrera CLI: {}", e.getMessage(), e);
-            System.err.println("Failed to start Churrera CLI: " + e.getMessage());
             System.exit(1);
         }
     }
@@ -195,13 +189,9 @@ public class ChurreraCLI implements Runnable {
     static void printBanner(Supplier<GitInfo> gitInfoSupplier) {
         try {
             logger.debug("Printing application banner");
-            System.out.println();
-            String asciiArt = FigletFont.convertOneLine("Churrera CLI");
-            System.out.println(colorize(asciiArt, Attribute.GREEN_TEXT()));
             gitInfoSupplier.get().print();
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             logger.error("Error printing banner: {}", e.getMessage(), e);
-            System.out.println("Error printing banner: " + e.getMessage());
         }
     }
 

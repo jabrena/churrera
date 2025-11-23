@@ -145,7 +145,7 @@ public class CLIAgent {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException("Monitoring interrupted", e);
             } catch (Exception e) {
-                System.err.println("⚠️  Error during status check: " + e.getMessage());
+                logger.warn("Error during status check: {}", e.getMessage());
                 // Continue monitoring despite errors
                 try {
                     Thread.sleep(delaySeconds * 1000L);

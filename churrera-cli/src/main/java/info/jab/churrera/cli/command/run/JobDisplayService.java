@@ -56,7 +56,7 @@ public class JobDisplayService {
 
         // Display table
         if (jobsToDisplay.isEmpty()) {
-            System.out.println("No jobs found.");
+            logger.info("No jobs found.");
             return;
         }
 
@@ -71,8 +71,7 @@ public class JobDisplayService {
 
         // Display table to console
         String tableOutput = TableFormatter.formatTable(headers, rows);
-        System.out.println(tableOutput);
-        logger.debug("Filtered jobs table displayed:\n{}", tableOutput);
+        logger.info("Filtered jobs table:\n{}", tableOutput);
     }
 
     /**

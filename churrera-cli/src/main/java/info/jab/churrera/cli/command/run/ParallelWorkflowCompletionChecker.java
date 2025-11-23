@@ -32,7 +32,7 @@ public class ParallelWorkflowCompletionChecker implements CompletionChecker {
         // If no child jobs exist, parent completion is sufficient
         if (childJobs.isEmpty()) {
             logger.info("Parent job {} reached terminal state with no child jobs", jobId);
-            System.out.println("\nJob completed with status: " + job.status());
+            logger.info("Job completed with status: {}", job.status());
             return new CompletionCheckResult(true, job.status(), childJobs);
         }
 
@@ -46,8 +46,8 @@ public class ParallelWorkflowCompletionChecker implements CompletionChecker {
 
         // All children are terminal
         logger.info("Parent job {} and all {} child jobs reached terminal state", jobId, childJobs.size());
-        System.out.println("\nJob completed with status: " + job.status());
-        System.out.println("All " + childJobs.size() + " child jobs completed.");
+        logger.info("Job completed with status: {}", job.status());
+        logger.info("All {} child jobs completed.", childJobs.size());
 
         AgentState finalStatus = determineFinalStatusForParallelWorkflow(job, childJobs);
         return new CompletionCheckResult(true, finalStatus, childJobs);

@@ -28,10 +28,14 @@ Cursor Cloud Agents REST API (Beta) allows you to programmatically create and ma
 <?xml version="1.0" encoding="UTF-8"?>
 <pml-workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://jabrena.github.io/pml/schemas/0.3.0/pml-workflow.xsd">
-    <sequence model="default" repository="https://github.com/jabrena/wjax25-demos"
-     timeout="3m" fallback="fallback.xml">
-        <prompt src="pml-java25-installation-v5.xml" />
-        <prompt src="pml-hello-world-java-v2.xml" />
+
+    <sequence
+        model="default" repository="https://github.com/jabrena/churrera-cli"
+        timeout="30m" fallback-src="999-fallback.xml">
+
+        <prompt src="1-pml-java25-installation.xml" />
+        <prompt src="2-pml-jbang-sonar-search-cli-installation.xml" />
+        <prompt src="3-pml-fix-sonar-issues.xml" />
     </sequence>
 </pml-workflow>
 ```

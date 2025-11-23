@@ -61,6 +61,15 @@ Examples using Churrera with PML-Workflow:
 - [Continous documentation](./churrera-recipes/continous-diagrams/)
 - [Fix Sonar issues](./churrera-recipes/fix-sonar-issues/)
 
+## Limitations
+
+Currently, the solution has the following limitations
+
+- Limited Java types to be desearialized data from prompts.
+- No capacity to pass parameters from Pipelines to prompts.
+- No Directed graph support for complex workflow
+- Not released in Maven Central
+
 ## Getting started
 
 ### 1. Generate a CURSOR_API_KEY

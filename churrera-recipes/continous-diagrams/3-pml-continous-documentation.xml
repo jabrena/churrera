@@ -15,6 +15,12 @@
         <step number="1">
             <step-title>Update diagrams in the documentation folder</step-title>
             <step-content>
+                First, install the Maven dependencies with:
+
+                ```bash
+                ./mvnw clean install
+                ```
+
                 To update the diagrams, remove the previous diagrams in the path: ./documentation/uml/ and
                 the .puml files in the path: ./documentation/uml/puml/
 
@@ -28,8 +34,20 @@
 
                 And later:
 
-                `Create UML class diagrams for all modules: churrera-cli, churrera-core, cursor-api-client and cursor-cloud-agents-openapi with @171-java-diagrams without any question
+                `Create UML class diagrams for all modules: churrera-cli, churrera-core,
+                cursor-api-client and cursor-cloud-agents-openapi with @171-java-diagrams without
+                any question
                 for all modules finally create a complete diagram from all`
+
+                and also:
+
+                `Create UML sequence diagrams for the churrera-cli module when a user uses the cli
+                tool to execute a sequence workflow.`
+
+                and also:
+
+                `Create UML sequence diagrams for the churrera-cli module when a user uses the cli
+                tool to execute a parallel workflow.`
 
                 Fetch the rule from the following URL:
                 https://github.com/jabrena/cursor-rules-java/blob/main/.cursor/rules/171-java-diagrams.md
@@ -40,43 +58,31 @@
                 consider to add `scale 0.6` to visualize better the .png later.
 
                 Update the ./documentation/uml/README.md file with the all diagrams.
-                Verify that the document include 5 diagrams:
+                Verify that the document include 6 diagrams:
                 - 1 complete diagram from all modules.
                 - 1 diagram for the churrera-cli module.
                 - 1 diagram for the churrera-core module.
                 - 1 diagram for the cursor-api-client module.
                 - 1 diagram for the cursor-cloud-agents-openapi module.
+                - 1 diagram for the sequence workflow when a user uses the cli tool to execute a
+                sequence workflow.
+                - 1 diagram for the parallel workflow when a user uses the cli tool to execute a
+                parallel workflow.
 
                 The document located in the path: ./documentation/uml/README.md should show
                 a diagram per maven module and a complete diagram from all modules.
 
                 After the diagrams are generated, verify that the document include 5 diagrams:
-                Review that png files show all elements from the .puml files. In other case, make chages in the .puml files.
-            </step-content>
-        </step>
-        <step number="2">
-            <step-title>Update the README.md for UML Sequence Diagrams</step-title>
-            <step-content>
-                Add or update the document located in the path: ./documentation/uml/README.md
-                with the title "UML Sequence Diagrams" when a user uses the cli tool to execute a
-                sequence workflow.
-
-                `Create UML sequence diagrams for the churrera-cli module when a user uses the cli tool to execute a sequence workflow.`
-
-                Fetch the rule from the following URL:
-                https://github.com/jabrena/cursor-rules-java/blob/main/.cursor/rules/171-java-diagrams.md
-                put the diagrams in the path: ./documentation/uml/ and move the .puml files to the
-                path: ./documentation/uml/puml/
-
-                with the new diagram is  created add/update the document at the end of the file with the section
-                visualizting the sequence diagram.
+                Review that png files show all elements from the .puml files. In other case, make
+                chages in the .puml files.
             </step-content>
         </step>
     </steps>
 
     <acceptance-criteria>
         <acceptance-criteria-list>
-            <acceptance-criteria-item>The diagrams are updated in the path: ./documentation/uml/</acceptance-criteria-item>
+            <acceptance-criteria-item>No .png images are present in ./documentation/uml/puml/</acceptance-criteria-item>
+            <acceptance-criteria-item>The diagrams in .png format are updated in the path: ./documentation/uml/</acceptance-criteria-item>
             <acceptance-criteria-item>The .puml files are moved to the path: ./documentation/uml/puml/</acceptance-criteria-item>
         </acceptance-criteria-list>
     </acceptance-criteria>

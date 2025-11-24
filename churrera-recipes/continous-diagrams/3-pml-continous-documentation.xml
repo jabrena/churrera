@@ -15,6 +15,12 @@
         <step number="1">
             <step-title>Update diagrams in the documentation folder</step-title>
             <step-content>
+                First, install the Maven dependencies with:
+
+                ```bash
+                ./mvnw clean install
+                ```
+
                 To update the diagrams, remove the previous diagrams in the path: ./documentation/uml/ and
                 the .puml files in the path: ./documentation/uml/puml/
 

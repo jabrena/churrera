@@ -44,6 +44,11 @@
                 `Create UML sequence diagrams for the churrera-cli module when a user uses the cli
                 tool to execute a sequence workflow.`
 
+                and also:
+
+                `Create UML sequence diagrams for the churrera-cli module when a user uses the cli
+                tool to execute a parallel workflow.`
+
                 Fetch the rule from the following URL:
                 https://github.com/jabrena/cursor-rules-java/blob/main/.cursor/rules/171-java-diagrams.md
                 put the diagrams in the path: ./documentation/uml/ and move the .puml files to the
@@ -59,7 +64,8 @@
                 - 1 diagram for the churrera-core module.
                 - 1 diagram for the cursor-api-client module.
                 - 1 diagram for the cursor-cloud-agents-openapi module.
-                - 1 diagram for the sequence workflow when a user uses the cli tool to execute a sequence workflow.
+                - 1 diagram for the sequence workflow when a user uses the cli tool to execute a
+                sequence workflow.
 
                 The document located in the path: ./documentation/uml/README.md should show
                 a diagram per maven module and a complete diagram from all modules.

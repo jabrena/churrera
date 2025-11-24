@@ -1,6 +1,6 @@
-# UML Class Diagrams
+# UML Diagrams
 
-This document provides an overview of the class structure for the Churrera project through UML class diagrams.
+This document provides an overview of the architecture for the Churrera project through UML class and sequence diagrams.
 
 ## Complete Project Overview
 
@@ -65,6 +65,27 @@ The OpenAPI module contains the OpenAPI 3.0.3 specification file that defines th
 **Key Components:**
 - **OpenAPI Specification**: `cloud-agents-openapi.yaml` - Defines API endpoints, request/response schemas, and security schemes
 - Used to generate Java client code for the Cursor API
+
+## Sequence Workflow Diagram
+
+The following diagram illustrates the end-to-end flow when a user runs the CLI to execute a sequence workflow.
+
+![Sequence Workflow Execution Diagram](uml-sequence-diagram-sequence-workflow.png)
+
+**Highlights:**
+- Shows how `RunCommand`, `JobCreationService`, and `JobProcessor` cooperate to orchestrate jobs.
+- Details the interactions between `SequenceWorkflowHandler`, `AgentLauncher`, `CLIAgent`, and the Cursor API.
+- Covers timeout handling, fallback execution, and prompt follow-up processing.
+
+## Diagram Summary
+
+This document now includes six diagrams:
+1. **uml-class-diagram-complete.png** – Complete project overview.
+2. **uml-class-diagram-churrera-cli.png** – Churrera CLI module.
+3. **uml-class-diagram-churrera-core.png** – Churrera Core module.
+4. **uml-class-diagram-cursor-api-client.png** – Cursor API client module.
+5. **uml-class-diagram-cursor-cloud-agents-openapi.png** – Cursor Cloud Agents OpenAPI module.
+6. **uml-sequence-diagram-sequence-workflow.png** – Sequence workflow execution.
 
 ## Diagram Generation
 

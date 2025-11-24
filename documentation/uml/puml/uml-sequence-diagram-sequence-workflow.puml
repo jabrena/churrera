@@ -1,0 +1,172 @@
+@startuml
+!theme plain
+title Sequence Workflow Execution Flow
+
+actor User
+participant "RunCommand" as RunCmd
+participant "JobCreationService" as JobCreation
+participant "JobRepository" as JobRepo
+participant "JobProcessor" as JobProc
+participant "SequenceWorkflowHandler" as SeqHandler
+participant "AgentLauncher" as AgentLaunch
+participant "CLIAgent" as CLIAgent
+participant "CursorAgentManagement" as CursorAPI
+participant "PromptProcessor" as PromptProc
+participant "TimeoutManager" as TimeoutMgr
+participant "JobPollingService" as Polling
+
+== Workflow Initialization ==
+User -> RunCmd: churrera run --workflow workflow.xml
+activate RunCmd
+
+RunCmd -> JobCreation: createJob(workflowPath)
+activate JobCreation
+JobCreation -> JobRepo: save(job)
+activate JobRepo
+JobRepo --> JobCreation: job saved
+deactivate JobRepo
+JobCreation --> RunCmd: JobCreationResult(jobId)
+deactivate JobCreation
+
+== Job Processing Loop ==
+RunCmd -> Polling: executePollingLoop(jobId)
+activate Polling
+
+loop Every polling interval
+  Polling -> JobProc: processJobs()
+  activate JobProc
+  
+  JobProc -> JobRepo: findUnfinishedJobs()
+  activate JobRepo
+  JobRepo --> JobProc: List<Job>
+  deactivate JobRepo
+  
+  JobProc -> SeqHandler: processWorkflow(job, prompts, workflowData)
+  activate SeqHandler
+  
+  alt Job has no cursorAgentId
+    SeqHandler -> TimeoutMgr: resetWorkflowStartTimeIfNeeded(job)
+    activate TimeoutMgr
+    TimeoutMgr --> SeqHandler: updated job
+    deactivate TimeoutMgr
+    
+    SeqHandler -> AgentLaunch: launchJobAgent(job, workflowData)
+    activate AgentLaunch
+    
+    AgentLaunch -> CLIAgent: launchAgentForJob(job, promptContent, type, bindValue, pr)
+    activate CLIAgent
+    
+    CLIAgent -> CursorAPI: launch(prompt, model, repository, pr)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: AgentResponse(id)
+    deactivate CursorAPI
+    
+    CLIAgent -> JobRepo: updateJobCursorIdInDatabase(job, cursorAgentId, CREATING)
+    activate JobRepo
+    JobRepo --> CLIAgent: updated
+    deactivate JobRepo
+    
+    CLIAgent --> AgentLaunch: cursorAgentId
+    deactivate CLIAgent
+    AgentLaunch --> SeqHandler: agent launched
+    deactivate AgentLaunch
+    
+    SeqHandler -> JobRepo: findById(jobId)
+    activate JobRepo
+    JobRepo --> SeqHandler: updated job
+    deactivate JobRepo
+  end
+  
+  alt Job has cursorAgentId and not just launched
+    SeqHandler -> TimeoutMgr: checkTimeout(job)
+    activate TimeoutMgr
+    TimeoutMgr --> SeqHandler: TimeoutCheckResult
+    deactivate TimeoutMgr
+    
+    alt Timeout reached and fallback not executed
+      SeqHandler -> FallbackExecutor: executeFallback(job, workflowData, elapsed, timeout)
+      note right: Executes fallback prompt if configured
+    end
+    
+    SeqHandler -> CLIAgent: getAgentStatus(cursorAgentId)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: getStatus(agentId)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: AgentResponse(status)
+    deactivate CursorAPI
+    CLIAgent --> SeqHandler: AgentState
+    deactivate CLIAgent
+    
+    SeqHandler -> CLIAgent: updateJobStatusInDatabase(job, status)
+    activate CLIAgent
+    CLIAgent -> JobRepo: save(updatedJob)
+    activate JobRepo
+    JobRepo --> CLIAgent: saved
+    deactivate JobRepo
+    CLIAgent --> SeqHandler: updated
+    deactivate CLIAgent
+    
+    alt Agent status is SUCCESSFUL
+      SeqHandler -> PromptProc: processRemainingPrompts(job, prompts, workflowData)
+      activate PromptProc
+      
+      loop For each remaining prompt
+        PromptProc -> CLIAgent: followUpForPrompt(cursorAgentId, promptContent, type, bindValue)
+        activate CLIAgent
+        CLIAgent -> CursorAPI: followUp(agentId, prompt)
+        activate CursorAPI
+        CursorAPI --> CLIAgent: FollowUpResponse(id)
+        deactivate CursorAPI
+        CLIAgent --> PromptProc: followUpId
+        deactivate CLIAgent
+        
+        PromptProc -> CLIAgent: updatePromptInDatabase(prompt, "SENT")
+        activate CLIAgent
+        CLIAgent -> JobRepo: savePrompt(updatedPrompt)
+        activate JobRepo
+        JobRepo --> CLIAgent: saved
+        deactivate JobRepo
+        CLIAgent --> PromptProc: updated
+        deactivate CLIAgent
+      end
+      
+      PromptProc --> SeqHandler: prompts processed
+      deactivate PromptProc
+    end
+  end
+  
+  SeqHandler --> JobProc: workflow processed
+  deactivate SeqHandler
+  JobProc --> Polling: processing complete
+  deactivate JobProc
+  
+  Polling -> Polling: checkCompletion(jobId)
+  activate Polling
+  
+  alt Workflow completed
+    Polling --> RunCmd: ExecutionResult(finalStatus)
+    deactivate Polling
+  else Workflow still active
+    Polling -> Polling: sleep(pollingInterval)
+    deactivate Polling
+  end
+end
+
+== Completion ==
+Polling --> RunCmd: ExecutionResult
+deactivate Polling
+
+alt showLogs option
+  RunCmd -> JobLogDisplayService: displayLogsForJob(job)
+  note right: Display conversation logs
+end
+
+alt deleteOnCompletion or deleteOnSuccessCompletion
+  RunCmd -> JobDeletionService: handleDeletion(jobId, job, childJobs, deleteOnCompletion, deleteOnSuccessCompletion)
+  note right: Delete job and agents if conditions met
+end
+
+RunCmd --> User: Exit code (0 = success, 1 = failure)
+deactivate RunCmd
+
+@enduml

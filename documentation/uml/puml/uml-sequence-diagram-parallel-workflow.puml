@@ -1,0 +1,218 @@
+@startuml
+!theme plain
+title Parallel Workflow Execution - UML Sequence Diagram
+
+actor User
+participant "RunCommand" as RunCmd
+participant "JobCreationService" as JobCreation
+participant "JobRepository" as JobRepo
+participant "JobProcessor" as JobProc
+participant "ParallelWorkflowHandler" as ParallelHandler
+participant "AgentLauncher" as AgentLaunch
+participant "CLIAgent" as CLIAgent
+participant "CursorAgentManagement" as CursorAPI
+participant "ResultExtractor" as ResultExt
+participant "TimeoutManager" as TimeoutMgr
+participant "FallbackExecutor" as FallbackExec
+participant "ChildWorkflowHandler" as ChildHandler
+
+== Parent Job Creation Phase ==
+User -> RunCmd: churrera run --workflow parallel-workflow.xml
+activate RunCmd
+RunCmd -> JobCreation: createJob(workflowPath)
+activate JobCreation
+JobCreation -> JobRepo: save(parentJob)
+activate JobRepo
+JobRepo --> JobCreation: parent job saved
+deactivate JobRepo
+JobCreation --> RunCmd: JobCreationResult(parentJobId)
+deactivate JobCreation
+
+== Parent Job Processing Phase ==
+RunCmd -> JobProc: processJobs()
+activate JobProc
+JobProc -> JobRepo: findUnfinishedJobs()
+activate JobRepo
+JobRepo --> JobProc: List<Job> (includes parentJob)
+deactivate JobRepo
+
+JobProc -> ParallelHandler: processWorkflow(parentJob, workflowData)
+activate ParallelHandler
+
+alt Parent job not launched yet
+  ParallelHandler -> AgentLaunch: launchJobAgent(parentJob, workflowData)
+  activate AgentLaunch
+  AgentLaunch -> CLIAgent: launchAgentForJob(parentJob, parallelPrompt, type, null, false)
+  activate CLIAgent
+  CLIAgent -> CursorAPI: launch(parallelPrompt, model, repository, pr)
+  activate CursorAPI
+  CursorAPI --> CLIAgent: AgentResponse(agentId)
+  deactivate CursorAPI
+  CLIAgent -> JobRepo: update parent job with agentId
+  activate JobRepo
+  JobRepo --> CLIAgent: parent job updated
+  deactivate JobRepo
+  CLIAgent --> AgentLaunch: agentId
+  deactivate CLIAgent
+  AgentLaunch --> ParallelHandler: parent agent launched
+  deactivate AgentLaunch
+end
+
+== Parent Job Status Monitoring ==
+loop Polling loop
+  ParallelHandler -> TimeoutMgr: getElapsedMillis(parentJob)
+  activate TimeoutMgr
+  TimeoutMgr --> ParallelHandler: elapsedMillis
+  deactivate TimeoutMgr
+  
+  alt Timeout reached
+    ParallelHandler -> FallbackExec: executeFallbackForParallelChildren(parentJob, parallelData)
+    activate FallbackExec
+    FallbackExec -> JobRepo: findChildJobs(parentJobId)
+    activate JobRepo
+    JobRepo --> FallbackExec: List<Job> (child jobs)
+    deactivate JobRepo
+    
+    loop For each unfinished child job
+      FallbackExec -> CLIAgent: launchAgentForJob(childJob, fallbackPrompt, type, null, false)
+      activate CLIAgent
+      CLIAgent -> CursorAPI: launch(fallbackPrompt, model, repository, pr)
+      activate CursorAPI
+      CursorAPI --> CLIAgent: AgentResponse(agentId)
+      deactivate CursorAPI
+      CLIAgent --> FallbackExec: agentId
+      deactivate CLIAgent
+    end
+    
+    FallbackExec --> ParallelHandler: fallback executed for children
+    deactivate FallbackExec
+  end
+  
+  ParallelHandler -> CLIAgent: getAgentStatus(parentAgentId)
+  activate CLIAgent
+  CLIAgent -> CursorAPI: getStatus(parentAgentId)
+  activate CursorAPI
+  CursorAPI --> CLIAgent: AgentStatus
+  deactivate CursorAPI
+  CLIAgent --> ParallelHandler: AgentState
+  deactivate CLIAgent
+  
+  ParallelHandler -> CLIAgent: updateJobStatusInDatabase(parentJob, status)
+  activate CLIAgent
+  CLIAgent -> JobRepo: update parent job status
+  activate JobRepo
+  JobRepo --> CLIAgent: parent job updated
+  deactivate JobRepo
+  CLIAgent --> ParallelHandler: status updated
+  deactivate CLIAgent
+  
+  alt Parent job completed successfully
+    ParallelHandler -> ResultExt: extractResults(parentJob, parallelData)
+    activate ResultExt
+    ResultExt -> CLIAgent: getConversation(parentAgentId)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: getConversation(parentAgentId)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: ConversationResponse
+    deactivate CursorAPI
+    CLIAgent --> ResultExt: conversation messages
+    deactivate CLIAgent
+    ResultExt -> ResultExt: deserialize results based on bindResultType
+    ResultExt --> ParallelHandler: List<Object> (deserialized results)
+    deactivate ResultExt
+    
+    == Child Jobs Creation Phase ==
+    ParallelHandler -> ParallelHandler: createChildJobs(parentJob, resultList, parallelData)
+    activate ParallelHandler
+    
+    loop For each element in resultList
+      ParallelHandler -> JobRepo: save(childJob)
+      activate JobRepo
+      JobRepo --> ParallelHandler: child job saved
+      deactivate JobRepo
+      
+      ParallelHandler -> JobRepo: savePrompt(prompt) for each prompt in sequence
+      activate JobRepo
+      JobRepo --> ParallelHandler: prompts saved
+      deactivate JobRepo
+    end
+    
+    ParallelHandler --> ParallelHandler: child jobs created
+    deactivate ParallelHandler
+  end
+end
+
+ParallelHandler --> JobProc: parent workflow processed
+deactivate ParallelHandler
+
+== Child Jobs Processing Phase ==
+JobProc -> JobRepo: findUnfinishedJobs()
+activate JobRepo
+JobRepo --> JobProc: List<Job> (includes child jobs)
+deactivate JobRepo
+
+loop For each child job
+  JobProc -> ChildHandler: processWorkflow(childJob, workflowData, prompts)
+  activate ChildHandler
+  
+  alt Child job not launched yet
+    ChildHandler -> AgentLaunch: launchJobAgent(childJob, workflowData)
+    activate AgentLaunch
+    AgentLaunch -> CLIAgent: launchAgentForJob(childJob, prompt, type, boundValue, false)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: launch(prompt with boundValue, model, repository, pr)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: AgentResponse(agentId)
+    deactivate CursorAPI
+    CLIAgent --> AgentLaunch: agentId
+    deactivate CLIAgent
+    AgentLaunch --> ChildHandler: child agent launched
+    deactivate AgentLaunch
+  end
+  
+  ChildHandler -> CLIAgent: getAgentStatus(childAgentId)
+  activate CLIAgent
+  CLIAgent -> CursorAPI: getStatus(childAgentId)
+  activate CursorAPI
+  CursorAPI --> CLIAgent: AgentStatus
+  deactivate CursorAPI
+  CLIAgent --> ChildHandler: AgentState
+  deactivate CLIAgent
+  
+  alt Child agent completed successfully
+    ChildHandler -> PromptProc: processRemainingPrompts(childJob, prompts, workflowData)
+    activate PromptProc
+    PromptProc -> CLIAgent: followUpForPrompt(agentId, prompt, type, bindValue)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: followUp(agentId, prompt)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: FollowUpResponse
+    deactivate CursorAPI
+    CLIAgent --> PromptProc: followUpId
+    deactivate CLIAgent
+    PromptProc --> ChildHandler: prompts processed
+    deactivate PromptProc
+  end
+  
+  ChildHandler --> JobProc: child workflow processed
+  deactivate ChildHandler
+end
+
+JobProc --> RunCmd: all jobs processed
+deactivate JobProc
+
+== Completion Check Phase ==
+RunCmd -> JobRepo: findById(parentJobId)
+activate JobRepo
+JobRepo --> RunCmd: Parent job with final status
+deactivate JobRepo
+
+RunCmd -> JobRepo: findChildJobs(parentJobId)
+activate JobRepo
+JobRepo --> RunCmd: List<Job> (child jobs)
+deactivate JobRepo
+
+RunCmd --> User: Exit with status code
+deactivate RunCmd
+
+@enduml

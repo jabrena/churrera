@@ -1,0 +1,149 @@
+@startuml
+!theme plain
+title Sequence Workflow Execution - UML Sequence Diagram
+
+actor User
+participant "RunCommand" as RunCmd
+participant "JobCreationService" as JobCreation
+participant "JobRepository" as JobRepo
+participant "JobProcessor" as JobProc
+participant "SequenceWorkflowHandler" as SeqHandler
+participant "AgentLauncher" as AgentLaunch
+participant "CLIAgent" as CLIAgent
+participant "CursorAgentManagement" as CursorAPI
+participant "PromptProcessor" as PromptProc
+participant "TimeoutManager" as TimeoutMgr
+participant "FallbackExecutor" as FallbackExec
+
+== Job Creation Phase ==
+User -> RunCmd: churrera run --workflow workflow.xml
+activate RunCmd
+RunCmd -> JobCreation: createJob(workflowPath)
+activate JobCreation
+JobCreation -> JobRepo: save(job)
+activate JobRepo
+JobRepo --> JobCreation: job saved
+deactivate JobRepo
+JobCreation --> RunCmd: JobCreationResult(jobId)
+deactivate JobCreation
+
+== Job Processing Phase ==
+RunCmd -> JobProc: processJobs()
+activate JobProc
+JobProc -> JobRepo: findUnfinishedJobs()
+activate JobRepo
+JobRepo --> JobProc: List<Job>
+deactivate JobRepo
+
+loop For each unfinished job
+  JobProc -> SeqHandler: processWorkflow(job, prompts, workflowData)
+  activate SeqHandler
+  
+  alt Job not launched yet
+    SeqHandler -> TimeoutMgr: resetWorkflowStartTimeIfNeeded(job)
+    activate TimeoutMgr
+    TimeoutMgr --> SeqHandler: updated job
+    deactivate TimeoutMgr
+    
+    SeqHandler -> AgentLaunch: launchJobAgent(job, workflowData)
+    activate AgentLaunch
+    AgentLaunch -> CLIAgent: launchAgentForJob(job, prompt, type, null, false)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: launch(prompt, model, repository, pr)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: AgentResponse(agentId)
+    deactivate CursorAPI
+    CLIAgent -> JobRepo: update job with agentId
+    activate JobRepo
+    JobRepo --> CLIAgent: job updated
+    deactivate JobRepo
+    CLIAgent --> AgentLaunch: agentId
+    deactivate CLIAgent
+    AgentLaunch --> SeqHandler: agent launched
+    deactivate AgentLaunch
+  end
+  
+  == Status Monitoring Phase ==
+  SeqHandler -> TimeoutMgr: checkTimeout(job)
+  activate TimeoutMgr
+  TimeoutMgr --> SeqHandler: TimeoutCheckResult
+  deactivate TimeoutMgr
+  
+  alt Timeout reached
+    SeqHandler -> FallbackExec: executeFallback(job, workflowData, elapsed, timeout)
+    activate FallbackExec
+    FallbackExec -> CLIAgent: launchAgentForJob(job, fallbackPrompt, type, null, false)
+    activate CLIAgent
+    CLIAgent -> CursorAPI: launch(fallbackPrompt, model, repository, pr)
+    activate CursorAPI
+    CursorAPI --> CLIAgent: AgentResponse(agentId)
+    deactivate CursorAPI
+    CLIAgent --> FallbackExec: agentId
+    deactivate CLIAgent
+    FallbackExec --> SeqHandler: fallback executed
+    deactivate FallbackExec
+  end
+  
+  SeqHandler -> CLIAgent: getAgentStatus(agentId)
+  activate CLIAgent
+  CLIAgent -> CursorAPI: getStatus(agentId)
+  activate CursorAPI
+  CursorAPI --> CLIAgent: AgentStatus
+  deactivate CursorAPI
+  CLIAgent --> SeqHandler: AgentState
+  deactivate CLIAgent
+  
+  SeqHandler -> CLIAgent: updateJobStatusInDatabase(job, status)
+  activate CLIAgent
+  CLIAgent -> JobRepo: update job status
+  activate JobRepo
+  JobRepo --> CLIAgent: job updated
+  deactivate JobRepo
+  CLIAgent --> SeqHandler: status updated
+  deactivate CLIAgent
+  
+  alt Agent completed successfully
+    SeqHandler -> PromptProc: processRemainingPrompts(job, prompts, workflowData)
+    activate PromptProc
+    
+    loop For each remaining prompt
+      PromptProc -> CLIAgent: followUpForPrompt(agentId, prompt, type, bindValue)
+      activate CLIAgent
+      CLIAgent -> CursorAPI: followUp(agentId, prompt)
+      activate CursorAPI
+      CursorAPI --> CLIAgent: FollowUpResponse
+      deactivate CursorAPI
+      CLIAgent --> PromptProc: followUpId
+      deactivate CLIAgent
+      
+      PromptProc -> CLIAgent: getAgentStatus(agentId)
+      activate CLIAgent
+      CLIAgent -> CursorAPI: getStatus(agentId)
+      activate CursorAPI
+      CursorAPI --> CLIAgent: AgentStatus
+      deactivate CursorAPI
+      CLIAgent --> PromptProc: AgentState
+      deactivate CLIAgent
+    end
+    
+    PromptProc --> SeqHandler: prompts processed
+    deactivate PromptProc
+  end
+  
+  SeqHandler --> JobProc: workflow processed
+  deactivate SeqHandler
+end
+
+JobProc --> RunCmd: jobs processed
+deactivate JobProc
+
+== Completion Check Phase ==
+RunCmd -> JobRepo: findById(jobId)
+activate JobRepo
+JobRepo --> RunCmd: Job with final status
+deactivate JobRepo
+
+RunCmd --> User: Exit with status code
+deactivate RunCmd
+
+@enduml

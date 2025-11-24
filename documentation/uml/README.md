@@ -1,71 +1,84 @@
-# UML Class Diagrams
+# UML Diagrams
 
-This document provides an overview of the class structure for the Churrera project through UML class diagrams.
+This document contains the continuously generated diagrams for the Churrera project. All PNG diagrams live in this directory, while the PlantUML sources are stored under `puml/`.
 
 ## Complete Project Overview
 
-The complete diagram shows all modules and their relationships across the entire project.
+The complete class diagram shows how every module collaborates, highlighting cross-module dependencies between the CLI, core utilities, and Cursor integrations.
 
-![](uml-class-diagram-complete.png)
+![Complete Project Class Diagram](uml-class-diagram-complete.png)
 
-The complete diagram includes:
-- **churrera-cli**: Command-line interface components
-- **churrera-core**: Core workflow and utility functionality
-- **cursor-cloud-agents-client**: Cursor API client implementations
-- **cursor-cloud-agents-openapi**: OpenAPI specifications
+## Module Class Diagrams
 
-## Module Diagrams
+### Churrera CLI
 
-### Churrera CLI Module
-
-The CLI module contains the command-line interface components, including commands, services, repositories, and models for managing jobs.
+The CLI module orchestrates user commands, job lifecycle management, and workflow execution handlers.
 
 ![Churrera CLI Class Diagram](uml-class-diagram-churrera-cli.png)
 
-**Key Components:**
-- **Commands**: `ChurreraCLI`, `RunCommand` for CLI operations
-- **Services**: `CLIAgent` for agent management, `JobProcessor` for job processing
-- **Repository**: `JobRepository` for data persistence
-- **Models**: `Job`, `JobWithDetails`, `Prompt`, `AgentState` for data representation
-- **Workflow Handlers**: `SequenceWorkflowHandler`, `ParallelWorkflowHandler`, `ChildWorkflowHandler` for different workflow types
-- **Supporting Services**: `AgentLauncher`, `PromptProcessor`, `TimeoutManager`, `FallbackExecutor`, `ResultExtractor`
+- `ChurreraCLI` wires configuration, repositories, and agents.
+- `RunCommand` manages job creation, polling, and cleanup.
+- `JobProcessor` delegates to workflow handlers (`Sequence`, `Parallel`, `Child`) through `AgentLauncher`, `PromptProcessor`, `TimeoutManager`, `FallbackExecutor`, and `ResultExtractor`.
+- `JobRepository` persists `Job`, `Prompt`, and `JobWithDetails` records.
 
-### Churrera Core Module
+### Churrera Core
 
-The core module provides workflow parsing, validation, and utility functions used across the application.
+Core utilities parse workflows, validate PML files, and expose shared data structures for the CLI.
 
 ![Churrera Core Class Diagram](uml-class-diagram-churrera-core.png)
 
-**Key Components:**
-- **Workflow**: `WorkflowParser`, `WorkflowData`, `WorkflowValidator`, `PmlValidator` for workflow management
-- **Types**: `WorkflowType` enum for workflow classification
-- **Utilities**: `PmlConverter`, `PropertyResolver`, `CursorApiKeyResolver` for utility operations
-- **Data Models**: `PromptInfo`, `SequenceInfo`, `ParallelWorkflowData` for workflow representation
-- **Supporting Classes**: `TimeoutParser`, `ExpressionEvaluator`, `BindResultTypeMapper` for workflow processing
+- `WorkflowParser` builds `WorkflowData`, `ParallelWorkflowData`, `SequenceInfo`, and `PromptInfo`.
+- `WorkflowValidator` and `PmlValidator` enforce schema rules.
+- Utilities such as `PmlConverter`, `PropertyResolver`, `CursorApiKeyResolver`, `TimeoutParser`, `ExpressionEvaluator`, and `BindResultTypeMapper` provide supporting logic.
 
-### Cursor Cloud Agents Client Module
+### Cursor Cloud Agents Client
 
-The client module provides interfaces and implementations for interacting with the Cursor API.
+This module encapsulates Cursor API interactions with typed interfaces, implementations, and data models.
 
-![Cursor Cloud Agents Client Class Diagram](uml-class-diagram-cursor-api-client.png)
+![Cursor API Client Class Diagram](uml-class-diagram-cursor-api-client.png)
 
-**Key Components:**
-- **Interfaces**: `CursorAgentManagement`, `CursorAgentInformation`, `CursorAgentGeneralEndpoints`
-- **Implementations**: `CursorAgentManagementImpl`, `CursorAgentInformationImpl`, `CursorAgentGeneralEndpointsImpl`
-- **Models**: `AgentResponse`, `FollowUpResponse`, `ConversationResponse`, `AgentsList`, `ApiKeyInfo` for API responses
-- **Enums**: `AgentStatus` for agent state management
-- **Supporting Models**: `Source`, `Target`, `ConversationMessage` for API data structures
+- Interfaces: `CursorAgentManagement`, `CursorAgentInformation`, `CursorAgentGeneralEndpoints`.
+- Implementations: `CursorAgentManagementImpl`, `CursorAgentInformationImpl`, `CursorAgentGeneralEndpointsImpl`.
+- Models: `AgentResponse`, `AgentStatus`, `ConversationResponse`, `ConversationMessage`, `AgentsList`, `Source`, `Target`, `DeleteAgentResponse`, `FollowUpResponse`.
 
-### Cursor Cloud Agents OpenAPI Module
+### Cursor Cloud Agents OpenAPI
 
-The OpenAPI module contains the OpenAPI 3.0.3 specification file that defines the Cursor Cloud Agents API.
+This module tracks the authoritative OpenAPI specification used to generate the Cursor client.
 
-![Cursor Cloud Agents OpenAPI Class Diagram](uml-class-diagram-cursor-cloud-agents-openapi.png)
+![Cursor Cloud Agents OpenAPI Diagram](uml-class-diagram-cursor-cloud-agents-openapi.png)
 
-**Key Components:**
-- **OpenAPI Specification**: `cloud-agents-openapi.yaml` - Defines API endpoints, request/response schemas, and security schemes
-- Used to generate Java client code for the Cursor API
+- Diagram summarizes the top-level OpenAPI document (`cloud-agents-openapi.yaml`) with metadata, paths, components, and security requirements.
 
-## Diagram Generation
+## Workflow Sequence Diagrams
 
-These diagrams are automatically generated from the source code. The PlantUML source files (`.puml`) are located in the `puml/` subdirectory and can be regenerated as needed.
+### Sequence Workflow Execution
+
+Illustrates the blocking CLI run command processing a sequential workflow from job creation through prompt execution and status monitoring.
+
+![Sequence Workflow Diagram](uml-sequence-diagram-sequence-workflow.png)
+
+Key phases:
+- User invokes `RunCommand`.
+- `JobCreationService` persists the job.
+- `JobProcessor` and `SequenceWorkflowHandler` launch the agent, monitor status via `CLIAgent`, and process follow-up prompts with `PromptProcessor`, `TimeoutManager`, and `FallbackExecutor`.
+
+### Parallel Workflow Execution
+
+Shows how a parent parallel workflow produces child jobs that run their own sequences after result extraction.
+
+![Parallel Workflow Diagram](uml-sequence-diagram-parallel-workflow.png)
+
+Key phases:
+- Parent job launches through `ParallelWorkflowHandler`.
+- `ResultExtractor` parses agent responses to generate child jobs.
+- Each child job executes via `ChildWorkflowHandler`, `AgentLauncher`, and `PromptProcessor`, with timeout/fallback safeguards.
+
+---
+
+To regenerate the PNGs automatically:
+
+```bash
+jbang puml-to-png@jabrena --watch ./documentation/uml/
+```
+
+Source `.puml` files are kept in `puml/` while the rendered `.png` images remain in this directory for documentation consumption.

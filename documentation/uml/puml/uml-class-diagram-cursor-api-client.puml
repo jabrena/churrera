@@ -1,124 +1,96 @@
 @startuml
 !theme plain
-scale 0.6
 title Cursor Cloud Agents Client Module - Class Diagram
 
 package "info.jab.cursor.client" {
   interface CursorAgentManagement {
-    + launch(String, String, String, Boolean) : AgentResponse
-    + followUp(String, String) : FollowUpResponse
-    + delete(String) : DeleteAgentResponse
+    + launch(String, String, String, boolean): AgentResponse
+    + delete(String): DeleteAgentResponse
   }
   
   interface CursorAgentInformation {
-    + getAgents(Integer, String) : AgentsList
-    + getStatus(String) : AgentResponse
-    + getAgentConversation(String) : ConversationResponse
+    + getStatus(String): AgentStatus
+    + getConversation(String): ConversationResponse
   }
   
   interface CursorAgentGeneralEndpoints {
-    + getApiKeyInfo() : ApiKeyInfo
-    + getModels() : List<String>
-    + getRepositories() : List<String>
+    + getModels(): AgentsList
+    + getRepositories(): AgentsList
   }
 }
 
 package "info.jab.cursor.client.impl" {
   class CursorAgentManagementImpl {
-    - String apiKey
-    - DefaultApi defaultApi
-    + CursorAgentManagementImpl(String, DefaultApi)
-    + launch(String, String, String, Boolean) : AgentResponse
-    + followUp(String, String) : FollowUpResponse
-    + delete(String) : DeleteAgentResponse
-    - getAuthHeaders() : Map<String, String>
-    - createLaunchAgentRequest(String, String, String, boolean) : CreateAgentRequest
+    - apiKey: String
+    - defaultApi: DefaultApi
+    + launch(String, String, String, boolean): AgentResponse
+    + delete(String): DeleteAgentResponse
   }
   
   class CursorAgentInformationImpl {
-    - String apiKey
-    - DefaultApi defaultApi
-    + CursorAgentInformationImpl(String, DefaultApi)
-    + getAgents(Integer, String) : AgentsList
-    + getStatus(String) : AgentResponse
-    + getAgentConversation(String) : ConversationResponse
-    - getAuthHeaders() : Map<String, String>
+    - apiKey: String
+    - defaultApi: DefaultApi
+    + getStatus(String): AgentStatus
+    + getConversation(String): ConversationResponse
   }
   
   class CursorAgentGeneralEndpointsImpl {
-    - String apiKey
-    - DefaultApi defaultApi
-    + CursorAgentGeneralEndpointsImpl(String, DefaultApi)
-    + getApiKeyInfo() : ApiKeyInfo
-    + getModels() : List<String>
-    + getRepositories() : List<String>
-    - getAuthHeaders() : Map<String, String>
+    - apiKey: String
+    - defaultApi: DefaultApi
+    + getModels(): AgentsList
+    + getRepositories(): AgentsList
   }
 }
 
 package "info.jab.cursor.client.model" {
-  record AgentResponse {
-    + String id
-    + AgentStatus status
-    + OffsetDateTime createdAt
-    + OffsetDateTime updatedAt
-    + Source source
-    + Target target
-    + {static} from(CreateAgent201Response) : AgentResponse
-    + {static} from(ListAgents200ResponseAgentsInner) : AgentResponse
+  class AgentResponse {
+    + id: String
+    + status: AgentStatus
   }
   
-  record FollowUpResponse {
-    + String id
-    + {static} from(DeleteAgent200Response) : FollowUpResponse
+  class DeleteAgentResponse {
+    + success: boolean
+    + message: String
   }
   
-  record DeleteAgentResponse {
-    + String id
-    + {static} from(DeleteAgent200Response) : DeleteAgentResponse
+  class FollowUpResponse {
+    + id: String
+    + status: AgentStatus
   }
   
-  record ConversationResponse {
-    + List<ConversationMessage> messages
-    + {static} from(GetAgentConversation200Response) : ConversationResponse
+  class ConversationResponse {
+    + messages: List<ConversationMessage>
   }
   
-  record ConversationMessage {
-    + String text
-    + {static} from(GetAgentConversation200ResponseMessagesInner) : ConversationMessage
+  class ConversationMessage {
+    + role: String
+    + content: String
   }
   
-  record AgentsList {
-    + List<AgentResponse> agents
-    + String cursor
-    + {static} from(ListAgents200Response) : AgentsList
+  class AgentsList {
+    + items: List<String>
   }
   
-  record ApiKeyInfo {
-    + String id
-    + OffsetDateTime createdAt
-    + {static} from(GetMe200Response) : ApiKeyInfo
-  }
-  
-  record Source {
-    + URI repository
-    + String ref
-    + {static} from(CreateAgent201ResponseSource) : Source
-    + {static} from(ListAgents200ResponseAgentsInnerSource) : Source
-  }
-  
-  record Target {
-    + URI branch
-    + Boolean autoCreatePr
-    + {static} from(CreateAgent201ResponseTarget) : Target
-    + {static} from(ListAgents200ResponseAgentsInnerTarget) : Target
+  class ApiKeyInfo {
+    + apiKey: String
   }
   
   enum AgentStatus {
     CREATING
     RUNNING
-    COMPLETED
-    FAILED
+    SUCCESS
+    ERROR
+    CANCELLED
+  }
+  
+  class Source {
+    + type: String
+    + content: String
+  }
+  
+  class Target {
+    + type: String
+    + content: String
   }
 }
 
@@ -127,24 +99,14 @@ CursorAgentManagementImpl ..|> CursorAgentManagement
 CursorAgentInformationImpl ..|> CursorAgentInformation
 CursorAgentGeneralEndpointsImpl ..|> CursorAgentGeneralEndpoints
 
-CursorAgentManagementImpl --> DefaultApi
 CursorAgentManagementImpl --> AgentResponse : returns
-CursorAgentManagementImpl --> FollowUpResponse : returns
 CursorAgentManagementImpl --> DeleteAgentResponse : returns
-
-CursorAgentInformationImpl --> DefaultApi
-CursorAgentInformationImpl --> AgentResponse : returns
-CursorAgentInformationImpl --> AgentsList : returns
+CursorAgentInformationImpl --> AgentStatus : returns
 CursorAgentInformationImpl --> ConversationResponse : returns
+CursorAgentGeneralEndpointsImpl --> AgentsList : returns
 
-CursorAgentGeneralEndpointsImpl --> DefaultApi
-CursorAgentGeneralEndpointsImpl --> ApiKeyInfo : returns
-
-AgentResponse --> AgentStatus
-AgentResponse --> Source
-AgentResponse --> Target
-
-ConversationResponse --> ConversationMessage
-AgentsList --> AgentResponse
+AgentResponse --> AgentStatus : contains
+FollowUpResponse --> AgentStatus : contains
+ConversationResponse --> ConversationMessage : contains
 
 @enduml

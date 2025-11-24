@@ -81,7 +81,8 @@
 
     <acceptance-criteria>
         <acceptance-criteria-list>
-            <acceptance-criteria-item>The diagrams are updated in the path: ./documentation/uml/</acceptance-criteria-item>
+            <acceptance-criteria-item>No .png images are present in ./documentation/uml/puml/</acceptance-criteria-item>
+            <acceptance-criteria-item>The diagrams in .png format are updated in the path: ./documentation/uml/</acceptance-criteria-item>
             <acceptance-criteria-item>The .puml files are moved to the path: ./documentation/uml/puml/</acceptance-criteria-item>
         </acceptance-criteria-list>
     </acceptance-criteria>
